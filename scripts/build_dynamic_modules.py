@@ -21,6 +21,8 @@ README are never touched by this script.
 
 import json
 import math
+import os
+import urllib.request
 import subprocess
 import sys
 import textwrap
@@ -31,7 +33,7 @@ from zoneinfo import ZoneInfo
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_assets import (  # noqa: E402
     BLUE, CW, FS, GREEN, ICE, LINE, OUT, PINK, VOID, WHITE, X0, X1,
-    Module, _f, line, mix, rect, t)
+    Module, _f, line, rect, t)
 
 ROOT = Path(__file__).resolve().parent.parent
 DYN = OUT / "dynamic"
@@ -70,6 +72,60 @@ def commits(limit=400):
             continue
         day = datetime.fromisoformat(when).astimezone(TZ).date()
         out.append((h, day, files))
+    return out
+
+
+GH_USER = os.environ.get("NODE_GITHUB_USER", "snowyarch")
+EVENT_CLASS = {
+    "PushEvent": "PUSH",
+    "CreateEvent": "CREATE", "PublicEvent": "CREATE", "ReleaseEvent": "CREATE",
+    "WatchEvent": "SOCIAL", "ForkEvent": "SOCIAL",
+    "IssuesEvent": "THREAD", "IssueCommentEvent": "THREAD",
+    "PullRequestEvent": "THREAD", "PullRequestReviewEvent": "THREAD",
+    "PullRequestReviewCommentEvent": "THREAD", "CommitCommentEvent": "THREAD",
+}
+
+
+def public_events(days=14):
+    """Public GitHub events of GH_USER inside the window, as (date, class).
+    Uses the public events endpoint only (never private data). The token,
+    when present, only raises the rate limit. Returns None when the API
+    cannot be reached, so the module shows a failure state instead."""
+    since = NOW.date() - timedelta(days=days - 1)
+    headers = {"Accept": "application/vnd.github+json",
+               "User-Agent": "zurich-node-refresh",
+               "X-GitHub-Api-Version": "2022-11-28"}
+    token = os.environ.get("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    out = []
+    for page in (1, 2, 3):  # the endpoint serves at most 300 events
+        url = (f"https://api.github.com/users/{GH_USER}/events/public"
+               f"?per_page=100&page={page}")
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=20) as r:
+                batch = json.loads(r.read().decode("utf-8"))
+        except (OSError, ValueError):
+            return None
+        if not isinstance(batch, list):
+            return None
+        for e in batch:
+            day = datetime.fromisoformat(
+                e["created_at"].replace("Z", "+00:00")).astimezone(TZ).date()
+            if day < since:
+                continue
+            # skip the node's own scheduled refresh pushes
+            if e.get("type") == "PushEvent":
+                msgs = [c.get("message", "") for c in
+                        e.get("payload", {}).get("commits", []) or []]
+                if msgs and all(m.startswith(REFRESH_SUBJECT) for m in msgs):
+                    continue
+            out.append((day, EVENT_CLASS.get(e.get("type"), "OTHER")))
+        if len(batch) < 100 or (batch and datetime.fromisoformat(
+                batch[-1]["created_at"].replace("Z", "+00:00"))
+                .astimezone(TZ).date() < since):
+            break
     return out
 
 
@@ -139,14 +195,13 @@ def led(cx, cy, color, dur=None, r=4):
     return f'<circle cx="{_f(cx)}" cy="{_f(cy)}" r="{r}" fill="{color}">{anim}</circle>'
 
 
-def failure(m, state, detail):
+def failure(m, state, source, cond):
     """An intentional terminal failure state."""
     m.section("status", PINK)
     m.line(("[ ", ICE), ("!!", PINK, "bold"), (" ] ", ICE),
-           (state, PINK, "bold"), size=22, gap=34)
-    m.line(("# ", ICE), (detail, ICE), gap=34)
-    m.line(("# ", ICE), ("no values are shown rather than invented", ICE),
-           gap=30)
+           (state, PINK, "bold"), size=22, gap=36)
+    m.line(("SOURCE   ", BLUE, "bold"), (source, WHITE))
+    m.line(("STATE    ", BLUE, "bold"), (cond, PINK), gap=30)
 
 
 # ---------------------------------------------------------------- modules
@@ -191,7 +246,7 @@ def boot_sequence():
         f'dur="2.4s" begin="1.2s" fill="freeze"/></rect>')
     m.section("boot.log")
     m.line(("[ .. ] ", ICE), ("kernel: afterhours personal node", WHITE))
-    m.line(("[ .. ] ", ICE), ("tz: Europe/Zurich · node time", WHITE), gap=34)
+    m.line(("[ .. ] ", ICE), ("tz: Europe/Zurich", WHITE), gap=34)
     for mount, ok, note in results:
         if ok:
             m.line(("[ ", ICE), ("OK", GREEN, "bold"), (" ] ", ICE),
@@ -226,13 +281,14 @@ def transmission_log():
      '----------'
 """), (PINK, BLUE), "rx@transmission",
         [("source", "public repo commits", WHITE),
-         ("window", "last 5", WHITE), ("format", "classified", WHITE),
-         ("raw msgs", "hidden", ICE), ("last rx", last, GREEN)], kcol=10)
+         ("scope", "snowyarch/snowyarch", WHITE),
+         ("window", "last 5", WHITE), ("mode", "classified", WHITE),
+         ("last rx", last, GREEN)], kcol=9)
     m.head.append(pulse_rings(X0 + 92, 126, PINK, 3, 4, 40, 2.8))
     if data is None:
-        failure(m, "SIGNAL SOURCE UNAVAILABLE", "git history could not be read")
+        failure(m, "SIGNAL SOURCE UNAVAILABLE", "repo history", "unreadable")
     elif not recent:
-        failure(m, "NO RECENT PUBLIC TRANSMISSION", "no commits in history")
+        failure(m, "NO RECENT PUBLIC TRANSMISSION", "repo history", "empty")
     else:
         m.section("incoming")
         for i, (h, day, files) in enumerate(recent):
@@ -244,27 +300,29 @@ def transmission_log():
                    (f"{cls:<9}", c, "bold"), (h, LINE), size=19, gap=26)
             m.line(("  └ ", LINE), (CLASS_TEXT[cls], ICE), size=18, gap=32)
         m.gap(4)
-        m.line(("● incoming  ○ archived  ◆ asset", ICE), size=17, gap=26)
-        m.line(("# dates only · messages are classified, not shown", ICE),
-               size=17, gap=28)
+        m.line(("● incoming  ○ archived  ◆ asset", ICE), size=17, gap=28)
     m.build(["tail -n 5 transmission.log", "listening on public repo"])
+
+
+EV_COLORS = [("PUSH", GREEN), ("CREATE", BLUE), ("THREAD", WHITE),
+             ("SOCIAL", PINK), ("OTHER", ICE)]
 
 
 def signal_activity():
     m = Module("dynamic/signal-activity.svg", BLUE, "signal.activity", "14d",
-               "~", "rx --window 14d")
-    data = commits()
+               "~", f"rx --user {GH_USER} --window 14d")
+    events = public_events(14)
     days = [NOW.date() - timedelta(days=13 - i) for i in range(14)]
-    counts = None
-    if data is not None:
-        per = {d: 0 for d in days}
-        for _, day, _ in data:
+    per = None
+    if events is not None:
+        per = {d: {k: 0 for k, _ in EV_COLORS} for d in days}
+        for day, cls in events:
             if day in per:
-                per[day] += 1
-        counts = [per[d] for d in days]
-    total = sum(counts) if counts else 0
-    lastday = next((d for d in reversed(days) if counts and
-                    counts[days.index(d)]), None)
+                per[day][cls] += 1
+    totals = [sum(per[d].values()) for d in days] if per else None
+    total = sum(totals) if totals else 0
+    lastday = next((d for d, n in zip(reversed(days), reversed(totals or []))
+                    if n), None)
     m.neofetch(ascii_rows(r"""
            |
           /|\
@@ -276,45 +334,54 @@ def signal_activity():
        '---+---'
      =============
 """), (BLUE, GREEN), "rx@signal",
-        [("rx", "ACTIVE" if total else "IDLE", GREEN if total else ICE),
-         ("window", "14 days", WHITE),
-         ("source", "public repo commits", WHITE),
-         ("total", str(total) if counts else "—", WHITE),
-         ("peak", f"{max(counts)}/day" if counts else "—", WHITE),
+        [("rx", ("ACTIVE" if total else "IDLE") if per else "NO CARRIER",
+          GREEN if total else (ICE if per else PINK)),
+         ("source", "github public events", WHITE),
+         ("scope", f"{GH_USER} · public", WHITE),
+         ("window", "14d", WHITE),
+         ("total", str(total) if per else "—", WHITE),
+         ("peak", f"{max(totals)}/day" if per else "—", WHITE),
          ("last", lastday.isoformat() if lastday else "—", GREEN)], kcol=8)
     m.head.append(pulse_rings(X0 + 92, 120, BLUE, 3, 4, 44, 3.2))
-    if counts is None:
-        failure(m, "SIGNAL SOURCE UNAVAILABLE", "git history could not be read")
-        m.build(["rx --window 14d", "no signal source"])
+    if per is None:
+        failure(m, "SIGNAL SOURCE UNAVAILABLE", "github public events",
+                "unreachable")
+        m.build([f"rx --user {GH_USER} --window 14d", "no carrier"])
         return
-    m.section("spectrum :: commits / day")
+    m.section("spectrum :: public events / day")
     top, hgt = m.y, 170
     base = top + hgt
     slot = (X1 - X0) / 14
-    peak = max(counts) or 1
+    peak = max(totals) or 1
     g = [rect(X0, top - 8, X1 - X0, hgt + 16, fill="url(#grid)")]
     for k in range(1, 4):
         g.append(line(X0, base - hgt * k / 4, X1, base - hgt * k / 4,
                       stroke=LINE, sw=1, dash="2 6", opacity=0.7))
-    for i, (d, c) in enumerate(zip(days, counts)):
+    for i, d in enumerate(days):
         x = X0 + i * slot + slot * 0.2
         w = slot * 0.6
-        if c:
-            bh = max(6, (hgt - 26) * c / peak)
-            col = mix(BLUE, GREEN, c / peak)
-            g.append(rect(_f(x), _f(base - bh), _f(w), _f(bh), fill=col,
-                          opacity=0.25, extra=' filter="url(#soft)"'))
-            g.append(rect(_f(x), _f(base - bh), _f(w), _f(bh), fill=col,
-                          opacity=0.85))
-            g.append(rect(_f(x), _f(base - bh - 3), _f(w), 2, fill=WHITE))
-            g.append(t(_f(x + w / 2), _f(base - bh - 10), str(c), 16, WHITE,
+        n = totals[i]
+        if n:
+            full = max(6, (hgt - 26) * n / peak)
+            g.append(rect(_f(x), _f(base - full), _f(w), _f(full), fill=BLUE,
+                          opacity=0.22, extra=' filter="url(#soft)"'))
+            yb = base
+            for cls, col in EV_COLORS:
+                c = per[d][cls]
+                if not c:
+                    continue
+                seg = full * c / n
+                g.append(rect(_f(x), _f(yb - seg), _f(w), _f(seg), fill=col,
+                              opacity=0.85))
+                yb -= seg
+            g.append(rect(_f(x), _f(base - full - 3), _f(w), 2, fill=WHITE))
+            g.append(t(_f(x + w / 2), _f(base - full - 10), str(n), 16, WHITE,
                        "bold", anchor="middle"))
         else:
             g.append(rect(_f(x), base - 2, _f(w), 2, fill=LINE))
         g.append(t(_f(x + w / 2), base + 22, d.strftime("%d"), 15, ICE,
                    anchor="middle"))
     g.append(line(X0, base, X1, base, stroke=BLUE, sw=1.4))
-    # a slow receiver sweep across the window
     g.append(f'<rect x="{X0}" y="{top - 8}" width="3" height="{hgt + 8}" '
              f'fill="{GREEN}" opacity="0.5"><animate attributeName="x" '
              f'values="{X0};{X1 - 3}" dur="7s" repeatCount="indefinite"/>'
@@ -323,11 +390,13 @@ def signal_activity():
         g.append(t((X0 + X1) / 2, top + hgt / 2, "NO SIGNAL IN WINDOW", 22,
                    PINK, "bold", anchor="middle"))
     m.raw("".join(g), hgt + 48)
+    legend = []
+    for cls, col in EV_COLORS:
+        legend += [("■ ", col, "bold"), (cls.lower() + "  ", ICE)]
+    m.line(*legend, size=16, gap=26)
     m.line((f"{days[0].isoformat()} → {days[-1].isoformat()}", ICE),
-           size=17, gap=26)
-    m.line(("# real counts · scheduled refresh commits excluded", ICE),
            size=17, gap=28)
-    m.build(["rx --window 14d", "signal is real or it is absent"])
+    m.build([f"rx --user {GH_USER} --window 14d", "carrier: public events"])
 
 
 def currently_orbiting():
@@ -354,10 +423,10 @@ def currently_orbiting():
 """), (PINK, BLUE), "orbit@zurich-node",
         [("mode", "CURRENT ORBIT", PINK), ("bodies", str(len(entries)), WHITE),
          ("source", "data/orbit.json", WHITE),
-         ("claim", "orbit, not a log", ICE), ("sync", stamp(), GREEN)],
+         ("sync", stamp(), GREEN)],
         kcol=8)
     if not entries:
-        failure(m, "ORBIT EMPTY", "data/orbit.json has no entries")
+        failure(m, "ORBIT EMPTY", "data/orbit.json", "no bodies")
         m.build(["orbit --list", "nothing in orbit"])
         return
     m.section("orbital display")
@@ -402,9 +471,7 @@ def currently_orbiting():
     for (cat, item), c in zip(entries, colors):
         dots = "." * max(2, 14 - len(cat))
         m.line((cat + " ", c, "bold"), (dots + " ", LINE), (item, WHITE))
-    m.gap(4)
-    m.line(("# current orbit · not a reading log · hand-maintained", ICE),
-           size=17, gap=28)
+    m.gap(6)
     m.build(["orbit --list", "what keeps pulling me back"])
 
 
@@ -441,7 +508,7 @@ def research_queue():
          ("eta", "none", ICE), ("source", "data/research-queue.json", WHITE)],
         kcol=8)
     if not jobs:
-        failure(m, "QUEUE EMPTY", "data/research-queue.json has no jobs")
+        failure(m, "QUEUE EMPTY", "data/research-queue.json", "no jobs")
         m.build(["queue --list", "queue empty"])
         return
     m.section("process table")
@@ -466,9 +533,7 @@ def research_queue():
         for ln in textwrap.wrap(q, 48):
             m.line(("     ", LINE), (ln, ICE), size=18, gap=24)
         m.raw(line(X0, m.y - 14, X1, m.y - 14, stroke=LINE, dash="3 5"), 14)
-    m.line(("● OPEN   ○ QUEUED   ◇ PARKED", ICE), size=17, gap=26)
-    m.line(("# no percentages · no ETA · states set by hand", ICE),
-           size=17, gap=28)
+    m.line(("● OPEN   ○ QUEUED   ◇ PARKED", ICE), size=17, gap=28)
     m.build(["queue --list", "questions run until they close"])
 
 
@@ -518,10 +583,11 @@ def node_clock():
     off = NOW.utcoffset() or timedelta(0)
     sign = "+" if off >= timedelta(0) else "-"
     oh, om = divmod(int(abs(off).total_seconds()) // 60, 60)
-    rows = [("zone", NOW.tzname() or "—", GREEN),
+    abbr = NOW.tzname() or ""
+    rows = [("sync", f"{NOW.strftime('%H:%M')} {abbr}", GREEN),
+            ("zone", "Europe/Zurich", WHITE),
             ("offset", f"UTC{sign}{oh:02d}:{om:02d}", WHITE),
-            ("date", stamp(), WHITE),
-            ("sync", "at generation", WHITE)]
+            ("date", stamp(), WHITE)]
     for i, (k, v, c) in enumerate(rows):
         y = top + 140 + i * 26
         g.append(t(rx, y, f"{k}:", 18, BLUE, "bold") +
@@ -539,11 +605,7 @@ def node_clock():
           f'stroke-width="1.6" stroke-dasharray="6 4">'
           f'<animate attributeName="stroke-dashoffset" values="0;-40" '
           f'dur="2s" repeatCount="indefinite"/></polyline>', 30)
-    m.line(("state    ", BLUE, "bold"), ("snapshot · refreshed by workflow",
-                                         WHITE))
-    m.line(("note     ", BLUE, "bold"), ("node time, not a location", ICE),
-           gap=30)
-    m.build(["date --tz Europe/Zurich", "time as of the last refresh"])
+    m.build(["date --tz Europe/Zurich", f"sync {NOW.strftime('%H:%M')} {abbr}"])
 
 
 MAP_NODES = [("n01", "MARKETS", BLUE), ("n02", "PHILOSOPHY", PINK),
@@ -618,8 +680,7 @@ def signal_map():
     g.append(t(cx, cy + 64, "n00", 13, ICE, anchor="middle"))
     m.raw("".join(g), 470)
     m.line(("● node   ── signal   ┄┄ affinity", ICE), size=17, gap=26)
-    m.line(("# conceptual topology · not geography · no locations", ICE),
-           size=17, gap=28)
+    m.line(("MODE   ", BLUE, "bold"), ("conceptual", WHITE), size=17, gap=28)
     m.build(["netmap --conceptual", "everything routes through questions"])
 
 
@@ -657,7 +718,7 @@ def signal_archive():
          ("size", f"{total / 1024:.0f} KB" if info else "—", WHITE),
          ("changed", last, WHITE), ("scope", "public/ only", ICE)], kcol=9)
     if not info:
-        failure(m, "ARCHIVE NOT MOUNTED", "public/ is missing or empty")
+        failure(m, "ARCHIVE NOT MOUNTED", "public/", "missing")
         m.build(["ls -la public/", "archive not mounted"])
         return
     m.section("/public")
@@ -670,9 +731,7 @@ def signal_archive():
         m.line(("  " + ("    " if i == len(info) - 1 else "│   "), LINE),
                (f"{ext:<4} ", c, "bold"), (f"{kb:>9}  ", ICE), (day, ICE),
                size=16, gap=28)
-    m.gap(4)
-    m.line(("# generated from public/ · nothing outside it", ICE),
-           size=17, gap=28)
+    m.gap(6)
     m.build(["ls -la public/", "the archive is the public record"])
 
 
