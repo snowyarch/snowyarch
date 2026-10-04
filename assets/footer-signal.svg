@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="270" viewBox="0 0 720 270" fill="none">
+<style>text{font-family:ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', monospace;}</style>
+<defs>
+<pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+<path d="M24 0H0V24" stroke="#30435E" stroke-width="0.6" opacity="0.45"/>
+</pattern>
+<pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+<rect width="4" height="1" fill="#EDF5FF" opacity="0.025"/>
+</pattern>
+<filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+<feGaussianBlur stdDeviation="3" result="b"/>
+<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<linearGradient id="fadeR" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#2D8CFF" stop-opacity="0.9"/>
+<stop offset="1" stop-color="#2D8CFF" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="fadeP" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#FF4FCB" stop-opacity="0"/>
+<stop offset="0.5" stop-color="#FF4FCB" stop-opacity="0.9"/>
+<stop offset="1" stop-color="#FF4FCB" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="reflect" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#FF4FCB" stop-opacity="0.28"/>
+<stop offset="1" stop-color="#FF4FCB" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#070A10"/>
+<stop offset="1" stop-color="#0E1830"/>
+</linearGradient>
+</defs>
+<rect width="720" height="270" fill="#070A10"/>
+<rect x="0" y="234" width="49" height="36" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="52" y="228" width="49" height="42" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="104" y="209" width="49" height="61" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="156" y="249" width="49" height="21" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="208" y="235" width="37" height="35" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="248" y="247" width="49" height="23" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="300" y="243" width="27" height="27" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="330" y="220" width="37" height="50" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="370" y="226" width="27" height="44" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="400" y="244" width="49" height="26" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="452" y="235" width="49" height="35" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="504" y="237" width="27" height="33" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="534" y="233" width="37" height="37" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="574" y="226" width="27" height="44" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="604" y="246" width="27" height="24" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="634" y="211" width="27" height="59" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="664" y="222" width="49" height="48" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="716" y="242" width="27" height="28" fill="#0B1220" stroke="#30435E" stroke-width="1"/>
+<rect x="0" y="268" width="720" height="2" fill="url(#fadeP)"/>
+<rect x="32" y="58.0" width="8" height="4.0" fill="#FF4FCB" opacity="0.9"/>
+<rect x="50" y="51.374939373303896" width="8" height="17.3" fill="#FF4FCB" opacity="0.88"/>
+<rect x="68" y="46.99358910324127" width="8" height="26.0" fill="#FF4FCB" opacity="0.85"/>
+<rect x="86" y="46.01269803284163" width="8" height="28.0" fill="#FF4FCB" opacity="0.82"/>
+<rect x="104" y="48.5405920753108" width="8" height="22.9" fill="#FF4FCB" opacity="0.8"/>
+<rect x="122" y="53.65860621540473" width="8" height="12.7" fill="#FF4FCB" opacity="0.78"/>
+<rect x="140" y="56.2569100797171" width="8" height="7.5" fill="#FF4FCB" opacity="0.75"/>
+<rect x="158" y="51.022045404976076" width="8" height="18.0" fill="#FF4FCB" opacity="0.72"/>
+<rect x="176" y="48.103338431549034" width="8" height="23.8" fill="#FF4FCB" opacity="0.7"/>
+<rect x="194" y="48.20807657577666" width="8" height="23.6" fill="#FF4FCB" opacity="0.68"/>
+<rect x="212" y="51.12098182568868" width="8" height="17.8" fill="#FF4FCB" opacity="0.65"/>
+<rect x="230" y="55.82209184527824" width="8" height="8.4" fill="#FF4FCB" opacity="0.62"/>
+<rect x="248" y="55.164973592028254" width="8" height="9.7" fill="#FF4FCB" opacity="0.6"/>
+<rect x="266" y="51.31107116452861" width="8" height="17.4" fill="#FF4FCB" opacity="0.57"/>
+<rect x="284" y="49.64997842373935" width="8" height="20.7" fill="#FF4FCB" opacity="0.55"/>
+<rect x="302" y="50.50384079180536" width="8" height="19.0" fill="#FF4FCB" opacity="0.53"/>
+<rect x="320" y="53.43764589544426" width="8" height="13.1" fill="#FF4FCB" opacity="0.5"/>
+<rect x="338" y="57.44155552933824" width="8" height="5.1" fill="#FF4FCB" opacity="0.47"/>
+<rect x="356" y="54.728618359506456" width="8" height="10.5" fill="#FF4FCB" opacity="0.45"/>
+<rect x="374" y="52.16578914897724" width="8" height="15.7" fill="#FF4FCB" opacity="0.42"/>
+<rect x="392" y="51.50006365742043" width="8" height="17.0" fill="#FF4FCB" opacity="0.4"/>
+<rect x="410" y="52.74999698699169" width="8" height="14.5" fill="#FF4FCB" opacity="0.38"/>
+<rect x="428" y="55.36956233247259" width="8" height="9.3" fill="#FF4FCB" opacity="0.35"/>
+<rect x="446" y="57.53848604536163" width="8" height="4.9" fill="#FF4FCB" opacity="0.32"/>
+<rect x="464" y="54.92121772352243" width="8" height="10.2" fill="#FF4FCB" opacity="0.3"/>
+<rect x="482" y="53.48583559130794" width="8" height="13.0" fill="#FF4FCB" opacity="0.28"/>
+<rect x="500" y="53.51018756255051" width="8" height="13.0" fill="#FF4FCB" opacity="0.25"/>
+<rect x="518" y="54.80373615931576" width="8" height="10.4" fill="#FF4FCB" opacity="0.22"/>
+<rect x="536" y="56.81783840869177" width="8" height="6.4" fill="#FF4FCB" opacity="0.2"/>
+<rect x="554" y="57.14314225819902" width="8" height="5.7" fill="#FF4FCB" opacity="0.17"/>
+<rect x="572" y="55.68669763730035" width="8" height="8.6" fill="#FF4FCB" opacity="0.15"/>
+<rect x="590" y="55.151200841058525" width="8" height="9.7" fill="#FF4FCB" opacity="0.12"/>
+<rect x="608" y="55.53300430541288" width="8" height="8.9" fill="#FF4FCB" opacity="0.1"/>
+<rect x="626" y="56.5351776096379" width="8" height="6.9" fill="#FF4FCB" opacity="0.08"/>
+<rect x="644" y="57.70945189966232" width="8" height="4.6" fill="#FF4FCB" opacity="0.08"/>
+<rect x="662" y="57.36653059322464" width="8" height="5.3" fill="#FF4FCB" opacity="0.08"/>
+<text x="360.0" y="124" font-size="28" fill="#EDF5FF" font-weight="normal" text-anchor="middle">session closed.</text>
+<text x="360.0" y="158" font-size="28" fill="#EDF5FF" font-weight="normal" text-anchor="middle">questions still open.</text>
+<text x="360.0" y="194" font-size="22" fill="#FF4FCB" font-weight="bold" text-anchor="middle" letter-spacing="1">snowyarch // ZÜRICH NODE</text>
+</svg>

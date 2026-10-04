@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="500" viewBox="0 0 720 500" fill="none">
+<style>text{font-family:ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', monospace;}</style>
+<defs>
+<pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+<path d="M24 0H0V24" stroke="#30435E" stroke-width="0.6" opacity="0.45"/>
+</pattern>
+<pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+<rect width="4" height="1" fill="#EDF5FF" opacity="0.025"/>
+</pattern>
+<filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+<feGaussianBlur stdDeviation="3" result="b"/>
+<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<linearGradient id="fadeR" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#2D8CFF" stop-opacity="0.9"/>
+<stop offset="1" stop-color="#2D8CFF" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="fadeP" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#FF4FCB" stop-opacity="0"/>
+<stop offset="0.5" stop-color="#FF4FCB" stop-opacity="0.9"/>
+<stop offset="1" stop-color="#FF4FCB" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="reflect" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#FF4FCB" stop-opacity="0.28"/>
+<stop offset="1" stop-color="#FF4FCB" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#070A10"/>
+<stop offset="1" stop-color="#0E1830"/>
+</linearGradient>
+</defs>
+<rect width="720" height="500" fill="#070A10"/>
+<text x="32" y="58" font-size="34" fill="#EDF5FF" font-weight="bold" text-anchor="start" letter-spacing="1">LIBRARY // CULTURE NODE</text>
+<text x="32" y="92" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">an orbit of works, not a reading log</text>
+<rect x="32" y="187" width="44" height="257" fill="#172235" stroke="#FF4FCB" stroke-width="1.3"/>
+<line x1="36" y1="199" x2="72" y2="199" stroke="#FF4FCB" stroke-width="1" opacity="0.7"/>
+<line x1="36" y1="430" x2="72" y2="430" stroke="#FF4FCB" stroke-width="1" opacity="0.7"/>
+<text x="62.0" y="420" font-size="21" fill="#EDF5FF" font-weight="bold" transform="rotate(-90 62.0 420)">DUNE</text>
+<rect x="86" y="173" width="44" height="271" fill="#172235" stroke="#2D8CFF" stroke-width="1.3"/>
+<line x1="90" y1="185" x2="126" y2="185" stroke="#2D8CFF" stroke-width="1" opacity="0.7"/>
+<line x1="90" y1="430" x2="126" y2="430" stroke="#2D8CFF" stroke-width="1" opacity="0.7"/>
+<text x="116.0" y="420" font-size="21" fill="#EDF5FF" font-weight="bold" transform="rotate(-90 116.0 420)">LEVIATHAN</text>
+<rect x="140" y="145" width="44" height="299" fill="#172235" stroke="#C6FF3A" stroke-width="1.3"/>
+<line x1="144" y1="157" x2="180" y2="157" stroke="#C6FF3A" stroke-width="1" opacity="0.7"/>
+<line x1="144" y1="430" x2="180" y2="430" stroke="#C6FF3A" stroke-width="1" opacity="0.7"/>
+<text x="170.0" y="420" font-size="21" fill="#EDF5FF" font-weight="bold" transform="rotate(-90 170.0 420)">1984</text>
+<rect x="194" y="185" width="44" height="259" fill="#172235" stroke="#A7B8CE" stroke-width="1.3"/>
+<line x1="198" y1="197" x2="234" y2="197" stroke="#A7B8CE" stroke-width="1" opacity="0.7"/>
+<line x1="198" y1="430" x2="234" y2="430" stroke="#A7B8CE" stroke-width="1" opacity="0.7"/>
+<text x="224.0" y="420" font-size="21" fill="#EDF5FF" font-weight="bold" transform="rotate(-90 224.0 420)">FAHRENHEIT 451</text>
+<rect x="248" y="187" width="44" height="257" fill="#172235" stroke="#FF4FCB" stroke-width="1.3"/>
+<line x1="252" y1="199" x2="288" y2="199" stroke="#FF4FCB" stroke-width="1" opacity="0.7"/>
+<line x1="252" y1="430" x2="288" y2="430" stroke="#FF4FCB" stroke-width="1" opacity="0.7"/>
+<text x="278.0" y="420" font-size="21" fill="#EDF5FF" font-weight="bold" transform="rotate(-90 278.0 420)">BRAVE NEW WORLD</text>
+<rect x="302" y="179" width="44" height="265" fill="#172235" stroke="#2D8CFF" stroke-width="1.3"/>
+<line x1="306" y1="191" x2="342" y2="191" stroke="#2D8CFF" stroke-width="1" opacity="0.7"/>
+<line x1="306" y1="430" x2="342" y2="430" stroke="#2D8CFF" stroke-width="1" opacity="0.7"/>
+<text x="332.0" y="420" font-size="21" fill="#EDF5FF" font-weight="bold" transform="rotate(-90 332.0 420)">THE ROAD</text>
+<rect x="356" y="160.8" width="44" height="283.2" fill="#172235" stroke="#C6FF3A" stroke-width="1.3"/>
+<line x1="360" y1="172.8" x2="396" y2="172.8" stroke="#C6FF3A" stroke-width="1" opacity="0.7"/>
+<line x1="360" y1="430" x2="396" y2="430" stroke="#C6FF3A" stroke-width="1" opacity="0.7"/>
+<text x="386.0" y="420" font-size="21" fill="#EDF5FF" font-weight="bold" transform="rotate(-90 386.0 420)">CADÁVER EXQUISITO</text>
+<rect x="420" y="220" width="44" height="224" fill="#172235" stroke="#FF4FCB" stroke-width="1.3"/>
+<line x1="424" y1="232" x2="460" y2="232" stroke="#FF4FCB" stroke-width="1" opacity="0.7"/>
+<line x1="424" y1="430" x2="460" y2="430" stroke="#FF4FCB" stroke-width="1" opacity="0.7"/>
+<text x="450.0" y="420" font-size="21" fill="#EDF5FF" font-weight="bold" transform="rotate(-90 450.0 420)">MONSTER</text>
+<rect x="474" y="221" width="44" height="223" fill="#172235" stroke="#2D8CFF" stroke-width="1.3"/>
+<line x1="478" y1="233" x2="514" y2="233" stroke="#2D8CFF" stroke-width="1" opacity="0.7"/>
+<line x1="478" y1="430" x2="514" y2="430" stroke="#2D8CFF" stroke-width="1" opacity="0.7"/>
+<text x="504.0" y="420" font-size="21" fill="#EDF5FF" font-weight="bold" transform="rotate(-90 504.0 420)">EDGERUNNERS</text>
+<rect x="528" y="179" width="44" height="265" fill="#172235" stroke="#FF4FCB" stroke-width="1.3"/>
+<line x1="532" y1="191" x2="568" y2="191" stroke="#FF4FCB" stroke-width="1" opacity="0.7"/>
+<line x1="532" y1="430" x2="568" y2="430" stroke="#FF4FCB" stroke-width="1" opacity="0.7"/>
+<text x="558.0" y="420" font-size="21" fill="#EDF5FF" font-weight="bold" transform="rotate(-90 558.0 420)">ANGEL BEATS!</text>
+<rect x="582" y="184" width="44" height="260" fill="#172235" stroke="#2D8CFF" stroke-width="1.3"/>
+<line x1="586" y1="196" x2="622" y2="196" stroke="#2D8CFF" stroke-width="1" opacity="0.7"/>
+<line x1="586" y1="430" x2="622" y2="430" stroke="#2D8CFF" stroke-width="1" opacity="0.7"/>
+<text x="612.0" y="420" font-size="21" fill="#EDF5FF" font-weight="bold" transform="rotate(-90 612.0 420)">CHARLOTTE</text>
+<rect x="636" y="164" width="44" height="280" fill="#172235" stroke="#FF4FCB" stroke-width="1.3"/>
+<line x1="640" y1="176" x2="676" y2="176" stroke="#FF4FCB" stroke-width="1" opacity="0.7"/>
+<line x1="640" y1="430" x2="676" y2="430" stroke="#FF4FCB" stroke-width="1" opacity="0.7"/>
+<text x="666.0" y="420" font-size="21" fill="#EDF5FF" font-weight="bold" transform="rotate(-90 666.0 420)">NORSE MYTHS</text>
+<rect x="20" y="444" width="680" height="6" fill="#30435E"/>
+<line x1="20" y1="450" x2="700" y2="450" stroke="#FF4FCB" stroke-width="1" opacity="0.6"/>
+<text x="32" y="482" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">books</text>
+<text x="420" y="482" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">fiction · myth</text>
+</svg>

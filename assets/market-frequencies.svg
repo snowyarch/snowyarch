@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="436" viewBox="0 0 720 436" fill="none">
+<style>text{font-family:ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', monospace;}</style>
+<defs>
+<pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+<path d="M24 0H0V24" stroke="#30435E" stroke-width="0.6" opacity="0.45"/>
+</pattern>
+<pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+<rect width="4" height="1" fill="#EDF5FF" opacity="0.025"/>
+</pattern>
+<filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+<feGaussianBlur stdDeviation="3" result="b"/>
+<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<linearGradient id="fadeR" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#2D8CFF" stop-opacity="0.9"/>
+<stop offset="1" stop-color="#2D8CFF" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="fadeP" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#FF4FCB" stop-opacity="0"/>
+<stop offset="0.5" stop-color="#FF4FCB" stop-opacity="0.9"/>
+<stop offset="1" stop-color="#FF4FCB" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="reflect" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#FF4FCB" stop-opacity="0.28"/>
+<stop offset="1" stop-color="#FF4FCB" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#070A10"/>
+<stop offset="1" stop-color="#0E1830"/>
+</linearGradient>
+</defs>
+<rect width="720" height="436" fill="#070A10"/>
+<rect x="0" y="0" width="720" height="436" fill="url(#grid)"/>
+<text x="32" y="62" font-size="38" fill="#EDF5FF" font-weight="bold" text-anchor="start" letter-spacing="2">MARKET FREQUENCIES</text>
+<text x="32" y="96" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">interests and questions · no prices</text>
+<polyline points="0,146.0 6,151.7 12,156.4 18,159.3 24,159.9 30,158.1 36,154.2 42,148.9 48,143.1 54,137.8 60,133.9 66,132.1 72,132.7 78,135.6 84,140.3 90,146.0 96,151.7 102,156.4 108,159.3 114,159.9 120,158.1 126,154.2 132,148.9 138,143.1 144,137.8 150,133.9 156,132.1 162,132.7 168,135.6 174,140.3 180,146.0 186,151.7 192,156.4 198,159.3 204,159.9 210,158.1 216,154.2 222,148.9 228,143.1 234,137.8 240,133.9 246,132.1 252,132.7 258,135.6 264,140.3 270,146.0 276,151.7 282,156.4 288,159.3 294,159.9 300,158.1 306,154.2 312,148.9 318,143.1 324,137.8 330,133.9 336,132.1 342,132.7 348,135.6 354,140.3 360,146.0 366,151.7 372,156.4 378,159.3 384,159.9 390,158.1 396,154.2 402,148.9 408,143.1 414,137.8 420,133.9 426,132.1 432,132.7 438,135.6 444,140.3 450,146.0 456,151.7 462,156.4 468,159.3 474,159.9 480,158.1 486,154.2 492,148.9 498,143.1 504,137.8 510,133.9 516,132.1 522,132.7 528,135.6 534,140.3 540,146.0 546,151.7 552,156.4 558,159.3 564,159.9 570,158.1 576,154.2 582,148.9 588,143.1 594,137.8 600,133.9 606,132.1 612,132.7 618,135.6 624,140.3 630,146.0 636,151.7 642,156.4 648,159.3 654,159.9 660,158.1 666,154.2 672,148.9 678,143.1 684,137.8 690,133.9 696,132.1 702,132.7 708,135.6 714,140.3 720,146.0" stroke="#FF4FCB" stroke-width="1.6" opacity="0.75"/>
+<polyline points="0,154.4 6,156.0 12,153.7 18,148.5 24,142.4 30,137.6 36,136.0 42,138.3 48,143.5 54,149.6 60,154.4 66,156.0 72,153.7 78,148.5 84,142.4 90,137.6 96,136.0 102,138.3 108,143.5 114,149.6 120,154.4 126,156.0 132,153.7 138,148.5 144,142.4 150,137.6 156,136.0 162,138.3 168,143.5 174,149.6 180,154.4 186,156.0 192,153.7 198,148.5 204,142.4 210,137.6 216,136.0 222,138.3 228,143.5 234,149.6 240,154.4 246,156.0 252,153.7 258,148.5 264,142.4 270,137.6 276,136.0 282,138.3 288,143.5 294,149.6 300,154.4 306,156.0 312,153.7 318,148.5 324,142.4 330,137.6 336,136.0 342,138.3 348,143.5 354,149.6 360,154.4 366,156.0 372,153.7 378,148.5 384,142.4 390,137.6 396,136.0 402,138.3 408,143.5 414,149.6 420,154.4 426,156.0 432,153.7 438,148.5 444,142.4 450,137.6 456,136.0 462,138.3 468,143.5 474,149.6 480,154.4 486,156.0 492,153.7 498,148.5 504,142.4 510,137.6 516,136.0 522,138.3 528,143.5 534,149.6 540,154.4 546,156.0 552,153.7 558,148.5 564,142.4 570,137.6 576,136.0 582,138.3 588,143.5 594,149.6 600,154.4 606,156.0 612,153.7 618,148.5 624,142.4 630,137.6 636,136.0 642,138.3 648,143.5 654,149.6 660,154.4 666,156.0 672,153.7 678,148.5 684,142.4 690,137.6 696,136.0 702,138.3 708,143.5 714,149.6 720,154.4" stroke="#2D8CFF" stroke-width="1.6" opacity="0.75"/>
+<polyline points="0,151.5 6,150.6 12,149.4 18,148.0 24,146.4 30,144.8 36,143.3 42,141.9 48,140.9 54,140.2 60,140.0 66,140.2 72,140.8 78,141.8 84,143.1 90,144.6 96,146.2 102,147.7 108,149.2 114,150.4 120,151.4 126,151.9 132,152.0 138,151.7 144,150.9 150,149.8 156,148.5 162,146.9 168,145.3 174,143.8 180,142.4 186,141.2 192,140.4 198,140.0 204,140.1 210,140.5 216,141.4 222,142.6 228,144.0 234,145.6 240,147.2 246,148.7 252,150.1 258,151.1 264,151.8 270,152.0 276,151.8 282,151.2 288,150.2 294,148.9 300,147.4 306,145.8 312,144.3 318,142.8 324,141.6 330,140.6 336,140.1 342,140.0 348,140.3 354,141.1 360,142.2 366,143.5 372,145.1 378,146.7 384,148.2 390,149.6 396,150.8 402,151.6 408,152.0 414,151.9 420,151.5 426,150.6 432,149.4 438,148.0 444,146.4 450,144.8 456,143.3 462,141.9 468,140.9 474,140.2 480,140.0 486,140.2 492,140.8 498,141.8 504,143.1 510,144.6 516,146.2 522,147.7 528,149.2 534,150.4 540,151.4 546,151.9 552,152.0 558,151.7 564,150.9 570,149.8 576,148.5 582,146.9 588,145.3 594,143.8 600,142.4 606,141.2 612,140.4 618,140.0 624,140.1 630,140.5 636,141.4 642,142.6 648,144.0 654,145.6 660,147.2 666,148.7 672,150.1 678,151.1 684,151.8 690,152.0 696,151.8 702,151.2 708,150.2 714,148.9 720,147.4" stroke="#C6FF3A" stroke-width="1.6" opacity="0.75"/>
+<rect x="32" y="176" width="70" height="32" fill="#070A10" stroke="#FF4FCB" stroke-width="1.2"/>
+<text x="67" y="199" font-size="19" fill="#FF4FCB" font-weight="bold" text-anchor="middle">CH-A</text>
+<text x="118" y="200" font-size="23" fill="#EDF5FF" font-weight="normal" text-anchor="start">BITCOIN · SOLANA · MEMECOINS</text>
+<rect x="32" y="216" width="70" height="32" fill="#070A10" stroke="#2D8CFF" stroke-width="1.2"/>
+<text x="67" y="239" font-size="19" fill="#2D8CFF" font-weight="bold" text-anchor="middle">CH-B</text>
+<text x="118" y="240" font-size="23" fill="#EDF5FF" font-weight="normal" text-anchor="start">EQUITIES · BANKS · SOFTWARE</text>
+<rect x="32" y="256" width="70" height="32" fill="#070A10" stroke="#2D8CFF" stroke-width="1.2"/>
+<text x="67" y="279" font-size="19" fill="#2D8CFF" font-weight="bold" text-anchor="middle">CH-C</text>
+<text x="118" y="280" font-size="23" fill="#EDF5FF" font-weight="normal" text-anchor="start">AI · DEFENSE-TECH · FINANCING</text>
+<rect x="32" y="296" width="70" height="32" fill="#070A10" stroke="#C6FF3A" stroke-width="1.2"/>
+<text x="67" y="319" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="middle">CH-D</text>
+<text x="118" y="320" font-size="23" fill="#EDF5FF" font-weight="normal" text-anchor="start">CREDIT · LIQUIDITY · STRUCTURE</text>
+<rect x="32" y="336" width="70" height="32" fill="#070A10" stroke="#FF4FCB" stroke-width="1.2"/>
+<text x="67" y="359" font-size="19" fill="#FF4FCB" font-weight="bold" text-anchor="middle">CH-E</text>
+<text x="118" y="360" font-size="23" fill="#EDF5FF" font-weight="normal" text-anchor="start">NARRATIVE ↔ PRICE</text>
+<text x="32" y="418" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">no wallets · no positions · not advice</text>
+</svg>

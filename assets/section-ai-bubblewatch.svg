@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="720" viewBox="0 0 720 720" fill="none">
+<style>text{font-family:ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', monospace;}</style>
+<defs>
+<pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+<path d="M24 0H0V24" stroke="#30435E" stroke-width="0.6" opacity="0.45"/>
+</pattern>
+<pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+<rect width="4" height="1" fill="#EDF5FF" opacity="0.025"/>
+</pattern>
+<filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+<feGaussianBlur stdDeviation="3" result="b"/>
+<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<linearGradient id="fadeR" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#2D8CFF" stop-opacity="0.9"/>
+<stop offset="1" stop-color="#2D8CFF" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="fadeP" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#FF4FCB" stop-opacity="0"/>
+<stop offset="0.5" stop-color="#FF4FCB" stop-opacity="0.9"/>
+<stop offset="1" stop-color="#FF4FCB" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="reflect" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#FF4FCB" stop-opacity="0.28"/>
+<stop offset="1" stop-color="#FF4FCB" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#070A10"/>
+<stop offset="1" stop-color="#0E1830"/>
+</linearGradient>
+</defs>
+<rect width="720" height="720" fill="#070A10"/>
+<rect x="0" y="0" width="720" height="720" fill="url(#grid)"/>
+<rect x="16" y="16" width="688" height="688" fill="#101724"/>
+<rect x="16" y="16" width="688" height="688" fill="url(#scan)"/>
+<rect x="16" y="16" width="688" height="38" fill="#172235"/>
+<line x1="16" y1="54" x2="704" y2="54" stroke="#FF4FCB" stroke-width="1.2" opacity="0.7"/>
+<rect x="16" y="16" width="688" height="688" fill="none" stroke="#FF4FCB" stroke-width="1.6" opacity="0.55" filter="url(#glow)"/>
+<rect x="16" y="16" width="688" height="688" fill="none" stroke="#FF4FCB" stroke-width="1.2"/>
+<circle cx="38" cy="35" r="5.5" stroke="#FF4FCB" stroke-width="1.6" fill="#FF4FCB"/>
+<circle cx="58" cy="35" r="5.5" stroke="#FF4FCB" stroke-width="1.6"/>
+<circle cx="78" cy="35" r="5.5" stroke="#FF4FCB" stroke-width="1.6"/>
+<text x="102" y="43" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">ai-bubblewatch :: observatory</text>
+<text x="688" y="43" font-size="22" fill="#FF4FCB" font-weight="normal" text-anchor="end">2026-09-21</text>
+<text x="40" y="106" font-size="46" fill="#EDF5FF" font-weight="bold" text-anchor="start" letter-spacing="2">AI BUBBLEWATCH</text>
+<text x="676" y="140" font-size="88" fill="#FF4FCB" font-weight="bold" text-anchor="end" filter="url(#glow)">?</text>
+<text x="40" y="142" font-size="22" fill="#2D8CFF" font-weight="normal" text-anchor="start" letter-spacing="1">AI CAPITAL OBSERVATORY</text>
+<text x="40" y="182" font-size="25" fill="#FF4FCB" font-weight="normal" text-anchor="start">the name is a question,</text>
+<text x="40" y="212" font-size="25" fill="#FF4FCB" font-weight="normal" text-anchor="start">not a verdict</text>
+<rect x="40" y="236" width="310" height="164" fill="#172235" stroke="#2D8CFF" stroke-width="1.3"/>
+<path d="M46 252V242H56" stroke="#2D8CFF" stroke-width="1.4"/>
+<path d="M344 252V242H334" stroke="#2D8CFF" stroke-width="1.4"/>
+<path d="M46 384V394H56" stroke="#2D8CFF" stroke-width="1.4"/>
+<path d="M344 384V394H334" stroke="#2D8CFF" stroke-width="1.4"/>
+<text x="60" y="278" font-size="22" fill="#C6FF3A" font-weight="bold" text-anchor="start">01</text>
+<text x="60" y="314" font-size="25" fill="#EDF5FF" font-weight="bold" text-anchor="start" letter-spacing="1">INVESTMENT</text>
+<text x="60" y="348" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">built, paid,</text>
+<text x="60" y="376" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">committed?</text>
+<rect x="370" y="236" width="310" height="164" fill="#172235" stroke="#2D8CFF" stroke-width="1.3"/>
+<path d="M376 252V242H386" stroke="#2D8CFF" stroke-width="1.4"/>
+<path d="M674 252V242H664" stroke="#2D8CFF" stroke-width="1.4"/>
+<path d="M376 384V394H386" stroke="#2D8CFF" stroke-width="1.4"/>
+<path d="M674 384V394H664" stroke="#2D8CFF" stroke-width="1.4"/>
+<text x="390" y="278" font-size="22" fill="#C6FF3A" font-weight="bold" text-anchor="start">02</text>
+<text x="390" y="314" font-size="25" fill="#EDF5FF" font-weight="bold" text-anchor="start" letter-spacing="1">UTILIZATION</text>
+<text x="390" y="348" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">used by whom,</text>
+<text x="390" y="376" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">on what terms?</text>
+<rect x="40" y="420" width="310" height="164" fill="#172235" stroke="#2D8CFF" stroke-width="1.3"/>
+<path d="M46 436V426H56" stroke="#2D8CFF" stroke-width="1.4"/>
+<path d="M344 436V426H334" stroke="#2D8CFF" stroke-width="1.4"/>
+<path d="M46 568V578H56" stroke="#2D8CFF" stroke-width="1.4"/>
+<path d="M344 568V578H334" stroke="#2D8CFF" stroke-width="1.4"/>
+<text x="60" y="462" font-size="22" fill="#C6FF3A" font-weight="bold" text-anchor="start">03</text>
+<text x="60" y="498" font-size="25" fill="#EDF5FF" font-weight="bold" text-anchor="start" letter-spacing="1">RETURNS</text>
+<text x="60" y="532" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">cash left after</text>
+<text x="60" y="560" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">all costs?</text>
+<rect x="370" y="420" width="310" height="164" fill="#172235" stroke="#2D8CFF" stroke-width="1.3"/>
+<path d="M376 436V426H386" stroke="#2D8CFF" stroke-width="1.4"/>
+<path d="M674 436V426H664" stroke="#2D8CFF" stroke-width="1.4"/>
+<path d="M376 568V578H386" stroke="#2D8CFF" stroke-width="1.4"/>
+<path d="M674 568V578H664" stroke="#2D8CFF" stroke-width="1.4"/>
+<text x="390" y="462" font-size="22" fill="#C6FF3A" font-weight="bold" text-anchor="start">04</text>
+<text x="390" y="498" font-size="25" fill="#EDF5FF" font-weight="bold" text-anchor="start" letter-spacing="1">FINANCING</text>
+<text x="390" y="532" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">who supplies it,</text>
+<text x="390" y="560" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">who bears risk?</text>
+<path d="M360.0 366.0L448.0 410.0L360.0 454.0L272.0 410.0Z" fill="#070A10" stroke="#FF4FCB" stroke-width="1.8"/>
+<text x="360.0" y="416.0" font-size="18" fill="#FF4FCB" font-weight="bold" text-anchor="middle">OBLIGATIONS</text>
+<text x="40" y="628" font-size="22" fill="#EDF5FF" font-weight="normal" text-anchor="start">16 deliberately selected entities</text>
+<text x="40" y="658" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">not a representative sample</text>
+<rect x="40" y="676" width="251" height="34" fill="#070A10" stroke="#C6FF3A" stroke-width="1.4"/>
+<text x="50" y="700.92" font-size="22" fill="#C6FF3A" font-weight="bold" text-anchor="start">NO BUBBLE VERDICT</text>
+</svg>
