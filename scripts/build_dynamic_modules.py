@@ -22,6 +22,8 @@ README are never touched by this script.
 import json
 import math
 import os
+import re
+import urllib.parse
 import urllib.request
 import subprocess
 import sys
@@ -216,7 +218,8 @@ def boot_sequence():
         ("/archive", sorted(ROOT.glob("public/*")), "public files"),
         ("/signals", [ROOT / "data/orbit.json",
                       ROOT / "data/research-queue.json"], "node data"),
-        ("/radio", [ROOT / "assets/dynamic/radio-afterhours.svg"], ""),
+        ("/radio", [ROOT / "assets/dynamic/radio-afterhours.svg"],
+         "station deck"),
     ]
     results = []
     for mount, paths, what in checks:
@@ -260,7 +263,8 @@ def boot_sequence():
     m.line(("scope             ", BLUE, "bold"), ("public modules only", ICE),
            size=20, gap=30)
     m.build(["boot --public", f"{mounted} modules mounted",
-             "radio: not mounted yet"])
+             "afterhours // zürich node" if mounted == len(results)
+             else "awaiting mounts"])
 
 
 def transmission_log():
@@ -1085,11 +1089,189 @@ def node_traffic():
     m.build(["rx --passive --window 14d", "signals arriving at the node"])
 
 
+# ---------------------------------------------------------------- radio
+
+PLAYLIST_RE = re.compile(
+    r"^https://open\.spotify\.com/(?:intl-[a-z]{2}(?:-[A-Za-z]{2})?/)?"
+    r"playlist/[A-Za-z0-9]{22}(?:\?\S*)?$")
+TRACK_RE = re.compile(
+    r"^https://open\.spotify\.com/(?:intl-[a-z]{2}(?:-[A-Za-z]{2})?/)?"
+    r"track/[A-Za-z0-9]{22}(?:\?\S*)?$")
+
+
+def radio_config():
+    """Station config from data/radio.json; the playlist URL is only
+    accepted when it is a real public Spotify playlist link."""
+    cfg = load_json("radio.json") or {}
+    url = str(cfg.get("playlist_url", "")).strip()
+    rotation = []
+    for r in (cfg.get("rotation") or [])[:5]:
+        title = str(r.get("title", "")).strip()
+        artist = str(r.get("artist", "")).strip()
+        link = str(r.get("spotify_url", "")).strip()
+        if title and artist and TRACK_RE.match(link):
+            rotation.append((title, artist))
+    return (str(cfg.get("station", "")).strip() or "AFTERHOURS FM",
+            url if PLAYLIST_RE.match(url) else None, rotation)
+
+
+def playlist_title(url):
+    """Optional: public oEmbed title for the configured playlist. Any
+    failure simply leaves the station on its local config."""
+    data = fetch_json("https://open.spotify.com/oembed?url=" +
+                      urllib.parse.quote(url, safe=""))
+    title = (data or {}).get("title") if isinstance(data, dict) else None
+    return str(title).strip()[:26] if title else None
+
+
+def clip(s, n):
+    return s if len(s) <= n else s[:n - 1] + "…"
+
+
+def radio_afterhours():
+    m = Module("dynamic/radio-afterhours.svg", PINK,
+               "radio.afterhours :: frequency-deck", "fm", "~",
+               "tune afterhours.fm")
+    station, url, rotation = radio_config()
+    title = playlist_title(url) if url else None
+    online = url is not None
+    m.neofetch(ascii_rows(r"""
+      .--------------.
+  ))  | AFTERHOURS FM |  ((
+ )))  | .----------. |  (((
+  ))  | | |||||||| | |  ((
+      | '----------' |
+      | (o)      (o) |
+      '------.-------'
+             |
+        ==========
+"""), (PINK, BLUE), "radio@afterhours",
+        [("station", clip(station, 20), WHITE),
+         ("source", "spotify", WHITE),
+         ("mode", "playlist rotation", WHITE),
+         ("signal", "ONLINE" if online else "UNCONFIGURED",
+          GREEN if online else PINK),
+         ("playlist", clip(title, 20) if title else "—", WHITE),
+         ("rotation", f"{len(rotation)} / 5", WHITE),
+         ("sync", stamp(), GREEN if online else ICE)], kcol=10)
+    m.head.append(pulse_rings(X0 + 110, 150, PINK if online else LINE,
+                              3 if online else 1, 8, 52, 3.4))
+
+    # tuning dial: a scale with a needle that sweeps the band
+    m.section("tuner")
+    top = m.y
+    dl, dr = X0 + 10, X1 - 10
+    g = [rect(X0, top - 16, X1 - X0, 74, fill="#0B1220", stroke=LINE, sw=1.2)]
+    for k in range(0, 41):
+        x = dl + (dr - dl) * k / 40
+        major = k % 4 == 0
+        g.append(line(_f(x), top + 26 - (14 if major else 7), _f(x), top + 26,
+                      stroke=ICE if major else LINE, sw=1.4 if major else 1))
+        if major:
+            g.append(t(_f(x), top + 48, str(88 + k // 2), 15, ICE,
+                       anchor="middle"))
+    g.append(line(dl, top + 26, dr, top + 26, stroke=LINE, sw=1))
+    nx = dl + (dr - dl) * 0.62
+    sweep = ('<animateTransform attributeName="transform" type="translate" '
+             'values="0 0;-60 0;24 0;0 0" dur="14s" '
+             'repeatCount="indefinite"/>' if online else "")
+    g.append(f'<g>{line(_f(nx), top - 10, _f(nx), top + 34, stroke=PINK, sw=2.4)}'
+             f'<rect x="{_f(nx - 5)}" y="{top - 14}" width="10" height="6" '
+             f'fill="{PINK}"/>{sweep}</g>')
+    m.raw("".join(g), 78)
+
+    # spectrum analyser
+    m.section("spectrum")
+    top = m.y
+    hgt, n = 96, 28
+    base = top + hgt
+    slot = (X1 - X0) / n
+    g = [rect(X0, top - 10, X1 - X0, hgt + 18, fill="url(#grid)")]
+    for i in range(n):
+        x = X0 + i * slot + slot * 0.18
+        w = slot * 0.64
+        shape = 0.35 + 0.65 * abs(math.sin(i * 0.55 + 0.6)) * (1 - i / (n * 1.4))
+        h0 = max(6, hgt * shape * (0.85 if online else 0.12))
+        col = mix(BLUE, PINK, i / (n - 1))
+        anim = ""
+        if online:
+            lo, hi = max(4, h0 * 0.35), h0
+            vals = f"{_f(lo)};{_f(hi)};{_f(lo * 1.4)};{_f(hi * 0.8)};{_f(lo)}"
+            ys = ";".join(_f(base - float(v)) for v in vals.split(";"))
+            dur = f"{1.6 + (i % 5) * 0.23:.2f}s"
+            anim = (f'<animate attributeName="height" values="{vals}" '
+                    f'dur="{dur}" repeatCount="indefinite"/>'
+                    f'<animate attributeName="y" values="{ys}" dur="{dur}" '
+                    f'repeatCount="indefinite"/>')
+        g.append(f'<rect x="{_f(x)}" y="{_f(base - h0)}" width="{_f(w)}" '
+                 f'height="{_f(h0)}" fill="{col}" '
+                 f'opacity="{0.85 if online else 0.35}">{anim}</rect>')
+    g.append(line(X0, base, X1, base, stroke=PINK, sw=1.4))
+    if not online:
+        g.append(t((X0 + X1) / 2, top + hgt / 2, "STATION UNCONFIGURED", 22,
+                   PINK, "bold", anchor="middle"))
+    m.raw("".join(g), hgt + 30)
+
+    if rotation:
+        m.section("rotation")
+        top = m.y
+        rows = len(rotation)
+        sel = (f'<rect x="{X0}" y="{top - 20}" width="{X1 - X0}" height="28" '
+               f'fill="{PINK}" opacity="0.12"><animate attributeName="y" '
+               f'values="{";".join(str(top - 20 + k * 30) for k in range(rows))}" '
+               f'dur="{rows * 3}s" calcMode="discrete" '
+               f'repeatCount="indefinite"/></rect>')
+        m.raw(sel, 0)
+        for k, (ttl, art) in enumerate(rotation):
+            m.line((f"CH{k + 1:02d}  ", GREEN, "bold"),
+                   (clip(art, 18) + " — ", ICE), (clip(ttl, 24), WHITE),
+                   gap=30)
+    else:
+        # tape deck: reels turn while the station is configured
+        m.section("deck")
+        top = m.y
+        g = [rect(X0 + 90, top - 14, 468, 120, fill="#0B1220", stroke=LINE,
+                  sw=1.2),
+             rect(X0 + 180, top + 64, 288, 26, fill=VOID, stroke=LINE, sw=1)]
+        for cx in (X0 + 230, X0 + 418):
+            cy = top + 34
+            spokes = "".join(
+                line(_f(cx + 8 * math.cos(math.radians(a))),
+                     _f(cy + 8 * math.sin(math.radians(a))),
+                     _f(cx + 30 * math.cos(math.radians(a))),
+                     _f(cy + 30 * math.sin(math.radians(a))),
+                     stroke=ICE, sw=2) for a in (0, 120, 240))
+            spin = (f'<animateTransform attributeName="transform" '
+                    f'type="rotate" values="0 {cx} {cy};360 {cx} {cy}" '
+                    f'dur="6s" repeatCount="indefinite"/>' if online else "")
+            g.append(f'<circle cx="{cx}" cy="{cy}" r="38" fill="none" '
+                     f'stroke="{PINK}" stroke-width="1.6"/>'
+                     f'<circle cx="{cx}" cy="{cy}" r="6" fill="{PINK}"/>'
+                     f'<g>{spokes}{spin}</g>')
+        g.append(line(X0 + 268, top + 66, X0 + 380, top + 66, stroke=ICE,
+                      sw=1.2))
+        g.append(t(X0 + 324, top + 82, "SIDE A", 14, ICE, anchor="middle"))
+        for k, c in enumerate((GREEN if online else LINE, PINK, BLUE)):
+            anim = ('<animate attributeName="opacity" values="1;0.3;1" '
+                    f'dur="{2 + k * 0.7:.1f}s" repeatCount="indefinite"/>'
+                    if online and k == 0 else "")
+            g.append(f'<circle cx="{X0 + 116}" cy="{top + 4 + k * 22}" r="4.5" '
+                     f'fill="{c}">{anim}</circle>')
+        m.raw("".join(g), 124)
+
+    m.line(("STATION  ", BLUE, "bold"), (clip(station, 18), WHITE),
+           ("   SIGNAL  ", BLUE, "bold"),
+           ("ONLINE" if online else "UNCONFIGURED", GREEN if online else PINK,
+            "bold"), size=18, gap=30)
+    m.build(["tune afterhours.fm",
+             "afterhours fm" if online else "station unconfigured"])
+
+
 def main():
     DYN.mkdir(parents=True, exist_ok=True)
     for fn in (boot_sequence, transmission_log, signal_activity,
                node_traffic, currently_orbiting, research_queue, node_clock,
-               weather_signal, signal_map, signal_archive):
+               weather_signal, signal_map, signal_archive, radio_afterhours):
         fn()
     for p in sorted(DYN.glob("*.svg")):
         print(f"dynamic/{p.name:28} {p.stat().st_size:>7} bytes")

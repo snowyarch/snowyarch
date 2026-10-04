@@ -612,7 +612,8 @@ too-many-tabs.txt
 
 </details>
 
-<!-- future radio.afterhours goes here -->
+<a name="radio"></a>
+<img src="assets/dynamic/radio-afterhours.svg" width="100%" alt="radio.afterhours — AFTERHOURS FM Spotify playlist relay.">
 
 <p align="center">
   <img src="assets/footer-signal.svg" width="100%" alt="session.end terminal: exit, logout — session closed. questions still open. snowyarch // ZÜRICH NODE, AFTERHOURS / PERSONAL NODE.">
