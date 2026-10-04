@@ -1,0 +1,53 @@
+name: refresh node
+
+# Regenerates assets/dynamic/ from: this repo's history, public/, data/*.json,
+# snowyarch's public GitHub events, Open-Meteo (Zürich) and the repo's
+# traffic API. Scheduled runs only
+# happen on the default branch. There is no push trigger, and commits made
+# with GITHUB_TOKEN never start new workflow runs, so this cannot loop.
+on:
+  schedule:
+    # every 6 hours: fresh enough for weather without spamming commits
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-node
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate dynamic modules
+        env:
+          # read-only use: raises the rate limit for the public events API
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # optional: fine-grained, this repo only, Administration: read.
+          # Without it the traffic module renders its offline state.
+          PROFILE_TRAFFIC_TOKEN: ${{ secrets.PROFILE_TRAFFIC_TOKEN }}
+          NODE_GITHUB_USER: snowyarch
+        run: python3 scripts/build_dynamic_modules.py
+
+      - name: Commit only if the generated assets changed
+        run: |
+          if [ -z "$(git status --porcelain -- assets/dynamic)" ]; then
+            echo "no change"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/dynamic
+          git commit -m "chore(node): refresh dynamic signals"
+          git push

@@ -1,0 +1,21 @@
+{
+  "_edit": "Hand-maintained. Shown as CURRENT ORBIT in assets/dynamic/currently-orbiting.svg. Up to 4 entries; keep items short.",
+  "orbit": [
+    {
+      "category": "FICTION",
+      "item": "Dune"
+    },
+    {
+      "category": "SERIES",
+      "item": "Cyberpunk: Edgerunners"
+    },
+    {
+      "category": "MYTHOLOGY",
+      "item": "Norse mythology"
+    },
+    {
+      "category": "RABBIT HOLE",
+      "item": "autonomous systems security"
+    }
+  ]
+}

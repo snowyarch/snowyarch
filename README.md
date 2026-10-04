@@ -1,16 +1,626 @@
-## Hi there 👋
+<p align="center">
+  <img src="assets/header.svg" width="100%" alt="snowyarch@zurich-node terminal running neofetch. An ASCII skyline of twin towers, moon and river next to: node afterhours / personal, loc zürich // ch, role builder · researcher, focus markets · ai · philosophy, research 5 public · 1 restricted, tools python · git · claude code, markets btc · sol · credit, library dune · leviathan · 1984, side minecraft · terraria, status still learning. The prompt cycles through: build things to understand them; why do markets believe what they believe?; not yet is a valid result; questions over answers.">
+</p>
 
-<!--
-**snowyarch/snowyarch** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+<a name="boot"></a>
+<img src="assets/dynamic/boot-sequence.svg" width="100%" alt="boot.sequence — the node boots its public modules: research, markets, library, archive and signals mounted; radio not mounted yet. Generated from the repository.">
 
-Here are some ideas to get you started:
+<a name="index"></a>
+<img src="assets/mod-index.svg" width="100%" alt="research.index terminal module: tree of ~/research — 01 debtwatch credit-console, 02 ai-bubblewatch observatory, 03 culture-legitimacy dossier, 04 ECIS restricted, 05 GEN_ALPHA.dat cohort archive, 06 autonomous-security review. Dates are research cutoffs, not live updates.">
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+<details>
+<summary><code>$ less --plain</code></summary>
+
+```text
+~/research
+├── debtwatch/
+├── ai-bubblewatch/
+├── culture-legitimacy/
+├── ECIS           RESTRICTED
+├── GEN_ALPHA.dat
+└── autonomous-security/
+```
+
+</details>
+
+`cd` → [debtwatch](#debtwatch) · [ai-bubblewatch](#ai-bubblewatch) · [culture-legitimacy](#culture-legitimacy) · [GEN_ALPHA.dat](#gen-alpha) · [autonomous-security](#autonomous-security) · [mind.cache](#mind-cache) · [market.frequencies](#market-frequencies) · [library](#library)
+
+<a name="operator-note"></a>
+<img src="assets/mod-operator.svg" width="100%" alt="operator.note terminal module with an ASCII snowflake: builder, researcher, markets obsessive, philosophy nerd, systems explorer, internet-native learner, still learning; followed by the operator note.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
+
+```text
+I build things to understand
+them. Most of my questions start
+somewhere between markets,
+companies, AI and philosophy,
+then refuse to stay in one
+category.
+
+I'm interested in how money
+moves, how companies acquire
+power, how technology becomes
+culture, and what would make a
+convincing explanation fall
+apart. Sometimes that turns into
+code. Sometimes it becomes a
+research dossier with more
+unanswered questions than I
+started with.
+
+My working environment is mostly
+terminals, agents, source
+material and repeated revisions.
+I'm still learning the technical
+side as I go. This node collects
+the projects, ideas and strange
+corners of the internet that
+keep me coming back.
+```
+
+</details>
+
+<a name="debtwatch"></a>
+<img src="assets/mod-debtwatch.svg" width="100%" alt="debtwatch :: credit-console terminal module, historical snapshot 2026-10-02, forecast none, result not yet. Query: when does expensive credit become unavailable credit? Conceptual transmission from macro to rates, credit pricing, refinancing and company cash flows. Watchlist: price — more evident; terms — selective; access — not established. Notes on counterevidence and a non-representative panel.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
+
+```text
+DEBTWATCH         credit-console
+────────────────────────────────
+snapshot  2026-10-02  HISTORICAL
+evidence  to 2026-10-01
+edition   2026-10-03
+mode      research / monitoring
+forecast  none
+
+Q  when does expensive credit
+   become unavailable credit?
+```
+
+```text
+transmission  (conceptual)
+macro → rates → credit pricing
+      → refinancing
+      → company cash flows
+
+PATH      conditional
+DEPENDS   maturities
+          fixed / floating rates
+          collateral
+          lender appetite
+          operating performance
+```
+
+```text
+┌────────┬─────────────────────┐
+│ LAYER  │ WHAT IT OBSERVES    │
+├────────┼─────────────────────┤
+│ PRICE  │ cost of borrowing   │
+│ TERMS  │ more security,      │
+│        │ tighter restrictions│
+│ ACCESS │ can it be obtained? │
+└────────┴─────────────────────┘
+```
+
+```diff
+@@ snapshot 2026-10-02 @@
++ pricing: pressure more evident
++ terms: selective deterioration
+- access: broad failure not
+-   established
+```
+
+```text
+counterevidence :: limits
+COUNTER    successful
+           refinancings
+           on record
+PANEL      selected after cases
+           of interest
+LIMIT      no market-wide
+           prevalence estimate
+SCOPE      historical snapshot
+           2026-10-02
+
+RESULT     NOT YET
+THRESHOLD  stronger conclusion
+           not crossed
+RISK       open · not ruled out
+MODE       research / monitoring
+FORECAST   none
+```
+
+</details>
+
+[`$ cat public/debtwatch-public-brief.md`](public/debtwatch-public-brief.md)
+
+<a name="ai-bubblewatch"></a>
+<img src="assets/mod-ai-bubblewatch.svg" width="100%" alt="ai-bubblewatch :: observatory terminal module, cutoff 2026-09-21, hypothesis unresolved, 16 selected entities, not representative, verdict none. Analytical cells for capex, utilization, returns, obligations and financing; a conceptual map; counterevidence; open questions. The name is a question, not a verdict.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
+
+```text
+AI BUBBLEWATCH       observatory
+────────────────────────────────
+cutoff      2026-09-21
+hypothesis  unresolved
+sample      16 selected entities
+scope       non-representative
+verdict     none
+
+Q  what would distinguish
+   durable investment from an
+   unsustainable buildout?
+```
+
+```ini
+[status]
+  name     = question
+  verdict  = none
+[capex]
+  announced, spent and
+  committed are different
+  quantities
+[utilization]
+  contracted capacity ≠
+  realized, profitable use
+[returns]
+  revenue or usefulness ≠
+  return above the cost of
+  capital
+[obligations]
+  debt, project obligations,
+  leases and customer
+  commitments: separate
+[financing]
+  access to new money ≠
+  sound economics of the
+  assets it pays for
+```
+
+```diff
+@@ counterevidence @@
++ priced financing activity
++   works against "capital
++   markets have closed"
+- by itself it proves nothing
+-   about lifetime returns
+```
+
+```text
+open
+ · mature-cohort returns
+ · contracted vs realized use
+ · renewal, durable demand
+ · demand that depends on
+   continuing financing
+ · who bears the risk
+
+VERDICT    none
+LIVE       —
+ADVICE     —
+```
+
+</details>
+
+[`$ cat public/ai-bubblewatch-public-brief.md`](public/ai-bubblewatch-public-brief.md)
+
+<a name="culture-legitimacy"></a>
+<img src="assets/mod-culture.svg" width="100%" alt="culture-legitimacy :: dossier terminal module: Tastewashing → Cultural Legitimacy Embedding (working title), documentary, pre-experimental, causal question open, cutoff 2026-08-12. Layers: production, reception, causal question; finding; two reports in Spanish (10 and 13 pages).">
+
+<details>
+<summary><code>$ less --plain</code></summary>
+
+```text
+.
+├── index.md
+├── production/
+├── reception/
+├── causal-question/     OPEN
+└── reports/
+    ├── informe-sencillo  10pp
+    └── informe-formal    13pp
+
+4 directories, 3 files
+LANG       ES
+```
+
+```text
+TASTEWASHING →
+CULTURAL LEGITIMACY EMBEDDING
+(working title)
+────────────────────────────────
+status  documentary research
+        pre-experimental
+causal  OPEN
+cutoff  2026-08-12
+```
+
+```text
+why are technology and defense-
+tech companies becoming cultural
+objects through clothing,
+design, events, communities and
+identity?
+
+the comparisons made the
+original explanation less
+simple. similar practices appear
+in ordinary software businesses;
+traditional defense companies
+already have histories of
+national, professional and
+community identification.
+audiences read the same object
+as aesthetics, career ambition,
+investment, fandom, irony or
+political affinity.
+```
+
+```ini
+[production]
+  what do companies make,
+  communicate and organize?
+  LIMIT visible branding ≠
+        concealed intention
+[reception]
+  how do people interpret or
+  use those cultural objects?
+  LIMIT selected comments ≠
+        population-wide
+        attitudes
+[causal-question]
+  does affinity change the
+  legitimacy granted to a
+  company's functions or power?
+  LIMIT liking a brand ≠
+        evidence of this
+        transition
+```
+
+```text
+CAUSAL   not established by
+         the reports
+LINKS    connections ≠
+         coordination
+EFFECT   an effect ≠ proof of
+         intention
+FRAME    working title
+         unvalidated
+```
+
+</details>
+
+`start here` → [Tastewashing, cultura y poder tecnológico](public/Tastewashing_Informe_Sencillo_PUBLIC_v1.pdf) · `PDF · ES · 10 pages`<br>
+`full synthesis` → [De tastewashing a la legitimidad cultural del poder tecnológico](public/Tastewashing_Informe_Formal_PUBLIC_v1.pdf) · `PDF · ES · 13 pages`
+
+[`$ cat public/culture-legitimacy-public-index.md`](public/culture-legitimacy-public-index.md)
+
+<details>
+<summary><code>$ cat reports/README</code></summary>
+
+```text
+CUTOFF     2026-08-12
+STATUS     pre-experimental
+METHOD     AI-assisted search,
+           comparison,
+           synthesis,
+           adversarial review
+EDITION    2026-10-03 editorial
+           cutoff unchanged
+BODY       preserved
+BIBLIO     updated
+THREADS    qualitative
+           non-representative
+LIVE PAGES may have changed
+           since the cutoff
+```
+
+</details>
+
+<p align="center">
+  <img src="assets/restricted-panel.svg" width="100%" alt="ECIS. PRIVATE R&amp;D SYSTEM. STATUS: ACTIVE. ACCESS: RESTRICTED. DETAILS: UNDISCLOSED.">
+</p>
+
+<a name="mind-cache"></a>
+<img src="assets/mod-mind-cache.svg" width="100%" alt="mind.cache terminal module with five open questions: what would make me change my mind; when does authority become legitimate; who gets to define normal; how much of identity is actually ours; why do markets believe what they believe.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
+
+```text
+01  what would make me change
+    my mind?
+    > the question i try to ask
+      before an answer gets
+      comfortable. a habit,
+      not a badge.
+
+02  when does authority become
+    legitimate?
+    > political philosophy, but
+      also companies and
+      institutions, and why
+      people accept the power
+      they hold.
+
+03  who gets to define normal?
+    > language, norms, culture,
+      and the way every
+      generation judges the
+      next one.
+
+04  how much of identity is
+    actually ours?
+    > the question underneath a
+      lot of the fiction in
+      ~/library: memory,
+      belonging, consciousness,
+      change.
+
+05  why do markets believe what
+    they believe?
+    > a price is a story with
+      money behind it. where
+      does the story come from?
+```
+
+</details>
+
+<a name="gen-alpha"></a>
+<img src="assets/mod-gen-alpha.svg" width="100%" alt="GEN_ALPHA.dat terminal module — a label, not a dataset. Five records: educational performance is not general cognition; population, age and measure; school conditions; screens, short-form, algorithms and AI need separate causal evidence; the observer. Causality unresolved, snapshot 2026-08-16.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
+
+```text
+MODE      cohort / cognition
+          archive
+SNAPSHOT  2026-08-16
+TYPE      research label
+
+Q  what actually changes between
+   generations, and what changes
+   in the comparison?
+```
+
+```text
+-[ RECORD 1 ]-------------------
+domain | educational
+       | performance ≠
+       | general cognition
+obs    | reading, maths and
+       | science tests measure
+       | abilities in defined
+       | settings; not a direct
+       | measure of attention,
+       | working memory or
+       | independent judgment
+-[ RECORD 2 ]-------------------
+domain | population · age ·
+       | measure
+obs    | which group, task,
+       | country, period? PISA
+       | 2022 tested
+       | 15-year-olds, mostly
+       | born well before the
+       | usual Gen Alpha start
+       | dates
+-[ RECORD 3 ]-------------------
+domain | school conditions
+obs    | instruction,
+       | attendance, pandemic
+       | disruption,
+       | socioeconomic and
+       | language context
+-[ RECORD 4 ]-------------------
+domain | screens · short-form
+       | · feeds · ai
+obs    | separate hypotheses,
+       | separate causal
+       | evidence. association
+       | ≠ direction;
+       | uncertainty ≠ harmless
+-[ RECORD 5 ]-------------------
+domain | the observer
+obs    | biased memory makes
+       | "kids these days" look
+       | worse; dismissing a
+       | documented decline is
+       | also an error
+
+(5 rows)
+```
+
+```text
+EVIDENCE   heterogeneous
+THRESHOLD  one educational
+           trend ≠ a generation-
+           wide decline
+CAUSALITY  UNRESOLVED
+RESEARCH   open
+SCOPE      selected public
+           synthesis
+```
+
+</details>
+
+[`$ cat public/gen-alpha-research-note.md`](public/gen-alpha-research-note.md)
+
+<a name="autonomous-security"></a>
+<img src="assets/mod-security.svg" width="100%" alt="autonomous-security :: review terminal module: discovery and adversarial review of security boundaries for autonomous action; novelty and protection claims under falsification; no validated primitive, product or startup thesis; readiness unclaimed.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
+
+```text
+[mode  ] discovery
+[mode  ] adversarial review
+[scope ] security boundaries
+         for increasingly
+         autonomous action
+[method] compare proposed
+         approaches with
+         existing research
+         and tools
+[check ] novelty claims:
+         under falsification
+[check ] protection claims:
+         under falsification
+[result] no validated primitive
+[result] no validated product
+[result] no startup thesis
+[thresh] interesting question
+         ≠ defensible
+         contribution
+[claims] security · deployment
+         · readiness: —
+```
+
+</details>
+
+[`$ cat public/autonomous-systems-security-public-note.md`](public/autonomous-systems-security-public-note.md)
+
+<a name="orbit"></a>
+<img src="assets/dynamic/currently-orbiting.svg" width="100%" alt="currently.orbiting — current orbit: fiction, series, mythology, rabbit hole. Source: data/orbit.json.">
+
+<a name="queue"></a>
+<img src="assets/dynamic/research-queue.svg" width="100%" alt="research.queue — process table of open research questions. Source: data/research-queue.json.">
+
+<a name="market-frequencies"></a>
+<img src="assets/mod-markets.svg" width="100%" alt="market.frequencies terminal module: channels for crypto, equities, credit, structure and narrative. Interests and questions only — no wallets, positions, P&amp;L or advice.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
+
+```ini
+[crypto]
+topics = bitcoin, solana,
+         memecoins
+lens   = liquidity, incentives,
+         coordination, narrative
+
+[equities]
+topics = banks, software, ai,
+         defense-tech
+lens   = capital, market power,
+         dependence
+
+[credit]
+topics = obligations,
+         maturities, refinancing
+link   = debtwatch
+
+[structure]
+topics = liquidity, market
+         structure
+q      = what can a price
+         actually tell you?
+
+[narrative]
+q      = why does a story
+         become believable once
+         money enters it?
+```
+
+</details>
+
+<a name="library"></a>
+<img src="assets/mod-library.svg" width="100%" alt="library :: culture-node terminal module with an ASCII bookshelf: Dune, Leviathan, 1984, Fahrenheit 451, Brave New World, The Road, Cadáver exquisito; Monster, Cyberpunk: Edgerunners, Angel Beats!, Charlotte; Norse myths.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
+
+```yaml
+mode: orbit
+books:
+  dune: power, prescience
+  leviathan: authority, order
+  "1984": language, control
+  fahrenheit_451: distraction
+  brave_new_world: conditioning
+  the_road: moral continuity
+  cadaver_exquisito: normality
+fiction:
+  monster: responsibility
+  edgerunners: identity, systems
+  angel_beats: memory, loss
+  charlotte: bonds, continuity
+myth:
+  norse: fate, transformation
+```
+
+</details>
+
+<a name="operator-environment"></a>
+<img src="assets/mod-environment.svg" width="100%" alt="operator.environment terminal module: build — Claude Code, Git, VS Code, Python; research — ChatGPT and sources; screens — TradingView, Reuters, CoinGlass; crypto — Axiom, Phantom; mastery undefined.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
+
+```sh
+build=(claude-code git vscode)
+build+=(python)
+research=(chatgpt sources)
+screens=(tradingview reuters)
+screens+=(coinglass)
+crypto=(axiom phantom)
+mastery=undefined
+loop=(direct compare review)
+loop+=(revise)
+```
+
+</details>
+
+<a name="signal-map"></a>
+<img src="assets/dynamic/signal-map.svg" width="100%" alt="signal.map — conceptual topology: snowyarch linked to markets, philosophy, culture, AI / systems, security, research and library.">
+
+<a name="archive"></a>
+<img src="assets/dynamic/signal-archive.svg" width="100%" alt="signal.archive — file listing of public/, with type, size and last change date for each public file.">
+
+<a name="activity"></a>
+<img src="assets/dynamic/signal-activity.svg" width="100%" alt="signal.activity — 14-day spectrum of public GitHub events for snowyarch: push, create, thread, social, other.">
+
+<a name="traffic"></a>
+<img src="assets/dynamic/node-traffic.svg" width="100%" alt="node.traffic — 14-day views, unique visitors, clones, top referrer and top path for snowyarch/snowyarch.">
+
+<a name="transmissions"></a>
+<img src="assets/dynamic/transmission-log.svg" width="100%" alt="transmission.log — last five commits of snowyarch/snowyarch, by date and class.">
+
+<a name="clock"></a>
+<img src="assets/dynamic/node-clock.svg" width="100%" alt="node.clock — Zürich node time, Europe/Zurich, at last sync.">
+
+<a name="weather"></a>
+<img src="assets/dynamic/weather-signal.svg" width="100%" alt="weather.signal — current weather in Zürich: condition, temperature, humidity, wind, pressure and sync time.">
+
+<img src="assets/mod-side.svg" width="100%" alt="side.frequencies terminal module: Minecraft, Terraria, weird corners of the internet, technical rabbit holes, internet culture, too many tabs.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
+
+```text
+minecraft/      terraria/
+weird-corners-of-the-internet/
+technical-rabbit-holes/
+too-many-tabs.txt
+```
+
+</details>
+
+<a name="radio"></a>
+<a href="https://open.spotify.com/playlist/4dmC1A34kqmEilGf8KSlbN">
+  <img src="assets/dynamic/radio-afterhours.svg" width="100%" alt="radio.afterhours — AFTERHOURS FM Spotify playlist relay.">
+</a>
+
+[`OPEN SPOTIFY ↗`](https://open.spotify.com/playlist/4dmC1A34kqmEilGf8KSlbN)
+
+<p align="center">
+  <img src="assets/footer-signal.svg" width="100%" alt="session.end terminal: exit, logout — session closed. questions still open. snowyarch // ZÜRICH NODE, AFTERHOURS / PERSONAL NODE.">
+</p>
+
+<p align="center"><a href="#index"><code>cd ~/research</code></a></p>
