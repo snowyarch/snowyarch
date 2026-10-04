@@ -2,16 +2,11 @@
   <img src="assets/header.svg" width="100%" alt="snowyarch@zurich-node terminal running neofetch. An ASCII skyline of twin towers, moon and river next to: node afterhours / personal, loc zürich // ch, role builder · researcher, focus markets · ai · philosophy, research 5 public · 1 restricted, tools python · git · claude code, markets btc · sol · credit, library dune · leviathan · 1984, side minecraft · terraria, status still learning. The prompt cycles through: build things to understand them; why do markets believe what they believe?; not yet is a valid result; questions over answers.">
 </p>
 
-```console
-$ ssh guest@zurich-node
-connected :: AFTERHOURS
-personal node · ZÜRICH // CH
-user snowyarch
-5 public modules · 1 restricted
-```
-
 <a name="index"></a>
-<img src="assets/mod-index.svg" width="100%" alt="module ~/research — tree -L 1">
+<img src="assets/mod-index.svg" width="100%" alt="research.index terminal module: tree of ~/research — 01 debtwatch credit-console, 02 ai-bubblewatch observatory, 03 culture-legitimacy dossier, 04 ECIS restricted, 05 GEN_ALPHA.dat cohort archive, 06 autonomous-security review. Dates are research cutoffs, not live updates.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
 
 ```text
 ~/research
@@ -23,10 +18,15 @@ user snowyarch
 └── autonomous-security/
 ```
 
+</details>
+
 `cd` → [debtwatch](#debtwatch) · [ai-bubblewatch](#ai-bubblewatch) · [culture-legitimacy](#culture-legitimacy) · [GEN_ALPHA.dat](#gen-alpha) · [autonomous-security](#autonomous-security) · [mind.cache](#mind-cache) · [market.frequencies](#market-frequencies) · [library](#library)
 
 <a name="operator-note"></a>
-<img src="assets/mod-operator.svg" width="100%" alt="module operator.note — cat operator.note">
+<img src="assets/mod-operator.svg" width="100%" alt="operator.note terminal module with an ASCII snowflake: builder, researcher, markets obsessive, philosophy nerd, systems explorer, internet-native learner, still learning; followed by the operator note. Plain text below.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
 
 ```text
 I build things to understand
@@ -57,8 +57,13 @@ corners of the internet that
 keep me coming back.
 ```
 
+</details>
+
 <a name="debtwatch"></a>
-<img src="assets/mod-debtwatch.svg" width="100%" alt="module debtwatch :: credit-console — cat brief.md">
+<img src="assets/mod-debtwatch.svg" width="100%" alt="debtwatch :: credit-console terminal module, historical snapshot 2026-10-02, forecast none, result not yet. Query: when does expensive credit become unavailable credit? Conceptual transmission from macro to rates, credit pricing, refinancing and company cash flows. Watchlist: price — more evident; terms — selective; access — not established. Notes on counterevidence and a non-representative panel. Plain text below.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
 
 ```text
 DEBTWATCH         credit-console
@@ -128,10 +133,15 @@ research / monitoring workflow
 not a crash predictor
 ```
 
+</details>
+
 [`$ cat public/debtwatch-public-brief.md`](public/debtwatch-public-brief.md)
 
 <a name="ai-bubblewatch"></a>
-<img src="assets/mod-ai-bubblewatch.svg" width="100%" alt="module ai-bubblewatch :: observatory — cat brief.md">
+<img src="assets/mod-ai-bubblewatch.svg" width="100%" alt="ai-bubblewatch :: observatory terminal module, cutoff 2026-09-21, hypothesis unresolved, 16 selected entities, not representative, verdict none. Analytical cells for capex, utilization, returns, obligations and financing; a conceptual map; counterevidence; open questions. The name is a question, not a verdict. Plain text below.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
 
 ```text
 AI BUBBLEWATCH       observatory
@@ -195,10 +205,15 @@ no live market assessment
 no trading recommendation
 ```
 
+</details>
+
 [`$ cat public/ai-bubblewatch-public-brief.md`](public/ai-bubblewatch-public-brief.md)
 
 <a name="culture-legitimacy"></a>
-<img src="assets/mod-culture.svg" width="100%" alt="module culture-legitimacy :: dossier — tree .">
+<img src="assets/mod-culture.svg" width="100%" alt="culture-legitimacy :: dossier terminal module: Tastewashing → Cultural Legitimacy Embedding (working title), documentary, pre-experimental, causal question open, cutoff 2026-08-12. Layers: production, reception, causal question; finding; two reports in Spanish (10 and 13 pages). Plain text below.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
 
 ```text
 .
@@ -280,6 +295,8 @@ is a working title, not a
 validated theory.
 ```
 
+</details>
+
 `start here` → [Tastewashing, cultura y poder tecnológico](public/Tastewashing_Informe_Sencillo_PUBLIC_v1.pdf) · `PDF · ES · 10 pages`<br>
 `full synthesis` → [De tastewashing a la legitimidad cultural del poder tecnológico](public/Tastewashing_Informe_Formal_PUBLIC_v1.pdf) · `PDF · ES · 13 pages`
 
@@ -314,21 +331,15 @@ formulation.
 
 </details>
 
-<br>
-
-```text
-ECIS
-PRIVATE R&D SYSTEM
-
-STATUS      ACTIVE
-ACCESS      RESTRICTED
-DETAILS     UNDISCLOSED
-```
-
-<br>
+<p align="center">
+  <img src="assets/restricted-panel.svg" width="100%" alt="ECIS. PRIVATE R&amp;D SYSTEM. STATUS: ACTIVE. ACCESS: RESTRICTED. DETAILS: UNDISCLOSED.">
+</p>
 
 <a name="mind-cache"></a>
-<img src="assets/mod-mind-cache.svg" width="100%" alt="module mind.cache — tail -n 5 mind.cache">
+<img src="assets/mod-mind-cache.svg" width="100%" alt="mind.cache terminal module with five open questions: what would make me change my mind; when does authority become legitimate; who gets to define normal; how much of identity is actually ours; why do markets believe what they believe. Plain text below.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
 
 ```text
 01  what would make me change
@@ -367,8 +378,13 @@ DETAILS     UNDISCLOSED
       does the story come from?
 ```
 
+</details>
+
 <a name="gen-alpha"></a>
-<img src="assets/mod-gen-alpha.svg" width="100%" alt="module GEN_ALPHA.dat — cat GEN_ALPHA.dat">
+<img src="assets/mod-gen-alpha.svg" width="100%" alt="GEN_ALPHA.dat terminal module — a label, not a dataset. Five records: educational performance is not general cognition; population, age and measure; school conditions; screens, short-form, algorithms and AI need separate causal evidence; the observer. Causality unresolved, snapshot 2026-08-16. Plain text below.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
 
 ```text
 # cohort / cognition archive
@@ -444,10 +460,15 @@ type       selected public note
            experiment
 ```
 
+</details>
+
 [`$ cat public/gen-alpha-research-note.md`](public/gen-alpha-research-note.md)
 
 <a name="autonomous-security"></a>
-<img src="assets/mod-security.svg" width="100%" alt="module autonomous-security :: review — tail review.log">
+<img src="assets/mod-security.svg" width="100%" alt="autonomous-security :: review terminal module: discovery and adversarial review of security boundaries for autonomous action; novelty and protection claims under falsification; no validated primitive, product or startup thesis; readiness not claimed. Plain text below.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
 
 ```text
 [mode  ] discovery
@@ -471,10 +492,15 @@ type       selected public note
          defensible contribution
 ```
 
+</details>
+
 [`$ cat public/autonomous-systems-security-public-note.md`](public/autonomous-systems-security-public-note.md)
 
 <a name="market-frequencies"></a>
-<img src="assets/mod-markets.svg" width="100%" alt="module market.frequencies — cat .market_frequencies">
+<img src="assets/mod-markets.svg" width="100%" alt="market.frequencies terminal module: channels for crypto, equities, credit, structure and narrative. Interests and questions only — no wallets, positions, P&amp;L or advice. Plain text below.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
 
 ```ini
 ; interests and questions,
@@ -513,8 +539,13 @@ q      = why does a story
 ; no p&l · not advice
 ```
 
+</details>
+
 <a name="library"></a>
-<img src="assets/mod-library.svg" width="100%" alt="module library — cat library.yml">
+<img src="assets/mod-library.svg" width="100%" alt="library :: culture-node terminal module with an ASCII bookshelf: Dune, Leviathan, 1984, Fahrenheit 451, Brave New World, The Road, Cadáver exquisito; Monster, Cyberpunk: Edgerunners, Angel Beats!, Charlotte; Norse myths. An orbit, not a reading log.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
 
 ```yaml
 # an orbit of works,
@@ -536,8 +567,13 @@ myth:
   norse: fate, transformation
 ```
 
+</details>
+
 <a name="operator-environment"></a>
-<img src="assets/mod-environment.svg" width="100%" alt="module operator.environment — cat .operator_env">
+<img src="assets/mod-environment.svg" width="100%" alt="operator.environment terminal module: build — Claude Code, Git, VS Code, Python; research — ChatGPT and sources; screens — TradingView, Reuters, CoinGlass; crypto — Axiom, Phantom; mastery undefined.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
 
 ```sh
 # grouped by use
@@ -558,7 +594,12 @@ mastery=undefined
 # review the result, revise.
 ```
 
-<img src="assets/mod-side.svg" width="100%" alt="module side.frequencies — ls side_quests">
+</details>
+
+<img src="assets/mod-side.svg" width="100%" alt="side.frequencies terminal module: Minecraft, Terraria, weird corners of the internet, technical rabbit holes, internet culture, too many tabs.">
+
+<details>
+<summary><code>$ less --plain</code></summary>
 
 ```text
 minecraft/      terraria/
@@ -567,8 +608,10 @@ technical-rabbit-holes/
 too-many-tabs.txt
 ```
 
+</details>
+
 <p align="center">
-  <img src="assets/footer-signal.svg" width="100%" alt="exit — session closed. questions still open. snowyarch // ZÜRICH NODE.">
+  <img src="assets/footer-signal.svg" width="100%" alt="session.end terminal: exit, logout — session closed. questions still open. snowyarch // ZÜRICH NODE, AFTERHOURS / PERSONAL NODE.">
 </p>
 
 <p align="center"><a href="#index"><code>cd ~/research</code></a></p>

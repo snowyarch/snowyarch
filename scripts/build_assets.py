@@ -4,9 +4,12 @@ Run from the repository root:
 
     python3 scripts/build_assets.py
 
-The README itself is native text: code blocks hold every module's
-output. The SVGs here are only the animated parts: the neofetch-style
-header, one thin prompt strip per module, and the closing `exit`.
+Every section is a framed terminal scene built like the header: a
+typed command, an ASCII emblem beside a neofetch-style info column,
+decorated sub-sections and a closing prompt with rotating lines. The
+README keeps a collapsed plain-text copy of each module for reading
+without images. The restricted panel is static and carries only its
+approved lines.
 
 Every asset is hand-built SVG: no scripts, no external fonts, no
 embedded images, no metadata. Typing effects use SMIL, and every
@@ -16,6 +19,7 @@ written literally in this file.
 """
 
 import math
+import textwrap
 import random
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -345,97 +349,901 @@ def header():
     write("header.svg", svg(h, "\n".join(b)))
 
 
+# ---------------------------------------------------------------- modules
+# Every section after the header is built like the header: a framed
+# terminal scene with a typed command, an ASCII emblem beside a
+# neofetch-style info column, decorated sub-sections, and a closing
+# prompt that cycles through a few lines from the module itself.
+
+FS, LH = 19, 28        # body text size and line height
+X0, X1 = 36, 684       # content edges inside the frame
+INFO_X = 286           # info column, same as the header
+
+
+def mix(c1, c2, k):
+    a = [int(c1[i:i + 2], 16) for i in (1, 3, 5)]
+    b = [int(c2[i:i + 2], 16) for i in (1, 3, 5)]
+    return "#%02X%02X%02X" % tuple(round(a[j] + (b[j] - a[j]) * k)
+                                   for j in range(3))
+
+
+def segs(x, y, parts, size=FS):
+    """A run of (text, color[, weight]) parts on monospace columns."""
+    out, c = [], 0
+    for p in parts:
+        s, color = p[0], p[1]
+        weight = p[2] if len(p) > 2 else "normal"
+        if s.strip():
+            out.append(t(_f(x + c * size * CW), y, s, size, color, weight,
+                         extra=' xml:space="preserve"'))
+        c += len(s)
+    return "".join(out)
+
+
+def hud(x, y, w, h, color, n=12, sw=1.4, opacity=0.8):
+    """Corner brackets."""
+    out = []
+    for cx, cy, dx, dy in ((x, y, 1, 1), (x + w, y, -1, 1),
+                           (x, y + h, 1, -1), (x + w, y + h, -1, -1)):
+        out.append(f'<path d="M{cx} {cy + dy * n}V{cy}H{cx + dx * n}" '
+                   f'stroke="{color}" stroke-width="{sw}" '
+                   f'opacity="{opacity}"/>')
+    return "".join(out)
+
+
+class Module:
+    def __init__(self, name, color, title, right, path, cmd):
+        self.name, self.color = name, color
+        self.title, self.right, self.path, self.cmd = title, right, path, cmd
+        self.head = []      # emblem rows and info rows, streamed first
+        self.items = []     # body fragments, streamed in order
+        self.y = 0
+
+    # --- the neofetch-style head -------------------------------------
+    def neofetch(self, emblem, colors, ident, info, kcol=10):
+        y0 = 116
+        kcol = max(kcol, max(len(k) for k, _, _ in info) + 2)
+        for i, row in enumerate(emblem):
+            k = i / max(1, len(emblem) - 1)
+            c = mix(colors[0], colors[1], k)
+            self.head.append(
+                f'<text x="{X0}" y="{_f(y0 + i * 16.5)}" font-size="13.5" '
+                f'fill="{c}" xml:space="preserve">{escape(row)}</text>')
+        ey = y0 + len(emblem) * 16.5 + 8
+        for i in range(9):
+            c = mix(colors[0], colors[1], i / 8)
+            self.head.append(rect(X0 + i * 22, ey, 16, 16, fill=c,
+                                  stroke=LINE, sw=1,
+                                  opacity=round(0.35 + 0.07 * i, 2)))
+        self.head.append(t(INFO_X, y0, ident, 22, PINK, "bold"))
+        self.head.append(t(INFO_X, y0 + 22, "-" * len(ident), 22, LINE))
+        for i, (k, v, c) in enumerate(info):
+            y = y0 + 56 + i * 28
+            self.head.append(t(INFO_X, y, f"{k}:", FS, BLUE, "bold") +
+                             t(_f(INFO_X + kcol * FS * CW), y, v, FS, c,
+                               "bold" if c != WHITE else "normal"))
+        iy = y0 + 56 + (len(info) - 1) * 28
+        self.y = max(ey + 16, iy) + 46
+
+    # --- body helpers ------------------------------------------------
+    def section(self, label, color=None):
+        c = color or self.color
+        self.y += 6
+        y = self.y
+        lx = X0 + 20 + len(label) * FS * CW + 14
+        frag = (rect(X0, y - 12, 10, 10, fill=c) +
+                t(X0 + 20, y, label, FS, c, "bold") +
+                line(_f(lx), y - 6, X1 - 52, y - 6, stroke=LINE, sw=1))
+        for i in range(3):
+            frag += rect(X1 - 44 + i * 15, y - 12, 10, 10, fill=c,
+                         opacity=round(0.9 - 0.3 * i, 2))
+        self.items.append(frag)
+        self.y += 36
+
+    def line(self, *parts, size=FS, gap=LH, x=X0):
+        self.items.append(segs(x, self.y, parts, size))
+        self.y += gap
+
+    def wrap(self, text, color=WHITE, prefix="", cont="", width=54,
+             pcolor=None, size=FS):
+        lines = textwrap.wrap(text, width - len(prefix))
+        for i, ln in enumerate(lines):
+            p = prefix if i == 0 else (cont or " " * len(prefix))
+            self.line((p, pcolor or self.color, "bold"), (ln, color),
+                      size=size)
+
+    def gap(self, h=12):
+        self.y += h
+
+    def raw(self, frag, height):
+        self.items.append(frag)
+        self.y += height
+
+    # --- assemble ----------------------------------------------------
+    def build(self, phrases):
+        y = self.y + 4
+        tail = [line(X0, y, X1, y, stroke=LINE, sw=1),
+                t(X0, y + 36, "┌──(", 21, BLUE) +
+                t(_f(X0 + 4 * 21 * CW), y + 36, "snowyarch@zurich", 21, PINK,
+                  "bold") +
+                t(_f(X0 + 20 * 21 * CW), y + 36, f")-[{self.path}]", 21, BLUE),
+                t(X0, y + 70, "└─$", 21, BLUE)]
+        h = math.ceil(y + 70 + 40)
+        out = [window(16, 16, W - 32, h - 32, self.color, self.title,
+                      self.right, fill=VOID),
+               hud(26, 30, W - 52, h - 52, LINE, 10, 1.2, 0.9)]
+        prompt = f"snowyarch@zurich:{self.path}$"
+        ps = min(21, (X1 - X0) / ((len(prompt) + 1 + len(self.cmd)) * CW))
+        out.append(t(X0, 70, prompt, _f(ps), GREEN, "bold"))
+        cmd, t0 = typed((X0 + (len(prompt) + 1) * ps * CW), 70, self.cmd,
+                        ps, WHITE, 0.6, cps=16)
+        out.append(cmd)
+        tt = t0 + 0.3
+        for i, frag in enumerate(self.head):
+            out.append(appear(frag, tt + i * 0.025))
+        tt += len(self.head) * 0.025 + 0.15
+        for i, frag in enumerate(self.items):
+            out.append(appear(frag, tt + i * 0.04))
+        tt += len(self.items) * 0.04 + 0.2
+        out.append(appear("".join(tail), tt))
+        out.append(rotating((X0 + 4 * 21 * CW), y + 70, phrases, 21, GREEN,
+                            tt + 0.3))
+        write(self.name, svg(h, "\n".join(out)))
+
+
+EMBLEMS = {
+    "index": r"""
+        .--------.
+        | zh-01  |
+        '---++---'
+            ||
+   .--------++--------.
+   |        ||        |
+ [01]  [02] || [03]  [04]
+   |        ||        |
+ [05]------[##]------[06]
+            ||
+         ~~~~~~~~
+""",
+    "operator": r"""
+           .   *   .
+        \   \  |  /   /
+         \   \ | /   /
+     ---- \___\|/___/ ----
+   ------ ==== * ==== ------
+     ---- /```/|\```\ ----
+         /   / | \   \
+        /   /  |  \   \
+           '   *   '
+""",
+    "debtwatch": r"""
+          _________
+    _____/ CREDIT  \_____
+   /_____________________\
+     ||   ||   ||   ||
+     ||   ||   ||   ||
+     ||   ||   ||   ||
+     ||   ||   ||   ||
+     ||   ||   ||   ||
+   __||___||___||___||__
+  |_____________________|
+  =======================
+""",
+    "ai": r"""
+           .    *    .
+        .-~~~~~~~~~~~-.
+      .'   o     .     '.
+     /   .    ( ? )   o   \
+    |  o    O       .      |
+    |     .     o      O   |
+     \   O   .     o     /
+      '.     o   .     .'
+        '-.__________.-'
+            |      |
+         ___|______|___
+""",
+    "culture": r"""
+   .---------------------.
+   | .-----------------. |
+   | |  PRODUCTION     | |
+   | '-------o---------' |
+   | .-----------------. |
+   | |  RECEPTION      | |
+   | '-------o---------' |
+   | .-----------------. |
+   | |  CAUSAL   ?     | |
+   | '-------o---------' |
+   '---------------------'
+      ||             ||
+""",
+    "lock": r"""
+        .---------.
+       /  .-----.  \
+       | |       | |
+       | |       | |
+    .--'-'-------'-'--.
+    |                 |
+    |      .---.      |
+    |      |   |      |
+    |      '-.-'      |
+    |        |        |
+    '-----------------'
+""",
+    "mind": r"""
+      _|_|_|_|_|_|_|_|_
+     |                 |
+   --|   M I N D       |--
+   --|      . C A C H E|--
+   --|                 |--
+   --|   ?  ?  ?  ?  ? |--
+     |_________________|
+       | | | | | | | |
+""",
+    "gen": r"""
+      .-~~~~~~~~~~~~-.
+     (   GEN_ALPHA    )
+     |'-~~~~~~~~~~~~-'|
+     |  edu ≠ cog     |
+     |'-~~~~~~~~~~~~-'|
+     |  cohort · age  |
+     |'-~~~~~~~~~~~~-'|
+     |  observer  ?   |
+     |'-~~~~~~~~~~~~-'|
+      '-~~~~~~~~~~~~-'
+""",
+    "shield": r"""
+     .---------------.
+     |  .---------.  |
+     |  |    ?    |  |
+     |  '---------'  |
+     |   . . . . .   |
+      \             /
+       \   -----   /
+        \         /
+         '.     .'
+           '---'
+""",
+    "antenna": r"""
+            |
+           /|\        )))
+          / | \      ))
+         /  |  \    )
+        /---+---\
+       /    |    \
+      /     |     \
+     /------+------\
+    /       |       \
+   '========'========'
+""",
+    "library": r"""
+  .--.---.--.----.---.--.
+  |D |   |19|    |   |  |
+  |U |LEV|84|FAHR|BNW|TR|
+  |N |   |  |451 |   |  |
+  |E |   |  |    |   |  |
+  |__|___|__|____|___|__|
+  .---.---.---.----.--.
+  |MON|EDG|ANG|CHAR|NO|
+  |   |   |BTS|    |RS|
+  |___|___|___|____|__|
+  =======================
+""",
+    "env": r"""
+    .--------------------.
+    | $ claude           |
+    | $ git status       |
+    | $ python3 _        |
+    |                    |
+    '---------.----------'
+        ______|______
+       /=============\
+      /_______________\
+""",
+    "side": r"""
+           ###
+          #####
+         #######
+           |||        .-.
+     ______|||_______(   )
+    |##|##|##|##|##|##|##|
+    |__|__|__|__|__|__|__|
+""",
+}
+
+
+def emblem(key):
+    return EMBLEMS[key].strip("\n").split("\n")
+
+
+# ---------------------------------------------------------------- content
+# Module text is taken from the approved public notes in public/.
+
+def mod_index():
+    m = Module("mod-index.svg", BLUE, "research.index", "06 modules",
+               "~/research", "tree -L 1")
+    m.neofetch(emblem("index"), (BLUE, PINK), "research@zurich-node",
+               [("modules", "6", WHITE), ("public", "5", WHITE),
+                ("restricted", "1", PINK), ("dates", "research cutoffs", WHITE),
+                ("updates", "not live", WHITE), ("status", "open", GREEN)],
+               kcol=11)
+    m.section("~/research")
+    rows = [("├──", "01", "debtwatch/", "credit-console", BLUE),
+            ("├──", "02", "ai-bubblewatch/", "observatory", PINK),
+            ("├──", "03", "culture-legitimacy/", "dossier", PINK),
+            ("├──", "04", "ECIS", "RESTRICTED", ICE),
+            ("├──", "05", "GEN_ALPHA.dat", "cohort archive", GREEN),
+            ("└──", "06", "autonomous-security/", "review", BLUE)]
+    for pre, n, name, tag, c in rows:
+        m.line((pre + " ", LINE), (n + "  ", GREEN, "bold"),
+               (f"{name:<22}", WHITE if name == "ECIS" else c, "bold"),
+               (tag, PINK if name == "ECIS" else ICE), size=20, gap=32)
+    m.gap(6)
+    m.line(("# ", ICE), ("statuses are words, not colors", ICE))
+    m.build(["cd debtwatch", "cd ai-bubblewatch", "cat GEN_ALPHA.dat",
+             "tail mind.cache"])
+
+
+def mod_operator():
+    m = Module("mod-operator.svg", PINK, "operator.note", "tty1", "~",
+               "cat operator.note")
+    m.neofetch(emblem("operator"), (ICE, PINK), "operator@zurich-node",
+               [("handle", "snowyarch", WHITE),
+                ("is", "builder", WHITE), ("is", "researcher", WHITE),
+                ("is", "markets obsessive", WHITE),
+                ("is", "philosophy nerd", WHITE),
+                ("is", "systems explorer", WHITE),
+                ("is", "internet-native learner", WHITE),
+                ("status", "still learning", GREEN)], kcol=8)
+    m.section("operator.note")
+    m.line(("> ", PINK, "bold"), ("I build things to understand them.", PINK,
+                                  "bold"), size=21, gap=34)
+    m.wrap("Most of my questions start somewhere between markets, "
+           "companies, AI and philosophy, then refuse to stay in one "
+           "category.", prefix="  ")
+    m.gap()
+    m.wrap("I'm interested in how money moves, how companies acquire "
+           "power, how technology becomes culture, and what would make a "
+           "convincing explanation fall apart.", prefix="  ")
+    m.wrap("Sometimes that turns into code. Sometimes it becomes a "
+           "research dossier with more unanswered questions than I started "
+           "with.", color=ICE, prefix="  ")
+    m.gap()
+    m.section("environment")
+    m.wrap("My working environment is mostly terminals, agents, source "
+           "material and repeated revisions. I'm still learning the "
+           "technical side as I go.", prefix="  ")
+    m.wrap("This node collects the projects, ideas and strange corners of "
+           "the internet that keep me coming back.", color=ICE, prefix="  ")
+    m.build(["build things to understand them",
+             "what would make it fall apart?", "still learning"])
+
+
+def mod_debtwatch():
+    m = Module("mod-debtwatch.svg", BLUE, "debtwatch :: credit-console",
+               "01", "~/research/debtwatch", "cat brief.md")
+    m.neofetch(emblem("debtwatch"), (BLUE, GREEN), "debtwatch@credit",
+               [("type", "research · monitoring", WHITE),
+                ("snapshot", "2026-10-02", WHITE),
+                ("evidence", "to 2026-10-01", WHITE),
+                ("edition", "2026-10-03", WHITE),
+                ("mode", "historical", WHITE),
+                ("forecast", "none", GREEN),
+                ("result", "NOT YET", GREEN)])
+    m.section("query")
+    m.line(("Q  ", BLUE, "bold"), ("when does expensive credit", PINK, "bold"),
+           size=22, gap=32)
+    m.line(("   ", BLUE), ("become unavailable credit?", PINK, "bold"),
+           size=22, gap=38)
+
+    m.section("transmission :: conceptual")
+    m.line(("[ ", BLUE), ("MACRO", WHITE, "bold"), (" ]", BLUE),
+           (" → ", PINK, "bold"), ("[ ", BLUE), ("RATES", WHITE, "bold"),
+           (" ]", BLUE), (" → ", PINK, "bold"), ("[ ", BLUE),
+           ("CREDIT PRICING", WHITE, "bold"), (" ]", BLUE), size=19, gap=34)
+    m.line(("  ↳ ", PINK, "bold"), ("[ ", BLUE), ("REFINANCING", WHITE, "bold"),
+           (" ]", BLUE), (" → ", PINK, "bold"), ("[ ", BLUE),
+           ("COMPANY CASH FLOWS", WHITE, "bold"), (" ]", BLUE), size=19,
+           gap=36)
+    m.line(("# ", ICE), ("not an automatic sequence. maturities, fixed vs", ICE))
+    m.line(("# ", ICE), ("floating rates, collateral, lender appetite and", ICE))
+    m.line(("# ", ICE), ("operating performance change how pressure travels",
+                         ICE), gap=34)
+
+    m.section("watchlist :: price / terms / access", GREEN)
+    top = m.y
+    m.raw(rect(X0, m.y - 21, X1 - X0, 30, fill=PANEL) +
+          t(X0 + 14, m.y, "LAYER", 16, ICE, "bold") +
+          t(X0 + 130, m.y, "WHAT IT OBSERVES", 16, ICE, "bold") +
+          t(X0 + 424, m.y, "AT SNAPSHOT", 16, ICE, "bold"), 40)
+    rows = [("PRICE", ["cost of borrowing"], "●", "more evident", GREEN),
+            ("TERMS", ["more security,", "tighter restrictions"], "◐",
+             "selective", BLUE),
+            ("ACCESS", ["can it be obtained?"], "○", "not established", PINK)]
+    for k, obs, mark, st, c in rows:
+        y = m.y
+        hgt = 26 * len(obs) + 16
+        frag = rect(X0, y - 20, 4, hgt - 8, fill=c)
+        frag += t(X0 + 14, y, k, 20, c, "bold")
+        for i, o in enumerate(obs):
+            frag += t(X0 + 130, y + i * 26, o, FS, WHITE)
+        frag += t(X0 + 424, y, f"{mark} {st}", FS, WHITE, "bold")
+        frag += line(X0, y + hgt - 24, X1, y + hgt - 24, stroke=LINE,
+                     dash="3 5")
+        m.raw(frag, hgt)
+    m.items.append(hud(X0 - 8, top - 32, X1 - X0 + 16, m.y - top + 16,
+                       GREEN, 10, 1.4, 0.9))
+    m.gap(16)
+
+    m.section("snapshot.log :: 2026-10-02")
+    m.line(("+ ", GREEN, "bold"), ("pricing   ", BLUE, "bold"),
+           ("pressure more evident", GREEN))
+    m.line(("+ ", GREEN, "bold"), ("terms     ", BLUE, "bold"),
+           ("selective deterioration", GREEN))
+    m.line(("− ", PINK, "bold"), ("access    ", BLUE, "bold"),
+           ("broad failure not established", PINK), gap=36)
+
+    m.section("notes :: counterevidence")
+    m.wrap("successful refinancings stay in the record as "
+           "counterevidence", prefix="> ")
+    m.wrap("the borrower panel was picked after spotting cases of "
+           "interest: no estimate of how much of the market is losing "
+           "access", prefix="> ")
+    m.wrap("not a claim about conditions today", prefix="> ")
+    m.gap(8)
+
+    m.section("result", GREEN)
+    m.line(("NOT YET", GREEN, "bold"), size=34, gap=40)
+    m.wrap("the evidence hasn't crossed the threshold for the stronger "
+           "conclusion. it doesn't mean no risk exists.", color=ICE)
+    m.line(("research / monitoring workflow · not a crash predictor", BLUE),
+           gap=30)
+    m.build(["price ≠ terms ≠ access", '"not yet" is a valid result',
+             "research, not a crash predictor"])
+
+
+def mod_ai():
+    m = Module("mod-ai-bubblewatch.svg", PINK, "ai-bubblewatch :: observatory",
+               "02", "~/…/ai-bubblewatch", "cat brief.md")
+    m.neofetch(emblem("ai"), (PINK, BLUE), "bubblewatch@observatory",
+               [("type", "ai economics research", WHITE),
+                ("cutoff", "2026-09-21", WHITE),
+                ("edition", "2026-10-03", WHITE),
+                ("hypothesis", "unresolved", PINK),
+                ("sample", "16 selected entities", WHITE),
+                ("scope", "not representative", WHITE),
+                ("verdict", "none", GREEN)], kcol=11)
+    m.section("query")
+    m.line(("Q  ", PINK, "bold"), ("what would distinguish durable", PINK,
+                                   "bold"), size=22, gap=32)
+    m.line(("   ", PINK), ("investment from an unsustainable", PINK, "bold"),
+           size=22, gap=32)
+    m.line(("   ", PINK), ("buildout?", PINK, "bold"), size=22, gap=36)
+    m.line(("# ", GREEN), ("the name is a question, not a verdict", GREEN),
+           gap=36)
+
+    m.section("analytical cells")
+    cells = [("capex", BLUE, "announced ≠ spent", "≠ committed"),
+             ("utilization", BLUE, "contracted capacity ≠",
+              "realized, profitable use"),
+             ("returns", BLUE, "cash after operating,",
+              "maintenance, replacement"),
+             ("obligations", BLUE, "debt · projects · leases",
+              "· customer commitments"),
+             ("financing", BLUE, "access to new money ≠",
+              "good asset economics"),
+             ("?", PINK, "the name is a question,", "not a verdict")]
+    cw_, ch_, g = 316, 112, 16
+    for r in range(3):
+        frag = ""
+        for cidx in range(2):
+            k, c, l1, l2 = cells[r * 2 + cidx]
+            x = X0 + cidx * (cw_ + g)
+            y = m.y - 22
+            frag += hud(x, y, cw_, ch_ - 14, c, 12, 1.6, 1)
+            frag += t(x + 16, y + 30, f"[{k}]", FS, c, "bold")
+            frag += t(x + 16, y + 60, l1, 18, WHITE)
+            frag += t(x + 16, y + 86, l2, 18, ICE)
+        m.raw(frag, ch_)
+    m.gap(10)
+
+    m.section("conceptual map")
+    m.line(("financing", WHITE, "bold"), (" → ", PINK, "bold"),
+           ("capex", WHITE, "bold"), (" → ", PINK, "bold"),
+           ("capacity", WHITE, "bold"), (" → ", PINK, "bold"),
+           ("use", WHITE, "bold"), (" → ", PINK, "bold"),
+           ("returns", WHITE, "bold"))
+    m.line(("   └─ ", BLUE), ("obligations: who pays, when, which entity?",
+                              ICE), gap=36)
+
+    m.section("counterevidence")
+    m.line(("+ ", GREEN, "bold"), ("priced financing activity works against",
+                                   GREEN))
+    m.line(("+ ", GREEN, "bold"), ('  "capital markets have closed"', GREEN))
+    m.line(("− ", PINK, "bold"), ("alone it proves nothing about lifetime "
+                                  "returns", PINK), gap=36)
+
+    m.section("open :: unresolved")
+    for q in ["returns from mature asset cohorts",
+              "contracted vs realized, profitable use",
+              "renewal and durable demand",
+              "demand that depends on continuing financing",
+              "who bears the risk"]:
+        m.line(("· ", PINK, "bold"), (q, WHITE))
+    m.gap(8)
+    m.line(("no verdict · no live assessment · no trade advice", BLUE),
+           gap=30)
+    m.build(["the name is a question", "stress ≠ weak returns ≠ bubble",
+             "unresolved stays unresolved"])
+
+
+def mod_culture():
+    m = Module("mod-culture.svg", PINK, "culture-legitimacy :: dossier",
+               "03", "~/…/culture-legitimacy", "cat index.md")
+    m.neofetch(emblem("culture"), (PINK, ICE), "culture@dossier",
+               [("file", "Tastewashing →", WHITE),
+                ("", "Cultural Legitimacy", WHITE),
+                ("", "Embedding", WHITE),
+                ("note", "working title", ICE),
+                ("status", "documentary", WHITE),
+                ("phase", "pre-experimental", WHITE),
+                ("causal", "OPEN", PINK),
+                ("cutoff", "2026-08-12", WHITE)], kcol=8)
+    m.section("question")
+    m.wrap("why are technology and defense-tech companies becoming "
+           "cultural objects through clothing, design, events, communities "
+           "and identity?", color=PINK, prefix="Q  ", width=50, size=20)
+    m.gap(10)
+
+    m.section("what the comparisons showed")
+    m.wrap("similar practices appear in ordinary software businesses",
+           prefix="> ")
+    m.wrap("traditional defense companies already have histories of "
+           "national, professional and community identification",
+           prefix="> ")
+    m.wrap("audiences read the same object as aesthetics, career ambition, "
+           "investment, fandom, irony or political affinity", prefix="> ")
+    m.gap(8)
+
+    m.section("layers")
+    layers = [("01", "PRODUCTION", "", BLUE,
+               "what do companies make, communicate and organize?",
+               "visible branding does not establish a concealed intention"),
+              ("02", "RECEPTION", "", BLUE,
+               "how do people interpret or use those cultural objects?",
+               "selected public comments cannot estimate population-wide "
+               "attitudes"),
+              ("03", "CAUSAL QUESTION", "OPEN", PINK,
+               "does affinity change the legitimacy granted to a company's "
+               "functions or power?",
+               "liking a brand is not evidence that this transition has "
+               "occurred")]
+    for n, name, flag, c, q, caveat in layers:
+        m.line(("▌", c, "bold"), (n + " ", GREEN, "bold"), (name, c, "bold"),
+               ("  " + flag if flag else "", PINK, "bold"), size=20, gap=30)
+        m.wrap(q, prefix="   ")
+        m.wrap(caveat, color=ICE, prefix="   ! ", cont="     ", pcolor=PINK)
+        m.gap(10)
+
+    m.section("finding")
+    m.wrap("the reports do not establish that causal link. connections "
+           "between organizations don't alone show coordination; an "
+           "effect, even if established, wouldn't automatically prove "
+           "intention.", color=WHITE)
+    m.wrap('"cultural legitimacy embedding" is a working title, not a '
+           'validated theory.', color=ICE)
+    m.gap(8)
+
+    m.section("reports/")
+    m.line(("├── ", LINE), ("informe-sencillo.pdf  ", WHITE, "bold"),
+           ("start here · ES · 10 pp", GREEN))
+    m.line(("└── ", LINE), ("informe-formal.pdf    ", WHITE, "bold"),
+           ("full synthesis · ES · 13 pp", GREEN))
+    m.line(("# ", ICE), ("AI-assisted search, comparison, synthesis, review",
+                         ICE), gap=30)
+    m.build(["liking a brand ≠ legitimacy", "the causal question stays open",
+             "working title, not a theory"])
+
+
+def restricted_panel():
+    # Static on purpose. Only the approved public words appear here.
+    h = 420
+    b = [rect(16, 16, W - 32, h - 32, fill=VOID, stroke=LINE, sw=1.4),
+         rect(28, 28, W - 56, h - 56, stroke=LINE, sw=1, opacity=0.7),
+         hud(16, 16, W - 32, h - 32, ICE, 22, 2.4, 1),
+         hud(40, 40, W - 80, h - 80, PINK, 10, 1.2, 0.8),
+         rect(28, 28, W - 56, h - 56, fill="url(#scan)")]
+    for i, row in enumerate(emblem("lock")):
+        c = mix(ICE, PINK, i / 10)
+        b.append(f'<text x="58" y="{_f(122 + i * 17)}" font-size="14" '
+                 f'fill="{c}" xml:space="preserve">{escape(row)}</text>')
+    b.append(t(300, 150, "ECIS", 64, WHITE, "bold", spacing=12))
+    b.append(t(302, 190, "PRIVATE R&D SYSTEM", 22, ICE, spacing=2))
+    b.append(line(302, 214, W - 60, 214, stroke=LINE, sw=1))
+    for i, (k, v, c) in enumerate((("STATUS", "ACTIVE", GREEN),
+                                   ("ACCESS", "RESTRICTED", PINK),
+                                   ("DETAILS", "UNDISCLOSED", ICE))):
+        y = 256 + i * 40
+        b.append(t(302, y, k, 22, ICE) + t(450, y, v, 22, c, "bold",
+                                           spacing=1))
+    for i in range(9):
+        b.append(rect(58 + i * 22, h - 72, 16, 16,
+                      fill=mix(ICE, PINK, i / 8), stroke=LINE, sw=1,
+                      opacity=round(0.3 + 0.07 * i, 2)))
+    write("restricted-panel.svg", svg(h, "\n".join(b)))
+
+
+def mod_mind():
+    m = Module("mod-mind-cache.svg", GREEN, "mind.cache", "05 entries", "~",
+               "tail -n 5 mind.cache")
+    m.neofetch(emblem("mind"), (GREEN, PINK), "mind@cache",
+               [("entries", "05", WHITE), ("state", "open", GREEN),
+                ("type", "thought fragments", WHITE),
+                ("answers", "none cached", PINK),
+                ("method", "questions first", WHITE)], kcol=9)
+    qs = [("what would make me change my mind?",
+           "the question i try to ask before an answer gets comfortable. "
+           "a habit, not a badge."),
+          ("when does authority become legitimate?",
+           "political philosophy, but also companies and institutions, and "
+           "why people accept the power they hold."),
+          ("who gets to define normal?",
+           "language, norms, culture, and the way every generation judges "
+           "the next one."),
+          ("how much of identity is actually ours?",
+           "the question underneath a lot of the fiction in ~/library: "
+           "memory, belonging, consciousness, change."),
+          ("why do markets believe what they believe?",
+           "a price is a story with money behind it. where does the story "
+           "come from?")]
+    m.section("cache.dump")
+    for i, (q, note) in enumerate(qs):
+        m.line((f"[0x0{i + 1}] ", GREEN, "bold"), (q, WHITE, "bold"),
+               size=20, gap=30)
+        m.wrap(note, color=ICE, prefix="  └ ", cont="    ", pcolor=PINK)
+        m.gap(12)
+    m.build(["what would make me change my mind?", "questions > answers",
+             "cache stays open"])
+
+
+def mod_gen():
+    m = Module("mod-gen-alpha.svg", GREEN, "GEN_ALPHA.dat", "05",
+               "~/research", "cat GEN_ALPHA.dat")
+    m.neofetch(emblem("gen"), (GREEN, BLUE), "GEN_ALPHA.dat",
+               [("type", "research note", WHITE),
+                ("format", "label, not a dataset", WHITE),
+                ("snapshot", "2026-08-16", WHITE),
+                ("edition", "2026-10-03", WHITE),
+                ("records", "5", WHITE),
+                ("causality", "UNRESOLVED", PINK),
+                ("research", "open", GREEN)], kcol=11)
+    m.section("query")
+    m.wrap("what actually changes between generations, and what changes "
+           "in the comparison?", color=PINK, prefix="Q  ", width=50, size=20)
+    m.gap(10)
+    recs = [("educational performance ≠ general cognition",
+             "tests measure abilities in defined settings, not attention, "
+             "working memory or independent judgment"),
+            ("population · age · task · country · period",
+             "PISA 2022 tested 15-year-olds, mostly born well before the "
+             "usual Gen Alpha start dates"),
+            ("school conditions",
+             "instruction, attendance, pandemic disruption, socioeconomic "
+             "and language context"),
+            ("screens · short-form · algorithms · ai",
+             "separate hypotheses, separate causal evidence. association ≠ "
+             "direction; uncertainty ≠ harmless"),
+            ("the observer",
+             'biased memory makes "kids these days" look worse; dismissing '
+             'a documented decline is also an error')]
+    m.section("records")
+    for i, (dom, note) in enumerate(recs):
+        y = m.y
+        lab = f"-[ RECORD 0{i + 1} ]"
+        m.raw(t(X0, y, lab, FS, GREEN, "bold") +
+              line(_f(X0 + len(lab) * FS * CW + 10), y - 6, X1, y - 6,
+                   stroke=GREEN, sw=1, dash="2 4"), 30)
+        m.line(("domain │ ", BLUE, "bold"), (dom, WHITE, "bold"))
+        for j, ln in enumerate(textwrap.wrap(note, 45)):
+            m.line(("note   │ " if j == 0 else "       │ ", BLUE, "bold"),
+                   (ln, ICE))
+        m.gap(8)
+    m.line(("(5 rows)", ICE), gap=36)
+    m.section("reading")
+    m.wrap("the reviewed material supports a heterogeneous picture.",
+           prefix="> ")
+    m.wrap('"an entire generation is declining" is a much larger claim '
+           'than the evidence behind one educational trend.', prefix="> ")
+    m.line(("# ", ICE), ("selected public note: not a systematic review,", ICE))
+    m.line(("# ", ICE), ("a dataset, or an experiment", ICE), gap=30)
+    m.build(["educational performance ≠ cognition",
+             "the observer is part of the problem", "causality unresolved"])
+
+
+def mod_security():
+    m = Module("mod-security.svg", BLUE, "autonomous-security :: review",
+               "06", "~/…/autonomous-security", "tail review.log")
+    m.neofetch(emblem("shield"), (BLUE, PINK), "review@controlled",
+               [("mode", "discovery", WHITE),
+                ("method", "adversarial review", WHITE),
+                ("claims", "under falsification", PINK),
+                ("primitive", "none validated", WHITE),
+                ("product", "none", WHITE),
+                ("thesis", "none", WHITE),
+                ("readiness", "not claimed", GREEN)], kcol=11)
+    m.section("review.log")
+    log = [("scope", "security boundaries for increasingly", WHITE),
+           ("", "autonomous action", WHITE),
+           ("method", "compare proposed approaches with existing", WHITE),
+           ("", "research and tools", WHITE),
+           ("check", "novelty claims ........ under falsification", PINK),
+           ("check", "protection claims ..... under falsification", PINK),
+           ("result", "validated primitive ... none", WHITE),
+           ("result", "validated product ..... none", WHITE),
+           ("result", "startup thesis ........ none", WHITE)]
+    for k, v, c in log:
+        tagtxt = f"[{k:<6}] " if k else " " * 9
+        if c == PINK:
+            a, b_ = v.split(" under")
+            m.line((tagtxt, BLUE, "bold"), (a, ICE),
+                   (" under" + b_, PINK, "bold"))
+        elif "none" in v:
+            a = v[:-4]
+            m.line((tagtxt, BLUE, "bold"), (a, ICE), ("none", WHITE, "bold"))
+        else:
+            m.line((tagtxt, BLUE, "bold"), (v, WHITE))
+    m.gap(10)
+    m.section("note", GREEN)
+    m.wrap("an interesting question is not yet a defensible contribution.",
+           color=GREEN, prefix="> ")
+    m.wrap("this records a research direction and its limits. no claim of "
+           "demonstrated security, deployment or readiness for use.",
+           color=ICE, prefix="  ")
+    m.build(["research before claims",
+             "an interesting question ≠ a contribution"])
+
+
+def mod_markets():
+    m = Module("mod-markets.svg", BLUE, "market.frequencies", "interests",
+               "~", "cat .market_frequencies")
+    m.neofetch(emblem("antenna"), (BLUE, PINK), "market@frequencies",
+               [("type", "interests", WHITE), ("positions", "none shown", WHITE),
+                ("wallets", "not linked", WHITE), ("p&l", "not shown", WHITE),
+                ("advice", "none", GREEN), ("mode", "questions", PINK)],
+               kcol=10)
+    m.section("channels")
+    chans = [("CH-A", "CRYPTO", PINK, "bitcoin · solana · memecoins",
+              "liquidity, incentives, coordination, narrative"),
+             ("CH-B", "EQUITIES", BLUE, "banks · software · ai · defense-tech",
+              "raising capital, market power, dependence"),
+             ("CH-C", "CREDIT", GREEN, "obligations · maturities · refinancing",
+              "when a financial problem starts to travel (→ debtwatch)"),
+             ("CH-D", "STRUCTURE", BLUE, "liquidity · market structure",
+              "who is on the other side; what can a price tell?"),
+             ("CH-E", "NARRATIVE", PINK, "narrative ↔ price",
+              "why a story becomes believable once money enters it")]
+    for k, (ch, name, c, topics, lens) in enumerate(chans):
+        y = m.y
+        pts = " ".join(f"{_f(X0 + xi)},{_f(y - 7 + 6 * math.sin(xi / 6 + k))}"
+                       for xi in range(0, 62, 2))
+        frag = (f'<polyline points="{pts}" stroke="{c}" stroke-width="1.6" '
+                f'fill="none"/>' +
+                t(X0 + 76, y, f"[{ch}]", FS, c, "bold") +
+                t(X0 + 76 + 8 * FS * CW, y, name, FS, WHITE, "bold"))
+        m.raw(frag, 28)
+        m.line((topics, WHITE), x=X0 + 76)
+        m.line((lens, ICE), x=X0 + 76, size=17, gap=38)
+    m.line(("; no wallets · no balances · no p&l · not advice", ICE), gap=30)
+    m.build(["why do markets believe what they believe?", "narrative ↔ price",
+             "interests, not positions"])
+
+
+def mod_library():
+    m = Module("mod-library.svg", PINK, "library :: culture-node", "orbit",
+               "~", "ls -R library/")
+    m.neofetch(emblem("library"), (PINK, BLUE), "library@culture-node",
+               [("works", "12", WHITE), ("shelves", "books · fiction · myth",
+                                         WHITE),
+                ("log", "not a reading log", ICE), ("ratings", "none", WHITE),
+                ("mode", "orbit", PINK)], kcol=9)
+    shelves = [("books/", BLUE, [
+        ("dune", "power, religion, prescience"),
+        ("leviathan", "authority, fear, order, sovereignty"),
+        ("1984", "language, memory, control"),
+        ("fahrenheit_451", "distraction, reading, conformity"),
+        ("brave_new_world", "desire, comfort, conditioning"),
+        ("the_road", "moral continuity after institutions"),
+        ("cadaver_exquisito", "normality, language, dehumanization")]),
+        ("fiction/", PINK, [
+            ("monster", "identity, responsibility"),
+            ("cyberpunk_edgerunners", "bodies, systems bigger than one"),
+            ("angel_beats", "memory, loss, continuity"),
+            ("charlotte", "bonds, personal continuity")]),
+        ("myth/", GREEN, [("norse", "fate, transformation, endings")])]
+    for shelf, c, works in shelves:
+        m.section(shelf, c)
+        for name, theme in works:
+            dots = "." * max(2, 18 - len(name))
+            m.line((name + " ", WHITE, "bold"), (dots + " ", LINE),
+                   (theme, ICE))
+        m.gap(6)
+    m.build(["an orbit, not a reading log", "how much of identity is ours?"])
+
+
+def mod_env():
+    m = Module("mod-environment.svg", GREEN, "operator.environment", "env",
+               "~", "cat .operator_env")
+    m.neofetch(emblem("env"), (GREEN, BLUE), "operator@env",
+               [("build", "claude code · git", WHITE),
+                ("editor", "vs code", WHITE), ("lang", "python", WHITE),
+                ("research", "chatgpt · sources", WHITE),
+                ("mastery", "undefined", PINK)], kcol=10)
+    m.section(".operator_env")
+    for k, v in (("BUILD", "claude-code git vscode python"),
+                 ("RESEARCH", "chatgpt source-reading"),
+                 ("SCREENS", "tradingview reuters coinglass"),
+                 ("CRYPTO", "axiom phantom")):
+        m.line(("export ", BLUE), (k, PINK, "bold"), ("=", ICE),
+               (f'"{v}"', GREEN))
+    m.line(("export ", BLUE), ("MASTERY", PINK, "bold"), ("=undefined", WHITE),
+           (" # a tool used ≠ a skill claimed", ICE), gap=36)
+    m.line(("# ", ICE), ("most building happens in a terminal with agents:",
+                         ICE))
+    m.line(("# ", ICE), ("direct the task, compare answers, review, revise",
+                         ICE), gap=30)
+    m.build(["still learning", "one more revision"])
+
+
+def mod_side():
+    m = Module("mod-side.svg", GREEN, "side.frequencies", "off-duty", "~",
+               "ls side_quests/")
+    m.neofetch(emblem("side"), (GREEN, PINK), "side@quests",
+               [("games", "minecraft · terraria", WHITE),
+                ("habitat", "weird internet corners", WHITE),
+                ("tabs", "too many", PINK), ("status", "exploring", GREEN)],
+               kcol=9)
+    m.section("side_quests/")
+    m.line(("minecraft/      ", GREEN, "bold"), ("terraria/", GREEN, "bold"),
+           size=20, gap=30)
+    m.line(("weird-corners-of-the-internet/", PINK, "bold"), size=20, gap=30)
+    m.line(("technical-rabbit-holes/  ", BLUE, "bold"),
+           ("internet-culture/", BLUE, "bold"), size=20, gap=30)
+    m.line(("too-many-tabs.txt", WHITE), size=20, gap=30)
+    m.build(["too many tabs", "still one more question"])
+
+
 def footer():
-    h = 300
-    rnd = random.Random(5)
-    b = []
-    # low skyline reprise
-    x = 0
-    while x < W:
-        bw = rnd.choice([30, 40, 52])
-        bh = rnd.randint(20, 60)
-        b.append(rect(x, h - bh, bw - 3, bh, fill="#0B1220", stroke=LINE,
-                      sw=1))
-        x += bw
-    b.append(rect(0, h - 2, W, 2, fill="url(#fadeP)"))
-    # fading signal bars
-    for i in range(36):
-        hh = 4 + abs(math.sin(i * 0.55)) * 22 * (1 - i / 40)
-        b.append(rect(32 + i * 18, 40 - hh / 2, 8, round(hh, 1), fill=PINK,
-                      opacity=round(max(0.08, 0.9 - i * 0.025), 2)))
-    b.append(t(40, 98, "└─$", 22, BLUE))
-    cmd, t0 = typed(40 + 4 * 22 * CW, 98, "exit", 22, WHITE, 0.8, cps=8)
+    h = 330
+    b = [window(16, 16, W - 32, h - 32, PINK, "session.end", "zh-01",
+                fill=VOID),
+         hud(26, 30, W - 52, h - 52, LINE, 10, 1.2, 0.9)]
+    b.append(t(36, 70, "└─$", 21, BLUE))
+    cmd, t0 = typed((36 + 4 * 21 * CW), 70, "exit", 21, WHITE, 0.8, cps=8)
     b.append(cmd)
-    b.append(appear(t(40, 140, "session closed.", 28, WHITE), t0 + 0.4))
-    b.append(appear(t(40, 176, "questions still open.", 28, WHITE), t0 + 0.8))
-    b.append(appear(t(40, 214, "snowyarch // ZÜRICH NODE", 22, PINK, "bold",
-                      spacing=1), t0 + 1.2))
-    b.append(blink(40 + 21 * 28 * CW + 10, 176, 28, GREEN, t0 + 1.2))
+    lines = [(112, "logout", 19, ICE, "normal"),
+             (160, "session closed.", 30, WHITE, "bold"),
+             (200, "questions still open.", 30, WHITE, "bold"),
+             (240, "snowyarch // ZÜRICH NODE", 21, PINK, "bold"),
+             (268, "AFTERHOURS / PERSONAL NODE", 18, ICE, "normal")]
+    for i, (y, s, size, c, wt) in enumerate(lines):
+        b.append(appear(t(36, y, s, size, c, wt), t0 + 0.4 + i * 0.35))
+    b.append(blink(36 + 21 * 30 * CW + 10, 200, 30, GREEN, t0 + 1.2))
+    for i in range(9):
+        b.append(appear(rect(W - 250 + i * 24, 252, 18, 18,
+                             fill=mix(PINK, BLUE, i / 8), stroke=LINE, sw=1),
+                        t0 + 1.8 + i * 0.05))
+    b.append(t(36, h - 30, "~-" * 40, 14, BLUE, opacity=0.6))
     write("footer-signal.svg", svg(h, "\n".join(b)))
-
-
-MODULES = [
-    # file, color, module label, right label, prompt path, command
-    ("mod-index.svg", BLUE, "~/research", "index", "~/research",
-     "tree -L 1"),
-    ("mod-operator.svg", PINK, "operator.note", "tty1", "~",
-     "cat operator.note"),
-    ("mod-debtwatch.svg", BLUE, "debtwatch :: credit-console", "01",
-     "~/research/debtwatch", "cat brief.md"),
-    ("mod-ai-bubblewatch.svg", PINK, "ai-bubblewatch :: observatory", "02",
-     "~/…/ai-bubblewatch", "cat brief.md"),
-    ("mod-culture.svg", PINK, "culture-legitimacy :: dossier", "03",
-     "~/…/culture-legitimacy", "tree ."),
-    ("mod-mind-cache.svg", GREEN, "mind.cache", "open", "~",
-     "tail -n 5 mind.cache"),
-    ("mod-gen-alpha.svg", GREEN, "GEN_ALPHA.dat", "05", "~/research",
-     "cat GEN_ALPHA.dat"),
-    ("mod-security.svg", BLUE, "autonomous-security :: review", "06",
-     "~/…/autonomous-security", "tail review.log"),
-    ("mod-markets.svg", BLUE, "market.frequencies", "interests", "~",
-     "cat .market_frequencies"),
-    ("mod-library.svg", PINK, "library", "orbit", "~", "cat library.yml"),
-    ("mod-environment.svg", GREEN, "operator.environment", "env", "~",
-     "cat .operator_env"),
-    ("mod-side.svg", GREEN, "side.frequencies", "off-duty", "~",
-     "ls side_quests"),
-]
-
-
-def module_strip(name, color, label, right, path, cmd):
-    """A thin module header: rule with the module name, then a prompt
-    that types its command. The module's output is native text below."""
-    h = 124
-    fs = 21
-    b = [line(16, 22, W - 16, 22, stroke=color, sw=1.4)]
-    lab = f"[ {label} ]"
-    b.append(rect(30, 8, len(lab) * 20 * CW + 12, 28, fill=VOID))
-    b.append(t(36, 29, lab, 20, color, "bold"))
-    rl = f"[ {right} ]"
-    rw = len(rl) * 20 * CW + 12
-    b.append(rect(W - 30 - rw, 8, rw, 28, fill=VOID))
-    b.append(t(W - 36, 29, rl, 20, ICE, anchor="end"))
-    b.append(t(36, 72, "┌──(", fs, BLUE) +
-             t(36 + 4 * fs * CW, 72, "snowyarch@zurich", fs, PINK, "bold") +
-             t(36 + 20 * fs * CW, 72, f")-[{path}]", fs, BLUE))
-    b.append(t(36, 106, "└─$", fs, BLUE))
-    x = 36 + 4 * fs * CW
-    cmd_svg, end = typed(x, 106, cmd, fs, WHITE, 0.5, cps=16)
-    b.append(cmd_svg)
-    b.append(blink(x + len(cmd) * fs * CW + 6, 106, fs, GREEN, end, "6"))
-    write(name, svg(h, "\n".join(b)))
 
 
 def main():
     OUT.mkdir(exist_ok=True)
-    keep = {"header.svg", "footer-signal.svg"} | {m[0] for m in MODULES}
     for p in OUT.glob("*.svg"):
-        if p.name not in keep:
-            p.unlink()
+        p.unlink()
     header()
-    footer()
-    for m in MODULES:
-        module_strip(*m)
+    for fn in (mod_index, mod_operator, mod_debtwatch, mod_ai, mod_culture,
+               restricted_panel, mod_mind, mod_gen, mod_security, mod_markets,
+               mod_library, mod_env, mod_side, footer):
+        fn()
     for p in sorted(OUT.glob("*.svg")):
         print(f"{p.name:28} {p.stat().st_size:>7} bytes")
 
