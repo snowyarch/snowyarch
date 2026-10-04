@@ -67,6 +67,18 @@ DEFS = f"""<defs>
 <feGaussianBlur stdDeviation="3" result="b"/>
 <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
 </filter>
+<filter id="soft" x="-10%" y="-10%" width="120%" height="120%">
+<feGaussianBlur stdDeviation="4"/>
+</filter>
+<radialGradient id="vig" cx="0.5" cy="0.45" r="0.75">
+<stop offset="0.6" stop-color="{VOID}" stop-opacity="0"/>
+<stop offset="1" stop-color="#000000" stop-opacity="0.55"/>
+</radialGradient>
+<linearGradient id="sweep" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="{WHITE}" stop-opacity="0"/>
+<stop offset="0.5" stop-color="{WHITE}" stop-opacity="0.045"/>
+<stop offset="1" stop-color="{WHITE}" stop-opacity="0"/>
+</linearGradient>
 <linearGradient id="fadeR" x1="0" x2="1" y1="0" y2="0">
 <stop offset="0" stop-color="{BLUE}" stop-opacity="0.9"/>
 <stop offset="1" stop-color="{BLUE}" stop-opacity="0"/>
@@ -113,18 +125,111 @@ def line(x1, y1, x2, y2, stroke=LINE, sw=1, opacity=1, dash=None):
             f'stroke="{stroke}" stroke-width="{sw}"{d}{op}/>')
 
 
-def window(x, y, w, h, color, title, right="", fill=PANEL):
-    """A TUI pane: flat frame with the title cut into the top border."""
-    out = [rect(x, y, w, h, fill=fill), rect(x, y, w, h, stroke=color, sw=1.4)]
+def window(x, y, w, h, color, title, right="", fill=PANEL, lamps=True):
+    """A TUI pane: flat frame with the title cut into the top border, a
+    soft neon glow behind the border and three status lamps."""
+    out = [rect(x, y, w, h, fill=fill),
+           rect(x, y, w, h, stroke=color, sw=3, opacity=0.35,
+                extra=' filter="url(#soft)"'),
+           rect(x, y, w, h, stroke=color, sw=1.4)]
     label = f"[ {title} ]"
-    out.append(rect(x + 16, y - 13, len(label) * 20 * CW + 12, 26, fill=VOID))
+    lw = len(label) * 20 * CW + 12
+    out.append(rect(x + 16, y - 13, lw + (52 if lamps else 0), 26,
+                    fill=VOID))
     out.append(t(x + 22, y + 7, label, 20, color, "bold"))
+    if lamps:
+        lx = x + 16 + lw + 10
+        for i, (c, dur) in enumerate(((GREEN, "2.6s"), (color, "3.4s"),
+                                      (LINE, None))):
+            anim = (f'<animate attributeName="opacity" values="1;0.35;1" '
+                    f'dur="{dur}" begin="{0.4 * i}s" '
+                    f'repeatCount="indefinite"/>' if dur else "")
+            out.append(f'<circle cx="{_f(lx + i * 13)}" cy="{y}" r="3.6" '
+                       f'fill="{c}">{anim}</circle>')
     if right:
         rl = f"[ {right} ]"
         rw = len(rl) * 20 * CW + 12
         out.append(rect(x + w - 16 - rw, y - 13, rw, 26, fill=VOID))
         out.append(t(x + w - 22, y + 7, rl, 20, ICE, anchor="end"))
     return "\n".join(out)
+
+
+def chrome(h, color, bars=True, ruler=True):
+    """Atmosphere shared by every framed scene. Returns (under, over):
+    `under` goes right after the frame, `over` on top of everything."""
+    under = [rect(17, 17, W - 34, h - 34, fill="url(#vig)")]
+    if ruler:
+        for y in range(64, int(h) - 40, 24):
+            major = (y - 64) % 96 == 0
+            ln = 7 if major else 4
+            under.append(line(18, y, 18 + ln, y, stroke=color if major
+                              else LINE, sw=1, opacity=0.8))
+            under.append(line(W - 18, y, W - 18 - ln, y, stroke=color
+                              if major else LINE, sw=1, opacity=0.8))
+    if bars:
+        # a small, slow activity meter in the top-right corner
+        for i, (vals, dur) in enumerate((("4;9;5;4", "2.2s"),
+                                         ("7;4;10;7", "1.8s"),
+                                         ("5;11;6;5", "2.6s"),
+                                         ("9;5;8;9", "2.0s"),
+                                         ("3;7;4;3", "2.4s"))):
+            x = W - 92 + i * 7
+            under.append(
+                f'<rect x="{x}" y="34" width="4" height="6" fill="{color}" '
+                f'opacity="0.75"><animate attributeName="height" '
+                f'values="{vals}" dur="{dur}" repeatCount="indefinite"/>'
+                f'</rect>')
+        under.append(line(W - 94, 46, W - 56, 46, stroke=LINE, sw=1))
+    cid = uid()
+    over = [f'<clipPath id="{cid}"><rect x="17" y="17" width="{W - 34}" '
+            f'height="{_f(h - 34)}"/></clipPath>'
+            f'<g clip-path="url(#{cid})"><rect x="17" y="-120" '
+            f'width="{W - 34}" height="120" fill="url(#sweep)">'
+            f'<animateTransform attributeName="transform" type="translate" '
+            f'values="0 0;0 {_f(h + 120)}" dur="{_f(max(7, h / 120))}s" '
+            f'repeatCount="indefinite"/></rect></g>']
+    return under, over
+
+
+def crosshair(x, y, color=LINE, n=5):
+    return (line(x - n, y, x + n, y, stroke=color, sw=1) +
+            line(x, y - n, x, y + n, stroke=color, sw=1))
+
+
+def glitch(x, y, s, size, weight="bold", seed=0):
+    """Two offset copies of an existing heading that flash for a moment
+    every few seconds. Hidden unless the animation runs."""
+    out = []
+    for dx, c, k in ((-2, BLUE, 0.00), (2, GREEN, 0.012)):
+        a = 0.91 + k
+        out.append(
+            f'<text x="{_f(x + dx)}" y="{y}" font-size="{size}" fill="{c}" '
+            f'font-weight="{weight}" opacity="0">{escape(s)}'
+            f'<animate attributeName="opacity" '
+            f'values="0;0;0.7;0;0" keyTimes="0;{a:.3f};{a + 0.008:.3f};'
+            f'{a + 0.02:.3f};1" dur="{9 + seed % 4}s" '
+            f'begin="{1.5 + seed % 3}s" repeatCount="indefinite"/></text>')
+    return "".join(out)
+
+
+def flicker(x, y, w, h, seed=0):
+    """A faint dimming pass over an ASCII emblem, now and then."""
+    return (f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="{VOID}" '
+            f'opacity="0"><animate attributeName="opacity" '
+            f'values="0;0;0.28;0;0.18;0;0" '
+            f'keyTimes="0;0.86;0.87;0.88;0.89;0.9;1" dur="{7 + seed % 5}s" '
+            f'repeatCount="indefinite"/></rect>')
+
+
+def shimmer(x, y, n=9, step=22, size=16):
+    """A thin outline that walks across a swatch row, then rests."""
+    xs = ";".join(_f(x - 2 + i * step) for i in range(n)) + f";{_f(x - 2)}"
+    kt = ";".join(_f(i / (n + 4)) for i in range(n)) + ";1"
+    return (f'<rect x="{_f(x - 2)}" y="{_f(y - 2)}" width="{size + 4}" '
+            f'height="{size + 4}" fill="none" stroke="{WHITE}" '
+            f'stroke-width="1.2" opacity="0.7"><animate attributeName="x" '
+            f'values="{xs}" keyTimes="{kt}" calcMode="discrete" dur="5s" '
+            f'repeatCount="indefinite"/></rect>')
 
 
 def write(name, content):
@@ -249,7 +354,10 @@ def rotating(x, y, phrases, size, fill, start, cps=18, hold=2.6, gap=0.5):
         f'<animate attributeName="x" begin="{_f(start)}s" dur="{_f(cycle)}s" '
         f'repeatCount="indefinite" calcMode="discrete" '
         f'keyTimes="{";".join(_f(k / cycle) for k in times)}" '
-        f'values="{";".join(_f(v) for v in xs)}"/></rect>')
+        f'values="{";".join(_f(v) for v in xs)}"/>'
+        f'<animate attributeName="opacity" values="1;1;0.25;1" '
+        f'keyTimes="0;0.55;0.75;1" dur="1.3s" repeatCount="indefinite"/>'
+        f'</rect>')
     return appear("\n".join(out), start)
 
 
@@ -280,8 +388,9 @@ ________|#|####|#||:  |
 
 def header():
     h = 600
+    under, over = chrome(h, PINK)
     b = [window(16, 16, W - 32, h - 32, PINK, "snowyarch@zurich-node: ~",
-                "AFTERHOURS", fill=VOID)]
+                "AFTERHOURS", fill=VOID)] + under
     # the boot command
     prompt = "snowyarch@zurich-node:~$"
     b.append(t(36, 70, prompt, 21, GREEN, "bold"))
@@ -308,12 +417,17 @@ def header():
     sw = [appear(rect(36 + i * 26, 440, 22, 22, fill=c, stroke=LINE, sw=1),
                  t0 + 0.9 + i * 0.05) for i, c in enumerate(pal)]
     b += sw
+    b.append(appear(shimmer(36, 440, 9, 26, 22), t0 + 1.4))
+    b.append(appear(flicker(32, 96, 246, 330, 3), t0 + 1.0))
 
     # neofetch-style info column
     x0 = 286
     fs2, lh2 = 19, 29
     b.append(appear(t(x0, 112, "snowyarch@zurich-node", 22, PINK, "bold"),
                     t0 + 0.1))
+    b.append(appear(glitch(x0, 112, "snowyarch@zurich-node", 22, seed=1),
+                    t0 + 0.1))
+    b.append(crosshair(W - 40, 98))
     b.append(appear(t(x0, 134, "-" * 21, 22, LINE), t0 + 0.15))
     info = [("node", "afterhours / personal"),
             ("loc", "zürich // ch"),
@@ -346,6 +460,7 @@ def header():
                        '"not yet" is a valid result',
                        "questions > answers"],
                       21, GREEN, t1 + 0.3))
+    b += over
     write("header.svg", svg(h, "\n".join(b)))
 
 
@@ -415,7 +530,12 @@ class Module:
             self.head.append(rect(X0 + i * 22, ey, 16, 16, fill=c,
                                   stroke=LINE, sw=1,
                                   opacity=round(0.35 + 0.07 * i, 2)))
+        seed = len(self.name)
+        self.head.append(flicker(X0 - 4, y0 - 14, INFO_X - X0 - 8,
+                                 len(emblem) * 16.5 + 8, seed))
+        self.head.append(shimmer(X0, ey))
         self.head.append(t(INFO_X, y0, ident, 22, PINK, "bold"))
+        self.head.append(glitch(INFO_X, y0, ident, 22, seed=seed))
         self.head.append(t(INFO_X, y0 + 22, "-" * len(ident), 22, LINE))
         for i, (k, v, c) in enumerate(info):
             y = y0 + 56 + i * 28
@@ -435,8 +555,12 @@ class Module:
                 t(X0 + 20, y, label, FS, c, "bold") +
                 line(_f(lx), y - 6, X1 - 52, y - 6, stroke=LINE, sw=1))
         for i in range(3):
-            frag += rect(X1 - 44 + i * 15, y - 12, 10, 10, fill=c,
-                         opacity=round(0.9 - 0.3 * i, 2))
+            o = round(0.9 - 0.3 * i, 2)
+            frag += (f'<rect x="{X1 - 44 + i * 15}" y="{y - 12}" width="10" '
+                     f'height="10" fill="{c}" opacity="{o}">'
+                     f'<animate attributeName="opacity" '
+                     f'values="{o};0.12;{o}" dur="3.2s" begin="{0.45 * i}s" '
+                     f'repeatCount="indefinite"/></rect>')
         self.items.append(frag)
         self.y += 36
 
@@ -469,9 +593,11 @@ class Module:
                 t(_f(X0 + 20 * 21 * CW), y + 36, f")-[{self.path}]", 21, BLUE),
                 t(X0, y + 70, "└─$", 21, BLUE)]
         h = math.ceil(y + 70 + 40)
+        under, over = chrome(h, self.color)
         out = [window(16, 16, W - 32, h - 32, self.color, self.title,
-                      self.right, fill=VOID),
-               hud(26, 30, W - 52, h - 52, LINE, 10, 1.2, 0.9)]
+                      self.right, fill=VOID)] + under + [
+               hud(26, 30, W - 52, h - 52, LINE, 10, 1.2, 0.9),
+               crosshair(X1 - 4, 98), crosshair(X1 - 4, y - 14)]
         prompt = f"snowyarch@zurich:{self.path}$"
         ps = min(21, (X1 - X0) / ((len(prompt) + 1 + len(self.cmd)) * CW))
         out.append(t(X0, 70, prompt, _f(ps), GREEN, "bold"))
@@ -488,6 +614,7 @@ class Module:
         out.append(appear("".join(tail), tt))
         out.append(rotating((X0 + 4 * 21 * CW), y + 70, phrases, 21, GREEN,
                             tt + 0.3))
+        out += over
         write(self.name, svg(h, "\n".join(out)))
 
 
@@ -947,11 +1074,21 @@ def mod_culture():
 def restricted_panel():
     # Static on purpose. Only the approved public words appear here.
     h = 420
-    b = [rect(16, 16, W - 32, h - 32, fill=VOID, stroke=LINE, sw=1.4),
+    under, over = chrome(h, ICE, bars=False)
+    b = [rect(16, 16, W - 32, h - 32, stroke=ICE, sw=3, opacity=0.3,
+              extra=' filter="url(#soft)"'),
+         rect(16, 16, W - 32, h - 32, fill=VOID, stroke=LINE, sw=1.4)] + \
+        under + [
          rect(28, 28, W - 56, h - 56, stroke=LINE, sw=1, opacity=0.7),
          hud(16, 16, W - 32, h - 32, ICE, 22, 2.4, 1),
          hud(40, 40, W - 80, h - 80, PINK, 10, 1.2, 0.8),
          rect(28, 28, W - 56, h - 56, fill="url(#scan)")]
+    for i, (c, dur) in enumerate(((GREEN, "2.8s"), (PINK, None),
+                                  (LINE, None))):
+        anim = (f'<animate attributeName="opacity" values="1;0.3;1" '
+                f'dur="{dur}" repeatCount="indefinite"/>' if dur else "")
+        b.append(f'<circle cx="{W - 96 + i * 14}" cy="58" r="3.8" '
+                 f'fill="{c}">{anim}</circle>')
     for i, row in enumerate(emblem("lock")):
         c = mix(ICE, PINK, i / 10)
         b.append(f'<text x="58" y="{_f(122 + i * 17)}" font-size="14" '
@@ -969,6 +1106,8 @@ def restricted_panel():
         b.append(rect(58 + i * 22, h - 72, 16, 16,
                       fill=mix(ICE, PINK, i / 8), stroke=LINE, sw=1,
                       opacity=round(0.3 + 0.07 * i, 2)))
+    b.append(shimmer(58, h - 72))
+    b += over
     write("restricted-panel.svg", svg(h, "\n".join(b)))
 
 
@@ -1213,8 +1352,9 @@ def mod_side():
 
 def footer():
     h = 330
+    under, over = chrome(h, PINK)
     b = [window(16, 16, W - 32, h - 32, PINK, "session.end", "zh-01",
-                fill=VOID),
+                fill=VOID)] + under + [
          hud(26, 30, W - 52, h - 52, LINE, 10, 1.2, 0.9)]
     b.append(t(36, 70, "└─$", 21, BLUE))
     cmd, t0 = typed((36 + 4 * 21 * CW), 70, "exit", 21, WHITE, 0.8, cps=8)
@@ -1232,6 +1372,8 @@ def footer():
                              fill=mix(PINK, BLUE, i / 8), stroke=LINE, sw=1),
                         t0 + 1.8 + i * 0.05))
     b.append(t(36, h - 30, "~-" * 40, 14, BLUE, opacity=0.6))
+    b.append(appear(shimmer(W - 250, 252, 9, 24, 18), t0 + 2.4))
+    b += over
     write("footer-signal.svg", svg(h, "\n".join(b)))
 
 
