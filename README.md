@@ -26,7 +26,7 @@
 `cd` → [debtwatch](#debtwatch) · [ai-bubblewatch](#ai-bubblewatch) · [culture-legitimacy](#culture-legitimacy) · [GEN_ALPHA.dat](#gen-alpha) · [autonomous-security](#autonomous-security) · [mind.cache](#mind-cache) · [market.frequencies](#market-frequencies) · [library](#library)
 
 <a name="operator-note"></a>
-<img src="assets/mod-operator.svg" width="100%" alt="operator.note terminal module with an ASCII snowflake: builder, researcher, markets obsessive, philosophy nerd, systems explorer, internet-native learner, still learning; followed by the operator note. Plain text below.">
+<img src="assets/mod-operator.svg" width="100%" alt="operator.note terminal module with an ASCII snowflake: builder, researcher, markets obsessive, philosophy nerd, systems explorer, internet-native learner, still learning; followed by the operator note.">
 
 <details>
 <summary><code>$ less --plain</code></summary>
@@ -63,7 +63,7 @@ keep me coming back.
 </details>
 
 <a name="debtwatch"></a>
-<img src="assets/mod-debtwatch.svg" width="100%" alt="debtwatch :: credit-console terminal module, historical snapshot 2026-10-02, forecast none, result not yet. Query: when does expensive credit become unavailable credit? Conceptual transmission from macro to rates, credit pricing, refinancing and company cash flows. Watchlist: price — more evident; terms — selective; access — not established. Notes on counterevidence and a non-representative panel. Plain text below.">
+<img src="assets/mod-debtwatch.svg" width="100%" alt="debtwatch :: credit-console terminal module, historical snapshot 2026-10-02, forecast none, result not yet. Query: when does expensive credit become unavailable credit? Conceptual transmission from macro to rates, credit pricing, refinancing and company cash flows. Watchlist: price — more evident; terms — selective; access — not established. Notes on counterevidence and a non-representative panel.">
 
 <details>
 <summary><code>$ less --plain</code></summary>
@@ -87,11 +87,12 @@ macro → rates → credit pricing
       → refinancing
       → company cash flows
 
-# not an automatic sequence:
-# maturities, fixed vs floating
-# rates, collateral, lender
-# appetite and operating
-# performance change the path
+PATH      conditional
+DEPENDS   maturities
+          fixed / floating rates
+          collateral
+          lender appetite
+          operating performance
 ```
 
 ```text
@@ -114,26 +115,23 @@ macro → rates → credit pricing
 ```
 
 ```text
-notes
-> successful refinancings stay
-  in the record as
-  counterevidence
-> the borrower panel was picked
-  after spotting cases of
-  interest: no estimate of how
-  much of the market is losing
-  access
-> not a claim about conditions
-  today
+counterevidence :: limits
+COUNTER    successful
+           refinancings
+           on record
+PANEL      selected after cases
+           of interest
+LIMIT      no market-wide
+           prevalence estimate
+SCOPE      historical snapshot
+           2026-10-02
 
-result  NOT YET
-> the evidence hasn't crossed
-  the threshold for the
-  stronger conclusion. it
-  doesn't mean no risk exists.
-
-research / monitoring workflow
-not a crash predictor
+RESULT     NOT YET
+THRESHOLD  stronger conclusion
+           not crossed
+RISK       open · not ruled out
+MODE       research / monitoring
+FORECAST   none
 ```
 
 </details>
@@ -141,7 +139,7 @@ not a crash predictor
 [`$ cat public/debtwatch-public-brief.md`](public/debtwatch-public-brief.md)
 
 <a name="ai-bubblewatch"></a>
-<img src="assets/mod-ai-bubblewatch.svg" width="100%" alt="ai-bubblewatch :: observatory terminal module, cutoff 2026-09-21, hypothesis unresolved, 16 selected entities, not representative, verdict none. Analytical cells for capex, utilization, returns, obligations and financing; a conceptual map; counterevidence; open questions. The name is a question, not a verdict. Plain text below.">
+<img src="assets/mod-ai-bubblewatch.svg" width="100%" alt="ai-bubblewatch :: observatory terminal module, cutoff 2026-09-21, hypothesis unresolved, 16 selected entities, not representative, verdict none. Analytical cells for capex, utilization, returns, obligations and financing; a conceptual map; counterevidence; open questions. The name is a question, not a verdict.">
 
 <details>
 <summary><code>$ less --plain</code></summary>
@@ -152,7 +150,7 @@ AI BUBBLEWATCH       observatory
 cutoff      2026-09-21
 hypothesis  unresolved
 sample      16 selected entities
-            not representative
+scope       non-representative
 verdict     none
 
 Q  what would distinguish
@@ -161,28 +159,28 @@ Q  what would distinguish
 ```
 
 ```ini
-; the name is a question,
-; not a verdict
-
+[status]
+  name     = question
+  verdict  = none
 [capex]
   announced, spent and
   committed are different
   quantities
 [utilization]
-  contracted capacity is not
+  contracted capacity ≠
   realized, profitable use
 [returns]
-  revenue or usefulness alone
-  is not a return above the
-  cost of capital
+  revenue or usefulness ≠
+  return above the cost of
+  capital
 [obligations]
   debt, project obligations,
   leases and customer
   commitments: separate
 [financing]
-  access to new money doesn't
-  settle the economics of what
-  it pays for
+  access to new money ≠
+  sound economics of the
+  assets it pays for
 ```
 
 ```diff
@@ -203,9 +201,9 @@ open
    continuing financing
  · who bears the risk
 
-no bubble verdict
-no live market assessment
-no trading recommendation
+VERDICT    none
+LIVE       —
+ADVICE     —
 ```
 
 </details>
@@ -213,7 +211,7 @@ no trading recommendation
 [`$ cat public/ai-bubblewatch-public-brief.md`](public/ai-bubblewatch-public-brief.md)
 
 <a name="culture-legitimacy"></a>
-<img src="assets/mod-culture.svg" width="100%" alt="culture-legitimacy :: dossier terminal module: Tastewashing → Cultural Legitimacy Embedding (working title), documentary, pre-experimental, causal question open, cutoff 2026-08-12. Layers: production, reception, causal question; finding; two reports in Spanish (10 and 13 pages). Plain text below.">
+<img src="assets/mod-culture.svg" width="100%" alt="culture-legitimacy :: dossier terminal module: Tastewashing → Cultural Legitimacy Embedding (working title), documentary, pre-experimental, causal question open, cutoff 2026-08-12. Layers: production, reception, causal question; finding; two reports in Spanish (10 and 13 pages).">
 
 <details>
 <summary><code>$ less --plain</code></summary>
@@ -229,7 +227,7 @@ no trading recommendation
     └── informe-formal    13pp
 
 4 directories, 3 files
-# reports in ES (Spanish)
+LANG       ES
 ```
 
 ```text
@@ -268,34 +266,32 @@ political affinity.
 [production]
   what do companies make,
   communicate and organize?
-  ! visible branding does not
-    establish a concealed
-    intention
+  LIMIT visible branding ≠
+        concealed intention
 [reception]
   how do people interpret or
   use those cultural objects?
-  ! selected public comments
-    cannot estimate
-    population-wide attitudes
+  LIMIT selected comments ≠
+        population-wide
+        attitudes
 [causal-question]
   does affinity change the
   legitimacy granted to a
   company's functions or power?
-  ! liking a brand is not
-    evidence that this
-    transition occurred
+  LIMIT liking a brand ≠
+        evidence of this
+        transition
 ```
 
 ```text
-the reports do not establish
-that causal link. connections
-between organizations don't
-alone show coordination; an
-effect, even if established,
-wouldn't prove intention.
-"cultural legitimacy embedding"
-is a working title, not a
-validated theory.
+CAUSAL   not established by
+         the reports
+LINKS    connections ≠
+         coordination
+EFFECT   an effect ≠ proof of
+         intention
+FRAME    working title
+         unvalidated
 ```
 
 </details>
@@ -309,27 +305,20 @@ validated theory.
 <summary><code>$ cat reports/README</code></summary>
 
 ```text
-both reports keep the 12 August
-2026 research cutoff, their pre-
-experimental status and their
-disclosure of AI assistance in
-search, comparison, synthesis
-and adversarial review.
-
-public editions are dated 3
-October 2026: an editorial
-preparation date, not a new
-research cutoff. the research
-bodies are preserved and the
-bibliography updated.
-
-social-media threads remain
-qualitative, non-representative
-examples. live corporate pages
-may have changed since the
-cutoff and are not archived
-evidence of every earlier
-formulation.
+CUTOFF     2026-08-12
+STATUS     pre-experimental
+METHOD     AI-assisted search,
+           comparison,
+           synthesis,
+           adversarial review
+EDITION    2026-10-03 editorial
+           cutoff unchanged
+BODY       preserved
+BIBLIO     updated
+THREADS    qualitative
+           non-representative
+LIVE PAGES may have changed
+           since the cutoff
 ```
 
 </details>
@@ -339,7 +328,7 @@ formulation.
 </p>
 
 <a name="mind-cache"></a>
-<img src="assets/mod-mind-cache.svg" width="100%" alt="mind.cache terminal module with five open questions: what would make me change my mind; when does authority become legitimate; who gets to define normal; how much of identity is actually ours; why do markets believe what they believe. Plain text below.">
+<img src="assets/mod-mind-cache.svg" width="100%" alt="mind.cache terminal module with five open questions: what would make me change my mind; when does authority become legitimate; who gets to define normal; how much of identity is actually ours; why do markets believe what they believe.">
 
 <details>
 <summary><code>$ less --plain</code></summary>
@@ -384,15 +373,16 @@ formulation.
 </details>
 
 <a name="gen-alpha"></a>
-<img src="assets/mod-gen-alpha.svg" width="100%" alt="GEN_ALPHA.dat terminal module — a label, not a dataset. Five records: educational performance is not general cognition; population, age and measure; school conditions; screens, short-form, algorithms and AI need separate causal evidence; the observer. Causality unresolved, snapshot 2026-08-16. Plain text below.">
+<img src="assets/mod-gen-alpha.svg" width="100%" alt="GEN_ALPHA.dat terminal module — a label, not a dataset. Five records: educational performance is not general cognition; population, age and measure; school conditions; screens, short-form, algorithms and AI need separate causal evidence; the observer. Causality unresolved, snapshot 2026-08-16.">
 
 <details>
 <summary><code>$ less --plain</code></summary>
 
 ```text
-# cohort / cognition archive
-# source snapshot 2026-08-16
-# a label, not a dataset
+MODE      cohort / cognition
+          archive
+SNAPSHOT  2026-08-16
+TYPE      research label
 
 Q  what actually changes between
    generations, and what changes
@@ -404,7 +394,7 @@ Q  what actually changes between
 domain | educational
        | performance ≠
        | general cognition
-note   | reading, maths and
+obs    | reading, maths and
        | science tests measure
        | abilities in defined
        | settings; not a direct
@@ -414,7 +404,7 @@ note   | reading, maths and
 -[ RECORD 2 ]-------------------
 domain | population · age ·
        | measure
-note   | which group, task,
+obs    | which group, task,
        | country, period? PISA
        | 2022 tested
        | 15-year-olds, mostly
@@ -423,7 +413,7 @@ note   | which group, task,
        | dates
 -[ RECORD 3 ]-------------------
 domain | school conditions
-note   | instruction,
+obs    | instruction,
        | attendance, pandemic
        | disruption,
        | socioeconomic and
@@ -431,14 +421,14 @@ note   | instruction,
 -[ RECORD 4 ]-------------------
 domain | screens · short-form
        | · feeds · ai
-note   | separate hypotheses,
+obs    | separate hypotheses,
        | separate causal
        | evidence. association
        | ≠ direction;
        | uncertainty ≠ harmless
 -[ RECORD 5 ]-------------------
 domain | the observer
-note   | biased memory makes
+obs    | biased memory makes
        | "kids these days" look
        | worse; dismissing a
        | documented decline is
@@ -448,19 +438,14 @@ note   | biased memory makes
 ```
 
 ```text
-the reviewed material supports
-a heterogeneous picture. "an
-entire generation is declining"
-is a much larger claim than the
-evidence behind one educational
-trend.
-
-causality  UNRESOLVED
-research   open
-type       selected public note
-           not a systematic
-           review, dataset or
-           experiment
+EVIDENCE   heterogeneous
+THRESHOLD  one educational
+           trend ≠ a generation-
+           wide decline
+CAUSALITY  UNRESOLVED
+RESEARCH   open
+SCOPE      selected public
+           synthesis
 ```
 
 </details>
@@ -468,7 +453,7 @@ type       selected public note
 [`$ cat public/gen-alpha-research-note.md`](public/gen-alpha-research-note.md)
 
 <a name="autonomous-security"></a>
-<img src="assets/mod-security.svg" width="100%" alt="autonomous-security :: review terminal module: discovery and adversarial review of security boundaries for autonomous action; novelty and protection claims under falsification; no validated primitive, product or startup thesis; readiness not claimed. Plain text below.">
+<img src="assets/mod-security.svg" width="100%" alt="autonomous-security :: review terminal module: discovery and adversarial review of security boundaries for autonomous action; novelty and protection claims under falsification; no validated primitive, product or startup thesis; readiness unclaimed.">
 
 <details>
 <summary><code>$ less --plain</code></summary>
@@ -490,9 +475,11 @@ type       selected public note
 [result] no validated primitive
 [result] no validated product
 [result] no startup thesis
-[note  ] an interesting
-         question is not yet a
-         defensible contribution
+[thresh] interesting question
+         ≠ defensible
+         contribution
+[claims] security · deployment
+         · readiness: —
 ```
 
 </details>
@@ -506,15 +493,12 @@ type       selected public note
 <img src="assets/dynamic/research-queue.svg" width="100%" alt="research.queue — process table of open research questions. Source: data/research-queue.json.">
 
 <a name="market-frequencies"></a>
-<img src="assets/mod-markets.svg" width="100%" alt="market.frequencies terminal module: channels for crypto, equities, credit, structure and narrative. Interests and questions only — no wallets, positions, P&amp;L or advice. Plain text below.">
+<img src="assets/mod-markets.svg" width="100%" alt="market.frequencies terminal module: channels for crypto, equities, credit, structure and narrative. Interests and questions only — no wallets, positions, P&amp;L or advice.">
 
 <details>
 <summary><code>$ less --plain</code></summary>
 
 ```ini
-; interests and questions,
-; not positions or advice
-
 [crypto]
 topics = bitcoin, solana,
          memecoins
@@ -530,8 +514,7 @@ lens   = capital, market power,
 [credit]
 topics = obligations,
          maturities, refinancing
-note   = the interest behind
-         debtwatch
+link   = debtwatch
 
 [structure]
 topics = liquidity, market
@@ -543,22 +526,18 @@ q      = what can a price
 q      = why does a story
          become believable once
          money enters it?
-
-; no wallets · no balances
-; no p&l · not advice
 ```
 
 </details>
 
 <a name="library"></a>
-<img src="assets/mod-library.svg" width="100%" alt="library :: culture-node terminal module with an ASCII bookshelf: Dune, Leviathan, 1984, Fahrenheit 451, Brave New World, The Road, Cadáver exquisito; Monster, Cyberpunk: Edgerunners, Angel Beats!, Charlotte; Norse myths. An orbit, not a reading log.">
+<img src="assets/mod-library.svg" width="100%" alt="library :: culture-node terminal module with an ASCII bookshelf: Dune, Leviathan, 1984, Fahrenheit 451, Brave New World, The Road, Cadáver exquisito; Monster, Cyberpunk: Edgerunners, Angel Beats!, Charlotte; Norse myths.">
 
 <details>
 <summary><code>$ less --plain</code></summary>
 
 ```yaml
-# an orbit of works,
-# not a reading log
+mode: orbit
 books:
   dune: power, prescience
   leviathan: authority, order
@@ -585,22 +564,15 @@ myth:
 <summary><code>$ less --plain</code></summary>
 
 ```sh
-# grouped by use
-# no mastery bars
 build=(claude-code git vscode)
 build+=(python)
 research=(chatgpt sources)
 screens=(tradingview reuters)
 screens+=(coinglass)
 crypto=(axiom phantom)
-
-# a tool used ≠ a skill claimed
 mastery=undefined
-
-# most building happens in a
-# terminal with agents: direct
-# the task, compare answers,
-# review the result, revise.
+loop=(direct compare review)
+loop+=(revise)
 ```
 
 </details>
@@ -614,11 +586,17 @@ mastery=undefined
 <a name="activity"></a>
 <img src="assets/dynamic/signal-activity.svg" width="100%" alt="signal.activity — 14-day spectrum of public GitHub events for snowyarch: push, create, thread, social, other.">
 
+<a name="traffic"></a>
+<img src="assets/dynamic/node-traffic.svg" width="100%" alt="node.traffic — 14-day views, unique visitors, clones, top referrer and top path for snowyarch/snowyarch.">
+
 <a name="transmissions"></a>
 <img src="assets/dynamic/transmission-log.svg" width="100%" alt="transmission.log — last five commits of snowyarch/snowyarch, by date and class.">
 
 <a name="clock"></a>
 <img src="assets/dynamic/node-clock.svg" width="100%" alt="node.clock — Zürich node time, Europe/Zurich, at last sync.">
+
+<a name="weather"></a>
+<img src="assets/dynamic/weather-signal.svg" width="100%" alt="weather.signal — current weather in Zürich: condition, temperature, humidity, wind, pressure and sync time.">
 
 <img src="assets/mod-side.svg" width="100%" alt="side.frequencies terminal module: Minecraft, Terraria, weird corners of the internet, technical rabbit holes, internet culture, too many tabs.">
 

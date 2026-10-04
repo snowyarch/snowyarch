@@ -33,7 +33,7 @@ from zoneinfo import ZoneInfo
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_assets import (  # noqa: E402
     BLUE, CW, FS, GREEN, ICE, LINE, OUT, PINK, VOID, WHITE, X0, X1,
-    Module, _f, line, rect, t)
+    Module, _f, line, mix, rect, t)
 
 ROOT = Path(__file__).resolve().parent.parent
 DYN = OUT / "dynamic"
@@ -735,11 +735,361 @@ def signal_archive():
     m.build(["ls -la public/", "the archive is the public record"])
 
 
+# ---------------------------------------------------------------- weather
+
+# Zürich city-centre coordinates, used only to query the forecast API.
+ZRH_LAT, ZRH_LON = 47.3769, 8.5417
+WMO = {0: "CLEAR", 1: "MAINLY CLEAR", 2: "PARTLY CLOUDY", 3: "OVERCAST",
+       45: "FOG", 48: "RIME FOG", 51: "LIGHT DRIZZLE", 53: "DRIZZLE",
+       55: "DENSE DRIZZLE", 56: "FREEZING DRIZZLE", 57: "FREEZING DRIZZLE",
+       61: "LIGHT RAIN", 63: "RAIN", 65: "HEAVY RAIN", 66: "FREEZING RAIN",
+       67: "FREEZING RAIN", 71: "LIGHT SNOW", 73: "SNOW", 75: "HEAVY SNOW",
+       77: "SNOW GRAINS", 80: "RAIN SHOWERS", 81: "RAIN SHOWERS",
+       82: "HEAVY SHOWERS", 85: "SNOW SHOWERS", 86: "SNOW SHOWERS",
+       95: "THUNDERSTORM", 96: "STORM + HAIL", 99: "STORM + HAIL"}
+
+
+def sky_kind(code, is_day):
+    if code in (0, 1):
+        return "clear-day" if is_day else "clear-night"
+    if code in (45, 48):
+        return "fog"
+    if code in (95, 96, 99):
+        return "storm"
+    if 71 <= code <= 77 or code in (85, 86):
+        return "snow"
+    if 51 <= code <= 67 or 80 <= code <= 82:
+        return "rain"
+    return "cloud"
+
+
+def fetch_json(url, headers=None, timeout=20):
+    try:
+        req = urllib.request.Request(url, headers=headers or {
+            "User-Agent": "zurich-node-refresh"})
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
+def weather_now():
+    fields = ("temperature_2m,apparent_temperature,relative_humidity_2m,"
+              "is_day,weather_code,cloud_cover,pressure_msl,wind_speed_10m,"
+              "wind_direction_10m")
+    data = fetch_json(
+        "https://api.open-meteo.com/v1/forecast"
+        f"?latitude={ZRH_LAT}&longitude={ZRH_LON}&current={fields}"
+        "&timezone=Europe%2FZurich&wind_speed_unit=kmh")
+    cur = (data or {}).get("current")
+    if not isinstance(cur, dict) or "weather_code" not in cur:
+        return None
+    return cur
+
+
+def compass(deg):
+    pts = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+    return pts[int(((deg or 0) + 22.5) // 45) % 8]
+
+
+CLOUD = r"""
+         .-~~~~-.
+   .-~~-(        )~-.
+  (                  )~.
+ (  .                   )
+  '~-.______________.-~'
+"""
+
+
+def sky_art(kind, x, y, wind=10):
+    """Original ASCII / pixel weather art for the left instrument bay."""
+    g = []
+    cloud_rows = CLOUD.strip("\n").split("\n")
+
+    def cloud(cx, cy, color=ICE, drift=14, dur=14):
+        rows = "".join(
+            f'<text x="{_f(cx)}" y="{_f(cy + i * 17)}" font-size="15" '
+            f'fill="{color}" xml:space="preserve">{r}</text>'
+            for i, r in enumerate(cloud_rows))
+        return (f'<g>{rows}<animateTransform attributeName="transform" '
+                f'type="translate" values="0 0;{drift} 0;0 0" dur="{dur}s" '
+                f'repeatCount="indefinite"/></g>')
+
+    if kind == "clear-day":
+        cx, cy = x + 112, y + 96
+        rays = "".join(
+            line(_f(cx + 52 * math.cos(math.radians(a))),
+                 _f(cy + 52 * math.sin(math.radians(a))),
+                 _f(cx + 74 * math.cos(math.radians(a))),
+                 _f(cy + 74 * math.sin(math.radians(a))), stroke=GREEN, sw=3)
+            for a in range(0, 360, 30))
+        g.append(f'<g>{rays}<animateTransform attributeName="transform" '
+                 f'type="rotate" values="0 {cx} {cy};360 {cx} {cy}" '
+                 f'dur="48s" repeatCount="indefinite"/></g>')
+        for i in range(-3, 4):
+            for j in range(-3, 4):
+                if i * i + j * j <= 10:
+                    g.append(rect(cx + i * 12 - 5, cy + j * 12 - 5, 10, 10,
+                                  fill=GREEN if i * i + j * j < 6 else PINK,
+                                  opacity=0.9))
+        g.append(f'<circle cx="{cx}" cy="{cy}" r="44" fill="{GREEN}" '
+                 f'opacity="0.18" filter="url(#soft)"/>')
+    elif kind == "clear-night":
+        cx, cy = x + 120, y + 90
+        g.append(f'<circle cx="{cx}" cy="{cy}" r="44" fill="{ICE}" '
+                 f'opacity="0.9"/><circle cx="{cx + 20}" cy="{cy - 12}" '
+                 f'r="40" fill="{VOID}"/>')
+        g.append(f'<circle cx="{cx}" cy="{cy}" r="52" fill="{BLUE}" '
+                 f'opacity="0.12" filter="url(#soft)"/>')
+        for k, (sx, sy) in enumerate(((x + 30, y + 30), (x + 200, y + 40),
+                                      (x + 60, y + 160), (x + 214, y + 150),
+                                      (x + 170, y + 190), (x + 20, y + 110))):
+            g.append(f'<rect x="{sx}" y="{sy}" width="4" height="4" '
+                     f'fill="{WHITE}"><animate attributeName="opacity" '
+                     f'values="1;0.2;1" dur="{2.4 + k * 0.7:.1f}s" '
+                     f'repeatCount="indefinite"/></rect>')
+    elif kind == "fog":
+        for k in range(7):
+            yy = y + 30 + k * 26
+            g.append(f'<rect x="{x}" y="{yy}" width="230" height="10" '
+                     f'fill="{ICE}" opacity="{0.12 + 0.04 * (k % 3):.2f}">'
+                     f'<animateTransform attributeName="transform" '
+                     f'type="translate" values="0 0;{18 if k % 2 else -18} 0;'
+                     f'0 0" dur="{10 + k}s" repeatCount="indefinite"/></rect>')
+    else:
+        g.append(cloud(x + 4, y + 30, ICE if kind != "storm" else BLUE))
+        if kind in ("rain", "storm"):
+            for k in range(14):
+                rx = x + 30 + (k * 37) % 190
+                dl = (k * 0.29) % 1.2
+                g.append(
+                    f'<line x1="{rx}" y1="{y + 124}" x2="{rx - 4}" '
+                    f'y2="{y + 138}" stroke="{BLUE}" stroke-width="1.6" '
+                    f'opacity="0.8"><animateTransform attributeName="transform" '
+                    f'type="translate" values="0 0;-12 70" dur="1.2s" '
+                    f'begin="-{dl:.2f}s" repeatCount="indefinite"/></line>')
+        if kind == "snow":
+            for k in range(12):
+                sx = x + 30 + (k * 41) % 190
+                g.append(
+                    f'<rect x="{sx}" y="{y + 124}" width="4" height="4" '
+                    f'fill="{WHITE}"><animateTransform attributeName="transform" '
+                    f'type="translate" values="0 0;8 36;-6 72" '
+                    f'dur="{4 + k % 3}s" begin="-{k * 0.4:.1f}s" '
+                    f'repeatCount="indefinite"/></rect>')
+        if kind == "storm":
+            g.append(f'<polyline points="{x + 130},{y + 120} {x + 112},{y + 158} '
+                     f'{x + 128},{y + 158} {x + 108},{y + 200}" fill="none" '
+                     f'stroke="{PINK}" stroke-width="3" opacity="0">'
+                     f'<animate attributeName="opacity" values="0;0;1;0;0.7;0;0" '
+                     f'keyTimes="0;0.8;0.81;0.83;0.84;0.86;1" dur="6s" '
+                     f'repeatCount="indefinite"/></polyline>')
+    # wind lines along the floor of the bay; speed follows the real wind
+    dur = max(2.5, 12 - (wind or 0) / 4)
+    for k in range(3):
+        yy = y + 214 + k * 8
+        g.append(f'<line x1="{x}" y1="{yy}" x2="{x + 60}" y2="{yy}" '
+                 f'stroke="{LINE}" stroke-width="1.4" stroke-dasharray="10 8">'
+                 f'<animateTransform attributeName="transform" type="translate" '
+                 f'values="0 0;170 0" dur="{dur + k:.1f}s" '
+                 f'repeatCount="indefinite"/></line>')
+    return "".join(g)
+
+
+def weather_signal():
+    m = Dyn("dynamic/weather-signal.svg", BLUE,
+            "weather.signal :: atmospheric-uplink", "zürich", "~",
+            "weather --now")
+    m.start(116)
+    top = m.y
+    cur = weather_now()
+    rx = X0 + 272
+    g = [rect(X0 - 4, top - 18, 250, 252, fill="url(#grid)", opacity=0.6),
+         f'<rect x="{X0 - 4}" y="{top - 18}" width="250" height="252" '
+         f'fill="none" stroke="{LINE}" stroke-width="1"/>']
+    g.append(t(rx, top + 6, "ZÜRICH, CH", 22, PINK, "bold"))
+    g.append(t(rx, top + 26, "-" * 14, 19, LINE))
+    if cur is None:
+        g.append(sky_art("cloud", X0, top - 6))
+        g.append(t(rx, top + 70, "[ !! ] SOURCE OFFLINE", 20, PINK, "bold"))
+        for i, (k, v, c) in enumerate((("source", "open-meteo", WHITE),
+                                       ("state", "no signal", PINK),
+                                       ("zone", "Europe/Zurich", WHITE))):
+            y = top + 110 + i * 28
+            g.append(t(rx, y, f"{k}:", 18, BLUE, "bold") +
+                     t(_f(rx + 8 * 18 * CW), y, v, 18, c))
+        m.raw("".join(g), 252)
+        m.build(["weather --now", "uplink: no signal"])
+        return
+    code = int(cur.get("weather_code", 3))
+    is_day = bool(cur.get("is_day", 1))
+    kind = sky_kind(code, is_day)
+    temp = round(cur.get("temperature_2m", 0))
+    feels = round(cur.get("apparent_temperature", temp))
+    wind = round(cur.get("wind_speed_10m", 0))
+    obs = datetime.fromisoformat(cur["time"]).replace(tzinfo=TZ) \
+        if cur.get("time") else NOW
+    g.append(sky_art(kind, X0, top - 6, wind))
+    cond = WMO.get(code, "UNKNOWN")
+    g.append(t(rx, top + 64, cond, 26 if len(cond) <= 13 else 21, WHITE, "bold"))
+    rows = [("temp", f"{temp}°C", GREEN),
+            ("feels", f"{feels}°C", WHITE),
+            ("humidity", f"{round(cur.get('relative_humidity_2m', 0))}%", WHITE),
+            ("wind", f"{wind} km/h {compass(cur.get('wind_direction_10m'))}",
+             WHITE),
+            ("pressure", f"{round(cur.get('pressure_msl', 0))} hPa", WHITE),
+            ("cloud", f"{round(cur.get('cloud_cover', 0))}%", WHITE),
+            ("cycle", "DAY" if is_day else "NIGHT", PINK)]
+    for i, (k, v, c) in enumerate(rows):
+        y = top + 96 + i * 22
+        g.append(t(rx, y, f"{k}:", 17, BLUE, "bold") +
+                 t(_f(rx + 10 * 17 * CW), y, v, 17, c))
+    # thermometer: fill follows the real temperature on a -15..35 °C scale
+    tx, ty, th = X1 - 18, top + 40, 150
+    frac = min(1, max(0, (temp + 15) / 50))
+    g.append(rect(tx, ty, 10, th, fill=VOID, stroke=LINE, sw=1.2))
+    g.append(rect(tx + 2, _f(ty + th - (th - 4) * frac - 2), 6,
+                  _f((th - 4) * frac), fill=mix(BLUE, PINK, frac)))
+    for k in range(6):
+        g.append(line(tx - 6, ty + k * th / 5, tx - 1, ty + k * th / 5,
+                      stroke=LINE, sw=1))
+    m.raw("".join(g), 252)
+    m.section("uplink")
+    m.line(("SYNC     ", BLUE, "bold"),
+           (obs.strftime("%H:%M ") + (obs.tzname() or NOW.tzname() or ""),
+            GREEN), ("   SOURCE  ", BLUE, "bold"), ("open-meteo", WHITE))
+    m.build(["weather --now", f"{cond.lower()} · {temp}°C"])
+
+
+# ---------------------------------------------------------------- traffic
+
+REPO = os.environ.get("NODE_REPO", "snowyarch/snowyarch")
+
+
+def traffic():
+    """14-day traffic for the profile repository. Prefers the optional
+    PROFILE_TRAFFIC_TOKEN (fine-grained, Administration: read); falls back
+    to GITHUB_TOKEN. Tokens are only ever sent as a header."""
+    headers = {"Accept": "application/vnd.github+json",
+               "User-Agent": "zurich-node-refresh",
+               "X-GitHub-Api-Version": "2022-11-28"}
+    token = os.environ.get("PROFILE_TRAFFIC_TOKEN") or \
+        os.environ.get("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    base = f"https://api.github.com/repos/{REPO}/traffic/"
+    views = fetch_json(base + "views", headers)
+    if not isinstance(views, dict) or "views" not in views:
+        return None
+    clones = fetch_json(base + "clones", headers) or {}
+    refs = fetch_json(base + "popular/referrers", headers) or []
+    paths = fetch_json(base + "popular/paths", headers) or []
+    return views, clones, refs if isinstance(refs, list) else [], \
+        paths if isinstance(paths, list) else []
+
+
+def node_traffic():
+    m = Module("dynamic/node-traffic.svg", PINK,
+               "node.traffic :: passive-sensor", "14d", "~",
+               "rx --passive --window 14d")
+    data = traffic()
+    days = [NOW.date() - timedelta(days=13 - i) for i in range(14)]
+    if data:
+        views, clones, refs, paths = data
+        vday = {v["timestamp"][:10]: (v.get("count", 0), v.get("uniques", 0))
+                for v in views.get("views", [])}
+        cday = {c["timestamp"][:10]: c.get("count", 0)
+                for c in clones.get("clones", [])}
+        series = [vday.get(d.isoformat(), (0, 0)) for d in days]
+        cser = [cday.get(d.isoformat(), 0) for d in days]
+        top_ref = refs[0]["referrer"][:20] if refs else "—"
+        top_path = paths[0]["path"][:22] if paths else "—"
+        info = [("window", "14d", WHITE),
+                ("views", str(views.get("count", 0)), GREEN),
+                ("unique", str(views.get("uniques", 0)), WHITE),
+                ("clones", str(clones.get("count", 0)), WHITE),
+                ("cloners", str(clones.get("uniques", 0)), WHITE),
+                ("channel", top_ref, PINK), ("path", top_path, WHITE),
+                ("sync", stamp(), GREEN)]
+    else:
+        info = [("window", "14d", WHITE), ("views", "—", WHITE),
+                ("unique", "—", WHITE), ("clones", "—", WHITE),
+                ("source", "repo traffic", WHITE), ("sync", stamp(), ICE)]
+    m.neofetch(ascii_rows(r"""
+     ))       .-.       ((
+    )))     ( <> )     (((
+     ))       '-'       ((
+               |
+              /|\
+           __/ | \__
+          /    |    \
+        RX    NODE    TX
+       ====================
+"""), (PINK, BLUE), "rx@node-traffic", info, kcol=9)
+    total = data[0].get("count", 0) if data else 0
+    m.head.append(pulse_rings(X0 + 104, 132, PINK,
+                              min(5, 2 + total // 25) if data else 1, 6, 46,
+                              3.0))
+    if not data:
+        failure(m, "TRAFFIC SOURCE OFFLINE", "repo traffic", "no signal")
+        m.build(["rx --passive --window 14d", "sensor idle"])
+        return
+    m.section("inbound :: views / day")
+    top, hgt = m.y, 150
+    base = top + hgt
+    slot = (X1 - X0) / 13
+    peak = max([c for c, _ in series] + [1])
+    g = [rect(X0, top - 8, X1 - X0, hgt + 16, fill="url(#grid)")]
+    for k in range(1, 4):
+        g.append(line(X0, base - hgt * k / 4, X1, base - hgt * k / 4,
+                      stroke=LINE, sw=1, dash="2 6", opacity=0.7))
+    pts = [(X0 + i * slot, base - (hgt - 24) * c / peak)
+           for i, (c, _) in enumerate(series)]
+    area = (f"M{_f(pts[0][0])} {base} " +
+            " ".join(f"L{_f(x)} {_f(y)}" for x, y in pts) +
+            f" L{_f(pts[-1][0])} {base} Z")
+    g.append(f'<path d="{area}" fill="{PINK}" opacity="0.12"/>')
+    g.append(f'<polyline points="{" ".join(f"{_f(x)},{_f(y)}" for x, y in pts)}" '
+             f'fill="none" stroke="{PINK}" stroke-width="2" opacity="0.35" '
+             f'filter="url(#soft)"/>')
+    g.append(f'<polyline points="{" ".join(f"{_f(x)},{_f(y)}" for x, y in pts)}" '
+             f'fill="none" stroke="{PINK}" stroke-width="1.8"/>')
+    upeak = max([u for _, u in series] + [1])
+    for i, (c, u) in enumerate(series):
+        x = X0 + i * slot
+        uy = base - (hgt - 24) * u / max(peak, upeak)
+        if u:
+            g.append(f'<circle cx="{_f(x)}" cy="{_f(uy)}" r="3.5" '
+                     f'fill="{GREEN}"/>')
+        if cser[i]:
+            ch = min(30, 6 + cser[i] * 4)
+            g.append(rect(_f(x - 3), _f(base - ch), 6, _f(ch), fill=BLUE,
+                          opacity=0.8))
+        if i % 2 == 0:
+            g.append(t(_f(x), base + 22, days[i].strftime("%d"), 15, ICE,
+                       anchor="middle"))
+    g.append(line(X0, base, X1, base, stroke=PINK, sw=1.4))
+    # an inbound packet riding the waveform
+    path = "M" + " L".join(f"{_f(x)} {_f(y)}" for x, y in pts)
+    g.append(f'<circle r="4" fill="{WHITE}"><animateMotion dur="9s" '
+             f'repeatCount="indefinite" path="{path}"/></circle>')
+    if not total:
+        g.append(t((X0 + X1) / 2, top + hgt / 2, "NO INBOUND SIGNAL", 22,
+                   PINK, "bold", anchor="middle"))
+    m.raw("".join(g), hgt + 48)
+    m.line(("━ ", PINK, "bold"), ("views  ", ICE), ("● ", GREEN, "bold"),
+           ("unique  ", ICE), ("▮ ", BLUE, "bold"), ("clones", ICE),
+           size=16, gap=26)
+    m.line((f"{days[0].isoformat()} → {days[-1].isoformat()}", ICE),
+           size=17, gap=28)
+    m.build(["rx --passive --window 14d", "signals arriving at the node"])
+
+
 def main():
     DYN.mkdir(parents=True, exist_ok=True)
     for fn in (boot_sequence, transmission_log, signal_activity,
-               currently_orbiting, research_queue, node_clock, signal_map,
-               signal_archive):
+               node_traffic, currently_orbiting, research_queue, node_clock,
+               weather_signal, signal_map, signal_archive):
         fn()
     for p in sorted(DYN.glob("*.svg")):
         print(f"dynamic/{p.name:28} {p.stat().st_size:>7} bytes")

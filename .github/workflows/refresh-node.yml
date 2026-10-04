@@ -1,13 +1,14 @@
 name: refresh node
 
-# Regenerates assets/dynamic/ from public data: this repo's history, public/,
-# data/*.json and snowyarch's public GitHub events. Scheduled runs only
+# Regenerates assets/dynamic/ from: this repo's history, public/, data/*.json,
+# snowyarch's public GitHub events, Open-Meteo (Zürich) and the repo's
+# traffic API. Scheduled runs only
 # happen on the default branch. There is no push trigger, and commits made
 # with GITHUB_TOKEN never start new workflow runs, so this cannot loop.
 on:
   schedule:
-    # cadence lives here only; adjust when more live modules are added
-    - cron: "17 5 * * *"
+    # every 6 hours: fresh enough for weather without spamming commits
+    - cron: "17 */6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -33,6 +34,9 @@ jobs:
         env:
           # read-only use: raises the rate limit for the public events API
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # optional: fine-grained, this repo only, Administration: read.
+          # Without it the traffic module renders its offline state.
+          PROFILE_TRAFFIC_TOKEN: ${{ secrets.PROFILE_TRAFFIC_TOKEN }}
           NODE_GITHUB_USER: snowyarch
         run: python3 scripts/build_dynamic_modules.py
 

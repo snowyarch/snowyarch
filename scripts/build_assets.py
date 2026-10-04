@@ -20,7 +20,6 @@ written literally in this file.
 
 import math
 import textwrap
-import random
 from pathlib import Path
 from xml.sax.saxutils import escape
 
@@ -618,6 +617,11 @@ class Module:
         write(self.name, svg(h, "\n".join(out)))
 
 
+def kv(m, key, value, color=WHITE, w=12, size=FS, gap=LH):
+    """A terse interface field: KEY padded, then its value."""
+    m.line((f"{key:<{w}}", BLUE, "bold"), (value, color), size=size, gap=gap)
+
+
 EMBLEMS = {
     "index": r"""
         .--------.
@@ -791,7 +795,7 @@ def mod_index():
     m.neofetch(emblem("index"), (BLUE, PINK), "research@zurich-node",
                [("modules", "6", WHITE), ("public", "5", WHITE),
                 ("restricted", "1", PINK), ("dates", "research cutoffs", WHITE),
-                ("updates", "not live", WHITE), ("status", "open", GREEN)],
+                ("status", "open", GREEN)],
                kcol=11)
     m.section("~/research")
     rows = [("├──", "01", "debtwatch/", "credit-console", BLUE),
@@ -805,7 +809,6 @@ def mod_index():
                (f"{name:<22}", WHITE if name == "ECIS" else c, "bold"),
                (tag, PINK if name == "ECIS" else ICE), size=20, gap=32)
     m.gap(6)
-    m.line(("# ", ICE), ("statuses are words, not colors", ICE))
     m.build(["cd debtwatch", "cd ai-bubblewatch", "cat GEN_ALPHA.dat",
              "tail mind.cache"])
 
@@ -871,10 +874,10 @@ def mod_debtwatch():
            (" ]", BLUE), (" → ", PINK, "bold"), ("[ ", BLUE),
            ("COMPANY CASH FLOWS", WHITE, "bold"), (" ]", BLUE), size=19,
            gap=36)
-    m.line(("# ", ICE), ("not an automatic sequence. maturities, fixed vs", ICE))
-    m.line(("# ", ICE), ("floating rates, collateral, lender appetite and", ICE))
-    m.line(("# ", ICE), ("operating performance change how pressure travels",
-                         ICE), gap=34)
+    kv(m, "PATH", "conditional", GREEN)
+    kv(m, "DEPENDS ON", "maturities · fixed / floating rates", ICE)
+    kv(m, "", "collateral · lender appetite", ICE)
+    kv(m, "", "operating performance", ICE, gap=34)
 
     m.section("watchlist :: price / terms / access", GREEN)
     top = m.y
@@ -909,23 +912,19 @@ def mod_debtwatch():
     m.line(("− ", PINK, "bold"), ("access    ", BLUE, "bold"),
            ("broad failure not established", PINK), gap=36)
 
-    m.section("notes :: counterevidence")
-    m.wrap("successful refinancings stay in the record as "
-           "counterevidence", prefix="> ")
-    m.wrap("the borrower panel was picked after spotting cases of "
-           "interest: no estimate of how much of the market is losing "
-           "access", prefix="> ")
-    m.wrap("not a claim about conditions today", prefix="> ")
-    m.gap(8)
+    m.section("counterevidence :: limits")
+    kv(m, "COUNTER", "successful refinancings kept on record", w=10)
+    kv(m, "PANEL", "selected after cases of interest", w=10)
+    kv(m, "LIMIT", "no market-wide prevalence estimate", PINK, w=10)
+    kv(m, "SCOPE", "historical snapshot · 2026-10-02", w=10, gap=36)
 
     m.section("result", GREEN)
     m.line(("NOT YET", GREEN, "bold"), size=34, gap=40)
-    m.wrap("the evidence hasn't crossed the threshold for the stronger "
-           "conclusion. it doesn't mean no risk exists.", color=ICE)
-    m.line(("research / monitoring workflow · not a crash predictor", BLUE),
-           gap=30)
+    kv(m, "THRESHOLD", "stronger conclusion: not crossed", w=11)
+    kv(m, "RISK", "open · not ruled out", PINK, w=11)
+    kv(m, "MODE", "research / monitoring · forecast none", ICE, w=11, gap=30)
     m.build(["price ≠ terms ≠ access", '"not yet" is a valid result',
-             "research, not a crash predictor"])
+             "forecast: none"])
 
 
 def mod_ai():
@@ -937,7 +936,7 @@ def mod_ai():
                 ("edition", "2026-10-03", WHITE),
                 ("hypothesis", "unresolved", PINK),
                 ("sample", "16 selected entities", WHITE),
-                ("scope", "not representative", WHITE),
+                ("scope", "non-representative", WHITE),
                 ("verdict", "none", GREEN)], kcol=11)
     m.section("query")
     m.line(("Q  ", PINK, "bold"), ("what would distinguish durable", PINK,
@@ -945,8 +944,8 @@ def mod_ai():
     m.line(("   ", PINK), ("investment from an unsustainable", PINK, "bold"),
            size=22, gap=32)
     m.line(("   ", PINK), ("buildout?", PINK, "bold"), size=22, gap=36)
-    m.line(("# ", GREEN), ("the name is a question, not a verdict", GREEN),
-           gap=36)
+    kv(m, "NAME", "question", GREEN, w=9)
+    kv(m, "VERDICT", "none", GREEN, w=9, gap=36)
 
     m.section("analytical cells")
     cells = [("capex", BLUE, "announced ≠ spent", "≠ committed"),
@@ -958,7 +957,7 @@ def mod_ai():
               "· customer commitments"),
              ("financing", BLUE, "access to new money ≠",
               "good asset economics"),
-             ("?", PINK, "the name is a question,", "not a verdict")]
+             ("?", PINK, "name: question", "verdict: none")]
     cw_, ch_, g = 316, 112, 16
     for r in range(3):
         frag = ""
@@ -997,8 +996,9 @@ def mod_ai():
               "who bears the risk"]:
         m.line(("· ", PINK, "bold"), (q, WHITE))
     m.gap(8)
-    m.line(("no verdict · no live assessment · no trade advice", BLUE),
-           gap=30)
+    m.line(("VERDICT ", BLUE, "bold"), ("none   ", WHITE),
+           ("LIVE ", BLUE, "bold"), ("—   ", WHITE),
+           ("ADVICE ", BLUE, "bold"), ("—", WHITE), gap=30)
     m.build(["the name is a question", "stress ≠ weak returns ≠ bubble",
              "unresolved stays unresolved"])
 
@@ -1010,7 +1010,7 @@ def mod_culture():
                [("file", "Tastewashing →", WHITE),
                 ("", "Cultural Legitimacy", WHITE),
                 ("", "Embedding", WHITE),
-                ("note", "working title", ICE),
+                ("tag", "working title", ICE),
                 ("status", "documentary", WHITE),
                 ("phase", "pre-experimental", WHITE),
                 ("causal", "OPEN", PINK),
@@ -1034,41 +1034,36 @@ def mod_culture():
     m.section("layers")
     layers = [("01", "PRODUCTION", "", BLUE,
                "what do companies make, communicate and organize?",
-               "visible branding does not establish a concealed intention"),
+               "visible branding ≠ concealed intention"),
               ("02", "RECEPTION", "", BLUE,
                "how do people interpret or use those cultural objects?",
-               "selected public comments cannot estimate population-wide "
-               "attitudes"),
+               "selected comments ≠ population-wide attitudes"),
               ("03", "CAUSAL QUESTION", "OPEN", PINK,
                "does affinity change the legitimacy granted to a company's "
                "functions or power?",
-               "liking a brand is not evidence that this transition has "
-               "occurred")]
+               "liking a brand ≠ evidence of this transition")]
     for n, name, flag, c, q, caveat in layers:
         m.line(("▌", c, "bold"), (n + " ", GREEN, "bold"), (name, c, "bold"),
                ("  " + flag if flag else "", PINK, "bold"), size=20, gap=30)
         m.wrap(q, prefix="   ")
-        m.wrap(caveat, color=ICE, prefix="   ! ", cont="     ", pcolor=PINK)
+        m.line(("   LIMIT  ", PINK, "bold"), (caveat, ICE))
         m.gap(10)
 
     m.section("finding")
-    m.wrap("the reports do not establish that causal link. connections "
-           "between organizations don't alone show coordination; an "
-           "effect, even if established, wouldn't automatically prove "
-           "intention.", color=WHITE)
-    m.wrap('"cultural legitimacy embedding" is a working title, not a '
-           'validated theory.', color=ICE)
-    m.gap(8)
+    kv(m, "CAUSAL", "not established by the reports", PINK)
+    kv(m, "LINKS", "connections ≠ coordination")
+    kv(m, "EFFECT", "an effect ≠ proof of intention")
+    kv(m, "FRAME", "working title · unvalidated", ICE, gap=36)
 
     m.section("reports/")
     m.line(("├── ", LINE), ("informe-sencillo.pdf  ", WHITE, "bold"),
            ("start here · ES · 10 pp", GREEN))
     m.line(("└── ", LINE), ("informe-formal.pdf    ", WHITE, "bold"),
            ("full synthesis · ES · 13 pp", GREEN))
-    m.line(("# ", ICE), ("AI-assisted search, comparison, synthesis, review",
-                         ICE), gap=30)
+    kv(m, "METHOD", "AI-assisted search · comparison", ICE, w=8)
+    kv(m, "", "synthesis · adversarial review", ICE, w=8, gap=30)
     m.build(["liking a brand ≠ legitimacy", "the causal question stays open",
-             "working title, not a theory"])
+             "working title"])
 
 
 def restricted_panel():
@@ -1148,8 +1143,7 @@ def mod_gen():
     m = Module("mod-gen-alpha.svg", GREEN, "GEN_ALPHA.dat", "05",
                "~/research", "cat GEN_ALPHA.dat")
     m.neofetch(emblem("gen"), (GREEN, BLUE), "GEN_ALPHA.dat",
-               [("type", "research note", WHITE),
-                ("format", "label, not a dataset", WHITE),
+               [("type", "research label", WHITE),
                 ("snapshot", "2026-08-16", WHITE),
                 ("edition", "2026-10-03", WHITE),
                 ("records", "5", WHITE),
@@ -1183,17 +1177,15 @@ def mod_gen():
                    stroke=GREEN, sw=1, dash="2 4"), 30)
         m.line(("domain │ ", BLUE, "bold"), (dom, WHITE, "bold"))
         for j, ln in enumerate(textwrap.wrap(note, 45)):
-            m.line(("note   │ " if j == 0 else "       │ ", BLUE, "bold"),
+            m.line(("obs    │ " if j == 0 else "       │ ", BLUE, "bold"),
                    (ln, ICE))
         m.gap(8)
     m.line(("(5 rows)", ICE), gap=36)
     m.section("reading")
-    m.wrap("the reviewed material supports a heterogeneous picture.",
-           prefix="> ")
-    m.wrap('"an entire generation is declining" is a much larger claim '
-           'than the evidence behind one educational trend.', prefix="> ")
-    m.line(("# ", ICE), ("selected public note: not a systematic review,", ICE))
-    m.line(("# ", ICE), ("a dataset, or an experiment", ICE), gap=30)
+    kv(m, "EVIDENCE", "heterogeneous picture")
+    kv(m, "THRESHOLD", "one educational trend ≠")
+    kv(m, "", "a generation-wide decline")
+    kv(m, "SCOPE", "selected public synthesis", ICE, gap=30)
     m.build(["educational performance ≠ cognition",
              "the observer is part of the problem", "causality unresolved"])
 
@@ -1208,7 +1200,7 @@ def mod_security():
                 ("primitive", "none validated", WHITE),
                 ("product", "none", WHITE),
                 ("thesis", "none", WHITE),
-                ("readiness", "not claimed", GREEN)], kcol=11)
+                ("readiness", "unclaimed", GREEN)], kcol=11)
     m.section("review.log")
     log = [("scope", "security boundaries for increasingly", WHITE),
            ("", "autonomous action", WHITE),
@@ -1231,12 +1223,11 @@ def mod_security():
         else:
             m.line((tagtxt, BLUE, "bold"), (v, WHITE))
     m.gap(10)
-    m.section("note", GREEN)
-    m.wrap("an interesting question is not yet a defensible contribution.",
-           color=GREEN, prefix="> ")
-    m.wrap("this records a research direction and its limits. no claim of "
-           "demonstrated security, deployment or readiness for use.",
-           color=ICE, prefix="  ")
+    m.section("threshold", GREEN)
+    kv(m, "THRESHOLD", "interesting question ≠", GREEN, w=11)
+    kv(m, "", "defensible contribution", GREEN, w=11)
+    kv(m, "RECORD", "direction + limits", w=11)
+    kv(m, "CLAIMS", "security · deployment · readiness: —", ICE, w=11)
     m.build(["research before claims",
              "an interesting question ≠ a contribution"])
 
@@ -1245,8 +1236,8 @@ def mod_markets():
     m = Module("mod-markets.svg", BLUE, "market.frequencies", "interests",
                "~", "cat .market_frequencies")
     m.neofetch(emblem("antenna"), (BLUE, PINK), "market@frequencies",
-               [("type", "interests", WHITE), ("positions", "none shown", WHITE),
-                ("wallets", "not linked", WHITE), ("p&l", "not shown", WHITE),
+               [("type", "interests", WHITE), ("positions", "—", WHITE),
+                ("wallets", "—", WHITE), ("p&l", "—", WHITE),
                 ("advice", "none", GREEN), ("mode", "questions", PINK)],
                kcol=10)
     m.section("channels")
@@ -1271,9 +1262,8 @@ def mod_markets():
         m.raw(frag, 28)
         m.line((topics, WHITE), x=X0 + 76)
         m.line((lens, ICE), x=X0 + 76, size=17, gap=38)
-    m.line(("; no wallets · no balances · no p&l · not advice", ICE), gap=30)
     m.build(["why do markets believe what they believe?", "narrative ↔ price",
-             "interests, not positions"])
+             "interests > positions"])
 
 
 def mod_library():
@@ -1282,7 +1272,7 @@ def mod_library():
     m.neofetch(emblem("library"), (PINK, BLUE), "library@culture-node",
                [("works", "12", WHITE), ("shelves", "books · fiction · myth",
                                          WHITE),
-                ("log", "not a reading log", ICE), ("ratings", "none", WHITE),
+                ("ratings", "—", WHITE),
                 ("mode", "orbit", PINK)], kcol=9)
     shelves = [("books/", BLUE, [
         ("dune", "power, religion, prescience"),
@@ -1305,7 +1295,7 @@ def mod_library():
             m.line((name + " ", WHITE, "bold"), (dots + " ", LINE),
                    (theme, ICE))
         m.gap(6)
-    m.build(["an orbit, not a reading log", "how much of identity is ours?"])
+    m.build(["an orbit of works", "how much of identity is ours?"])
 
 
 def mod_env():
@@ -1323,12 +1313,9 @@ def mod_env():
                  ("CRYPTO", "axiom phantom")):
         m.line(("export ", BLUE), (k, PINK, "bold"), ("=", ICE),
                (f'"{v}"', GREEN))
-    m.line(("export ", BLUE), ("MASTERY", PINK, "bold"), ("=undefined", WHITE),
-           (" # a tool used ≠ a skill claimed", ICE), gap=36)
-    m.line(("# ", ICE), ("most building happens in a terminal with agents:",
-                         ICE))
-    m.line(("# ", ICE), ("direct the task, compare answers, review, revise",
-                         ICE), gap=30)
+    m.line(("export ", BLUE), ("MASTERY", PINK, "bold"), ("=undefined", WHITE))
+    m.line(("export ", BLUE), ("LOOP", PINK, "bold"), ("=", ICE),
+           ('"direct compare review revise"', GREEN), gap=36)
     m.build(["still learning", "one more revision"])
 
 
