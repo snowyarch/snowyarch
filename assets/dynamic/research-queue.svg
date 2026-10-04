@@ -1,0 +1,210 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1072" viewBox="0 0 720 1072" fill="none">
+<style>text{font-family:ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', monospace;}</style>
+<defs>
+<pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+<path d="M24 0H0V24" stroke="#30435E" stroke-width="0.6" opacity="0.45"/>
+</pattern>
+<pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+<rect width="4" height="1" fill="#EDF5FF" opacity="0.025"/>
+</pattern>
+<filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+<feGaussianBlur stdDeviation="3" result="b"/>
+<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="soft" x="-10%" y="-10%" width="120%" height="120%">
+<feGaussianBlur stdDeviation="4"/>
+</filter>
+<radialGradient id="vig" cx="0.5" cy="0.45" r="0.75">
+<stop offset="0.6" stop-color="#070A10" stop-opacity="0"/>
+<stop offset="1" stop-color="#000000" stop-opacity="0.55"/>
+</radialGradient>
+<linearGradient id="sweep" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#EDF5FF" stop-opacity="0"/>
+<stop offset="0.5" stop-color="#EDF5FF" stop-opacity="0.045"/>
+<stop offset="1" stop-color="#EDF5FF" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="fadeR" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#2D8CFF" stop-opacity="0.9"/>
+<stop offset="1" stop-color="#2D8CFF" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="fadeP" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#FF4FCB" stop-opacity="0"/>
+<stop offset="0.5" stop-color="#FF4FCB" stop-opacity="0.9"/>
+<stop offset="1" stop-color="#FF4FCB" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="reflect" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#FF4FCB" stop-opacity="0.28"/>
+<stop offset="1" stop-color="#FF4FCB" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#070A10"/>
+<stop offset="1" stop-color="#0E1830"/>
+</linearGradient>
+</defs>
+<rect width="720" height="1072" fill="#070A10"/>
+<rect x="16" y="16" width="688" height="1040" fill="#070A10"/>
+<rect x="16" y="16" width="688" height="1040" fill="none" stroke="#C6FF3A" stroke-width="3" opacity="0.35" filter="url(#soft)"/>
+<rect x="16" y="16" width="688" height="1040" fill="none" stroke="#C6FF3A" stroke-width="1.4"/>
+<rect x="32" y="3" width="280.0" height="26" fill="#070A10"/>
+<text x="38" y="23" font-size="20" fill="#C6FF3A" font-weight="bold" text-anchor="start">[ research.queue ]</text>
+<circle cx="270" cy="16" r="3.6" fill="#C6FF3A"><animate attributeName="opacity" values="1;0.35;1" dur="2.6s" begin="0.0s" repeatCount="indefinite"/></circle>
+<circle cx="283" cy="16" r="3.6" fill="#C6FF3A"><animate attributeName="opacity" values="1;0.35;1" dur="3.4s" begin="0.4s" repeatCount="indefinite"/></circle>
+<circle cx="296" cy="16" r="3.6" fill="#30435E"></circle>
+<rect x="580.0" y="3" width="108.0" height="26" fill="#070A10"/>
+<text x="682" y="23" font-size="20" fill="#A7B8CE" font-weight="normal" text-anchor="end">[ jobs ]</text>
+<rect x="17" y="17" width="686" height="1038" fill="url(#vig)"/>
+<line x1="18" y1="64" x2="25" y2="64" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="64" x2="695" y2="64" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="88" x2="22" y2="88" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="88" x2="698" y2="88" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="112" x2="22" y2="112" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="112" x2="698" y2="112" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="136" x2="22" y2="136" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="136" x2="698" y2="136" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="160" x2="25" y2="160" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="160" x2="695" y2="160" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="184" x2="22" y2="184" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="184" x2="698" y2="184" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="208" x2="22" y2="208" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="208" x2="698" y2="208" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="232" x2="22" y2="232" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="232" x2="698" y2="232" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="256" x2="25" y2="256" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="256" x2="695" y2="256" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="280" x2="22" y2="280" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="280" x2="698" y2="280" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="304" x2="22" y2="304" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="304" x2="698" y2="304" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="328" x2="22" y2="328" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="328" x2="698" y2="328" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="352" x2="25" y2="352" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="352" x2="695" y2="352" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="376" x2="22" y2="376" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="376" x2="698" y2="376" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="400" x2="22" y2="400" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="400" x2="698" y2="400" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="424" x2="22" y2="424" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="424" x2="698" y2="424" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="448" x2="25" y2="448" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="448" x2="695" y2="448" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="472" x2="22" y2="472" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="472" x2="698" y2="472" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="496" x2="22" y2="496" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="496" x2="698" y2="496" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="520" x2="22" y2="520" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="520" x2="698" y2="520" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="544" x2="25" y2="544" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="544" x2="695" y2="544" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="568" x2="22" y2="568" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="568" x2="698" y2="568" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="592" x2="22" y2="592" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="592" x2="698" y2="592" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="616" x2="22" y2="616" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="616" x2="698" y2="616" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="640" x2="25" y2="640" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="640" x2="695" y2="640" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="664" x2="22" y2="664" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="664" x2="698" y2="664" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="688" x2="22" y2="688" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="688" x2="698" y2="688" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="712" x2="22" y2="712" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="712" x2="698" y2="712" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="736" x2="25" y2="736" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="736" x2="695" y2="736" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="760" x2="22" y2="760" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="760" x2="698" y2="760" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="784" x2="22" y2="784" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="784" x2="698" y2="784" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="808" x2="22" y2="808" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="808" x2="698" y2="808" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="832" x2="25" y2="832" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="832" x2="695" y2="832" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="856" x2="22" y2="856" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="856" x2="698" y2="856" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="880" x2="22" y2="880" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="880" x2="698" y2="880" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="904" x2="22" y2="904" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="904" x2="698" y2="904" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="928" x2="25" y2="928" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="928" x2="695" y2="928" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="952" x2="22" y2="952" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="952" x2="698" y2="952" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="976" x2="22" y2="976" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="976" x2="698" y2="976" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="1000" x2="22" y2="1000" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="1000" x2="698" y2="1000" stroke="#30435E" stroke-width="1" opacity="0.8"/>
+<line x1="18" y1="1024" x2="25" y2="1024" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<line x1="702" y1="1024" x2="695" y2="1024" stroke="#C6FF3A" stroke-width="1" opacity="0.8"/>
+<rect x="628" y="34" width="4" height="6" fill="#C6FF3A" opacity="0.75"><animate attributeName="height" values="4;9;5;4" dur="2.2s" repeatCount="indefinite"/></rect>
+<rect x="635" y="34" width="4" height="6" fill="#C6FF3A" opacity="0.75"><animate attributeName="height" values="7;4;10;7" dur="1.8s" repeatCount="indefinite"/></rect>
+<rect x="642" y="34" width="4" height="6" fill="#C6FF3A" opacity="0.75"><animate attributeName="height" values="5;11;6;5" dur="2.6s" repeatCount="indefinite"/></rect>
+<rect x="649" y="34" width="4" height="6" fill="#C6FF3A" opacity="0.75"><animate attributeName="height" values="9;5;8;9" dur="2.0s" repeatCount="indefinite"/></rect>
+<rect x="656" y="34" width="4" height="6" fill="#C6FF3A" opacity="0.75"><animate attributeName="height" values="3;7;4;3" dur="2.4s" repeatCount="indefinite"/></rect>
+<line x1="626" y1="46" x2="664" y2="46" stroke="#30435E" stroke-width="1"/>
+<path d="M26 40V30H36" stroke="#30435E" stroke-width="1.2" opacity="0.9"/><path d="M694 40V30H684" stroke="#30435E" stroke-width="1.2" opacity="0.9"/><path d="M26 1040V1050H36" stroke="#30435E" stroke-width="1.2" opacity="0.9"/><path d="M694 1040V1050H684" stroke="#30435E" stroke-width="1.2" opacity="0.9"/>
+<line x1="675" y1="98" x2="685" y2="98" stroke="#30435E" stroke-width="1"/><line x1="680" y1="93" x2="680" y2="103" stroke="#30435E" stroke-width="1"/>
+<line x1="675" y1="948" x2="685" y2="948" stroke="#30435E" stroke-width="1"/><line x1="680" y1="943" x2="680" y2="953" stroke="#30435E" stroke-width="1"/>
+<text x="36" y="70" font-size="21" fill="#C6FF3A" font-weight="bold" text-anchor="start">snowyarch@zurich:~/research$</text>
+<clipPath id="k19"><rect x="401.4" y="49" width="151.2" height="29.4"><animate attributeName="width" dur="1.4125s" calcMode="discrete" keyTimes="0;0.4248;0.469;0.5133;0.5575;0.6018;0.646;0.6903;0.7345;0.7788;0.823;0.8673;0.9115;0.9558" values="0;0;12.6;25.2;37.8;50.4;63;75.6;88.2;100.8;113.4;126;138.6;151.2"/></rect></clipPath>
+<text x="401.4" y="70" font-size="21" fill="#EDF5FF" font-weight="normal" textLength="151.2" lengthAdjust="spacing" clip-path="url(#k19)">queue --list</text>
+<rect x="401.4" y="53.2" width="11.34" height="21" fill="#C6FF3A" opacity="0"><animate attributeName="x" dur="1.4125s" calcMode="discrete" keyTimes="0;0.4248;0.469;0.5133;0.5575;0.6018;0.646;0.6903;0.7345;0.7788;0.823;0.8673;0.9115;0.9558" values="401.4;401.4;414;426.6;439.2;451.8;464.4;477;489.6;502.2;514.8;527.4;540;552.6"/><animate attributeName="opacity" dur="1.4125s" calcMode="discrete" keyTimes="0;0.4248" values="0;1"/></rect>
+<g><set attributeName="opacity" to="0" begin="0s" dur="1.65s"/><text x="36" y="116" font-size="13.5" fill="#C6FF3A" xml:space="preserve">   .-----------------.</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="1.675s"/><text x="36" y="132.5" font-size="13.5" fill="#B3F153" xml:space="preserve">   | [#] [#] [#] [ ] |</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="1.7s"/><text x="36" y="149" font-size="13.5" fill="#A0E26B" xml:space="preserve">   |-----------------|</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="1.725s"/><text x="36" y="165.5" font-size="13.5" fill="#8DD484" xml:space="preserve">   | [#] [#] [ ] [ ] |</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="1.75s"/><text x="36" y="182" font-size="13.5" fill="#7AC69C" xml:space="preserve">   |-----------------|</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="1.775s"/><text x="36" y="198.5" font-size="13.5" fill="#66B7B5" xml:space="preserve">   | [#] [ ] [ ] [ ] |</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="1.8s"/><text x="36" y="215" font-size="13.5" fill="#53A9CE" xml:space="preserve">   '--------.--------'</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="1.825s"/><text x="36" y="231.5" font-size="13.5" fill="#409AE6" xml:space="preserve">         ___|___</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="1.85s"/><text x="36" y="248" font-size="13.5" fill="#2D8CFF" xml:space="preserve">        |_______|</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="1.875s"/><rect x="36" y="272.5" width="16" height="16" fill="#C6FF3A" stroke="#30435E" stroke-width="1" opacity="0.35"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="1.9s"/><rect x="58" y="272.5" width="16" height="16" fill="#B3F153" stroke="#30435E" stroke-width="1" opacity="0.42"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="1.925s"/><rect x="80" y="272.5" width="16" height="16" fill="#A0E26B" stroke="#30435E" stroke-width="1" opacity="0.49"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="1.95s"/><rect x="102" y="272.5" width="16" height="16" fill="#8DD484" stroke="#30435E" stroke-width="1" opacity="0.56"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="1.975s"/><rect x="124" y="272.5" width="16" height="16" fill="#7AC69C" stroke="#30435E" stroke-width="1" opacity="0.63"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2s"/><rect x="146" y="272.5" width="16" height="16" fill="#66B7B5" stroke="#30435E" stroke-width="1" opacity="0.7"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.025s"/><rect x="168" y="272.5" width="16" height="16" fill="#53A9CE" stroke="#30435E" stroke-width="1" opacity="0.77"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.05s"/><rect x="190" y="272.5" width="16" height="16" fill="#409AE6" stroke="#30435E" stroke-width="1" opacity="0.84"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.075s"/><rect x="212" y="272.5" width="16" height="16" fill="#2D8CFF" stroke="#30435E" stroke-width="1" opacity="0.91"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.1s"/><rect x="32" y="102" width="242" height="156.5" fill="#070A10" opacity="0"><animate attributeName="opacity" values="0;0;0.28;0;0.18;0;0" keyTimes="0;0.86;0.87;0.88;0.89;0.9;1" dur="8s" repeatCount="indefinite"/></rect></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.125s"/><rect x="34" y="270.5" width="20" height="20" fill="none" stroke="#EDF5FF" stroke-width="1.2" opacity="0.7"><animate attributeName="x" values="34;56;78;100;122;144;166;188;210;34" keyTimes="0;0.0769;0.1538;0.2308;0.3077;0.3846;0.4615;0.5385;0.6154;1" calcMode="discrete" dur="5s" repeatCount="indefinite"/></rect></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.15s"/><text x="286" y="116" font-size="22" fill="#FF4FCB" font-weight="bold" text-anchor="start">queue@scheduler</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.175s"/><text x="284" y="116" font-size="22" fill="#2D8CFF" font-weight="bold" opacity="0">queue@scheduler<animate attributeName="opacity" values="0;0;0.7;0;0" keyTimes="0;0.910;0.918;0.930;1" dur="11s" begin="3.5s" repeatCount="indefinite"/></text><text x="288" y="116" font-size="22" fill="#C6FF3A" font-weight="bold" opacity="0">queue@scheduler<animate attributeName="opacity" values="0;0;0.7;0;0" keyTimes="0;0.922;0.930;0.942;1" dur="11s" begin="3.5s" repeatCount="indefinite"/></text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.2s"/><text x="286" y="138" font-size="22" fill="#30435E" font-weight="normal" text-anchor="start">---------------</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.225s"/><text x="286" y="172" font-size="19" fill="#2D8CFF" font-weight="bold" text-anchor="start">jobs:</text><text x="377.2" y="172" font-size="19" fill="#EDF5FF" font-weight="normal" text-anchor="start">5</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.25s"/><text x="286" y="200" font-size="19" fill="#2D8CFF" font-weight="bold" text-anchor="start">open:</text><text x="377.2" y="200" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">5</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.275s"/><text x="286" y="228" font-size="19" fill="#2D8CFF" font-weight="bold" text-anchor="start">queued:</text><text x="377.2" y="228" font-size="19" fill="#2D8CFF" font-weight="bold" text-anchor="start">0</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.3s"/><text x="286" y="256" font-size="19" fill="#2D8CFF" font-weight="bold" text-anchor="start">parked:</text><text x="377.2" y="256" font-size="19" fill="#A7B8CE" font-weight="bold" text-anchor="start">0</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.325s"/><text x="286" y="284" font-size="19" fill="#2D8CFF" font-weight="bold" text-anchor="start">eta:</text><text x="377.2" y="284" font-size="19" fill="#A7B8CE" font-weight="bold" text-anchor="start">none</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.35s"/><text x="286" y="312" font-size="19" fill="#2D8CFF" font-weight="bold" text-anchor="start">source:</text><text x="377.2" y="312" font-size="19" fill="#EDF5FF" font-weight="normal" text-anchor="start">data/research-queue.json</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.525s"/><rect x="36" y="352" width="10" height="10" fill="#C6FF3A"/><text x="56" y="364" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">process table</text><line x1="218.2" y1="358" x2="632" y2="358" stroke="#30435E" stroke-width="1"/><rect x="640" y="352" width="10" height="10" fill="#C6FF3A" opacity="0.9"><animate attributeName="opacity" values="0.9;0.12;0.9" dur="3.2s" begin="0.0s" repeatCount="indefinite"/></rect><rect x="655" y="352" width="10" height="10" fill="#C6FF3A" opacity="0.6"><animate attributeName="opacity" values="0.6;0.12;0.6" dur="3.2s" begin="0.45s" repeatCount="indefinite"/></rect><rect x="670" y="352" width="10" height="10" fill="#C6FF3A" opacity="0.3"><animate attributeName="opacity" values="0.3;0.12;0.3" dur="3.2s" begin="0.9s" repeatCount="indefinite"/></rect></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.565s"/><rect x="36" y="379" width="648" height="30" fill="#101724"/><text x="48" y="400" font-size="16" fill="#A7B8CE" font-weight="bold" text-anchor="start">PID</text><text x="106" y="400" font-size="16" fill="#A7B8CE" font-weight="bold" text-anchor="start">STATE</text><text x="206" y="400" font-size="16" fill="#A7B8CE" font-weight="bold" text-anchor="start">SIG</text><text x="266" y="400" font-size="16" fill="#A7B8CE" font-weight="bold" text-anchor="start">MODULE</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.605s"/><circle cx="40" cy="434" r="3" fill="#C6FF3A"><animate attributeName="opacity" values="1;0.3;1" dur="2.4s" repeatCount="indefinite"/></circle><text x="48" y="440" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">01</text><text x="106" y="440" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">OPEN</text><text x="212" y="440" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">●</text><text x="266" y="440" font-size="19" fill="#EDF5FF" font-weight="bold" text-anchor="start">debtwatch</text><rect x="608" y="427" width="8" height="12" fill="#C6FF3A" opacity="0.15"/><rect x="620" y="427" width="8" height="12" fill="#C6FF3A" opacity="0.21"/><rect x="632" y="427" width="8" height="12" fill="#C6FF3A" opacity="0.27"/><rect x="644" y="427" width="8" height="12" fill="#C6FF3A" opacity="0.33"/><rect x="656" y="427" width="8" height="12" fill="#C6FF3A" opacity="0.39"/><rect x="668" y="427" width="8" height="12" fill="#C6FF3A" opacity="0.45"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.645s"/><text x="90" y="466" font-size="18" fill="#A7B8CE" font-weight="normal" text-anchor="start" xml:space="preserve">would a defined borrower population show</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.685s"/><text x="90" y="490" font-size="18" fill="#A7B8CE" font-weight="normal" text-anchor="start" xml:space="preserve">worsening terms or failed refinancing that</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.725s"/><text x="90" y="514" font-size="18" fill="#A7B8CE" font-weight="normal" text-anchor="start" xml:space="preserve">persists?</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.765s"/><line x1="36" y1="524" x2="684" y2="524" stroke="#30435E" stroke-width="1" stroke-dasharray="3 5"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.805s"/><circle cx="40" cy="546" r="3" fill="#C6FF3A"><animate attributeName="opacity" values="1;0.3;1" dur="2.4s" repeatCount="indefinite"/></circle><text x="48" y="552" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">02</text><text x="106" y="552" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">OPEN</text><text x="212" y="552" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">●</text><text x="266" y="552" font-size="19" fill="#EDF5FF" font-weight="bold" text-anchor="start">ai-bubblewatch</text><rect x="608" y="539" width="8" height="12" fill="#C6FF3A" opacity="0.15"/><rect x="620" y="539" width="8" height="12" fill="#C6FF3A" opacity="0.21"/><rect x="632" y="539" width="8" height="12" fill="#C6FF3A" opacity="0.27"/><rect x="644" y="539" width="8" height="12" fill="#C6FF3A" opacity="0.33"/><rect x="656" y="539" width="8" height="12" fill="#C6FF3A" opacity="0.39"/><rect x="668" y="539" width="8" height="12" fill="#C6FF3A" opacity="0.45"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.845s"/><text x="90" y="578" font-size="18" fill="#A7B8CE" font-weight="normal" text-anchor="start" xml:space="preserve">what do mature asset cohorts return after</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.885s"/><text x="90" y="602" font-size="18" fill="#A7B8CE" font-weight="normal" text-anchor="start" xml:space="preserve">energy, maintenance, replacement and financing?</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.925s"/><line x1="36" y1="612" x2="684" y2="612" stroke="#30435E" stroke-width="1" stroke-dasharray="3 5"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.965s"/><circle cx="40" cy="634" r="3" fill="#C6FF3A"><animate attributeName="opacity" values="1;0.3;1" dur="2.4s" repeatCount="indefinite"/></circle><text x="48" y="640" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">03</text><text x="106" y="640" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">OPEN</text><text x="212" y="640" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">●</text><text x="266" y="640" font-size="19" fill="#EDF5FF" font-weight="bold" text-anchor="start">ai-bubblewatch</text><rect x="608" y="627" width="8" height="12" fill="#C6FF3A" opacity="0.15"/><rect x="620" y="627" width="8" height="12" fill="#C6FF3A" opacity="0.21"/><rect x="632" y="627" width="8" height="12" fill="#C6FF3A" opacity="0.27"/><rect x="644" y="627" width="8" height="12" fill="#C6FF3A" opacity="0.33"/><rect x="656" y="627" width="8" height="12" fill="#C6FF3A" opacity="0.39"/><rect x="668" y="627" width="8" height="12" fill="#C6FF3A" opacity="0.45"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.005s"/><text x="90" y="666" font-size="18" fill="#A7B8CE" font-weight="normal" text-anchor="start" xml:space="preserve">how much demand depends on continuing financing</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.045s"/><text x="90" y="690" font-size="18" fill="#A7B8CE" font-weight="normal" text-anchor="start" xml:space="preserve">support?</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.085s"/><line x1="36" y1="700" x2="684" y2="700" stroke="#30435E" stroke-width="1" stroke-dasharray="3 5"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.125s"/><circle cx="40" cy="722" r="3" fill="#C6FF3A"><animate attributeName="opacity" values="1;0.3;1" dur="2.4s" repeatCount="indefinite"/></circle><text x="48" y="728" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">04</text><text x="106" y="728" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">OPEN</text><text x="212" y="728" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">●</text><text x="266" y="728" font-size="19" fill="#EDF5FF" font-weight="bold" text-anchor="start">culture-legitimacy</text><rect x="608" y="715" width="8" height="12" fill="#C6FF3A" opacity="0.15"/><rect x="620" y="715" width="8" height="12" fill="#C6FF3A" opacity="0.21"/><rect x="632" y="715" width="8" height="12" fill="#C6FF3A" opacity="0.27"/><rect x="644" y="715" width="8" height="12" fill="#C6FF3A" opacity="0.33"/><rect x="656" y="715" width="8" height="12" fill="#C6FF3A" opacity="0.39"/><rect x="668" y="715" width="8" height="12" fill="#C6FF3A" opacity="0.45"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.165s"/><text x="90" y="754" font-size="18" fill="#A7B8CE" font-weight="normal" text-anchor="start" xml:space="preserve">does cultural affinity change what power people</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.205s"/><text x="90" y="778" font-size="18" fill="#A7B8CE" font-weight="normal" text-anchor="start" xml:space="preserve">are willing to accept?</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.245s"/><line x1="36" y1="788" x2="684" y2="788" stroke="#30435E" stroke-width="1" stroke-dasharray="3 5"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.285s"/><circle cx="40" cy="810" r="3" fill="#C6FF3A"><animate attributeName="opacity" values="1;0.3;1" dur="2.4s" repeatCount="indefinite"/></circle><text x="48" y="816" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">05</text><text x="106" y="816" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">OPEN</text><text x="212" y="816" font-size="19" fill="#C6FF3A" font-weight="bold" text-anchor="start">●</text><text x="266" y="816" font-size="19" fill="#EDF5FF" font-weight="bold" text-anchor="start">gen-alpha</text><rect x="608" y="803" width="8" height="12" fill="#C6FF3A" opacity="0.15"/><rect x="620" y="803" width="8" height="12" fill="#C6FF3A" opacity="0.21"/><rect x="632" y="803" width="8" height="12" fill="#C6FF3A" opacity="0.27"/><rect x="644" y="803" width="8" height="12" fill="#C6FF3A" opacity="0.33"/><rect x="656" y="803" width="8" height="12" fill="#C6FF3A" opacity="0.39"/><rect x="668" y="803" width="8" height="12" fill="#C6FF3A" opacity="0.45"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.325s"/><text x="90" y="842" font-size="18" fill="#A7B8CE" font-weight="normal" text-anchor="start" xml:space="preserve">which forms of digital use have credible causal</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.365s"/><text x="90" y="866" font-size="18" fill="#A7B8CE" font-weight="normal" text-anchor="start" xml:space="preserve">evidence behind them?</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.405s"/><line x1="36" y1="876" x2="684" y2="876" stroke="#30435E" stroke-width="1" stroke-dasharray="3 5"/></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.445s"/><text x="36" y="904" font-size="17" fill="#A7B8CE" font-weight="normal" text-anchor="start" xml:space="preserve">● OPEN   ○ QUEUED   ◇ PARKED</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.485s"/><text x="36" y="930" font-size="17" fill="#A7B8CE" font-weight="normal" text-anchor="start" xml:space="preserve"># no percentages · no ETA · states set by hand</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.725s"/><line x1="36" y1="962" x2="684" y2="962" stroke="#30435E" stroke-width="1"/><text x="36" y="998" font-size="21" fill="#2D8CFF" font-weight="normal" text-anchor="start">┌──(</text><text x="86.4" y="998" font-size="21" fill="#FF4FCB" font-weight="bold" text-anchor="start">snowyarch@zurich</text><text x="288" y="998" font-size="21" fill="#2D8CFF" font-weight="normal" text-anchor="start">)-[~/research]</text><text x="36" y="1032" font-size="21" fill="#2D8CFF" font-weight="normal" text-anchor="start">└─$</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="4.025s"/><clipPath id="k20"><rect x="86.4" y="1011" width="151.2" height="29.4"><animate attributeName="width" begin="4.025s" dur="9.7s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.0057;0.0115;0.0172;0.0229;0.0286;0.0344;0.0401;0.0458;0.0515;0.0573;0.063;0.0687;0.3396;0.3425;0.3454;0.3482;0.3511;0.354;0.3568;0.3597;0.3625;0.3654;0.3683;0.3711" values="0;12.6;25.2;37.8;50.4;63;75.6;88.2;100.8;113.4;126;138.6;151.2;138.6;126;113.4;100.8;88.2;75.6;63;50.4;37.8;25.2;12.6;0"/></rect></clipPath><text x="86.4" y="1032" font-size="21" fill="#C6FF3A" textLength="151.2" lengthAdjust="spacing" clip-path="url(#k20)">queue --list</text>
+<clipPath id="k21"><rect x="86.4" y="1011" width="0" height="29.4"><animate attributeName="width" begin="4.025s" dur="9.7s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.4284;0.4341;0.4399;0.4456;0.4513;0.457;0.4628;0.4685;0.4742;0.48;0.4857;0.4914;0.4971;0.5029;0.5086;0.5143;0.52;0.5258;0.5315;0.5372;0.543;0.5487;0.5544;0.5601;0.5659;0.5716;0.5773;0.583;0.5888;0.5945;0.8654;0.8683;0.8711;0.874;0.8769;0.8797;0.8826;0.8855;0.8883;0.8912;0.894;0.8969;0.8998;0.9026;0.9055;0.9084;0.9112;0.9141;0.917;0.9198;0.9227;0.9255;0.9284;0.9313;0.9341;0.937;0.9399;0.9427;0.9456;0.9485" values="0;12.6;25.2;37.8;50.4;63;75.6;88.2;100.8;113.4;126;138.6;151.2;163.8;176.4;189;201.6;214.2;226.8;239.4;252;264.6;277.2;289.8;302.4;315;327.6;340.2;352.8;365.4;378;365.4;352.8;340.2;327.6;315;302.4;289.8;277.2;264.6;252;239.4;226.8;214.2;201.6;189;176.4;163.8;151.2;138.6;126;113.4;100.8;88.2;75.6;63;50.4;37.8;25.2;12.6;0"/></rect></clipPath><text x="86.4" y="1032" font-size="21" fill="#C6FF3A" textLength="378" lengthAdjust="spacing" clip-path="url(#k21)">questions run until they close</text>
+<rect x="237.6" y="1015.2" width="11.34" height="21" fill="#C6FF3A"><animate attributeName="x" begin="4.025s" dur="9.7s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.0057;0.0115;0.0172;0.0229;0.0286;0.0344;0.0401;0.0458;0.0515;0.0573;0.063;0.0687;0.3396;0.3425;0.3454;0.3482;0.3511;0.354;0.3568;0.3597;0.3625;0.3654;0.3683;0.3711;0.4284;0.4341;0.4399;0.4456;0.4513;0.457;0.4628;0.4685;0.4742;0.48;0.4857;0.4914;0.4971;0.5029;0.5086;0.5143;0.52;0.5258;0.5315;0.5372;0.543;0.5487;0.5544;0.5601;0.5659;0.5716;0.5773;0.583;0.5888;0.5945;0.8654;0.8683;0.8711;0.874;0.8769;0.8797;0.8826;0.8855;0.8883;0.8912;0.894;0.8969;0.8998;0.9026;0.9055;0.9084;0.9112;0.9141;0.917;0.9198;0.9227;0.9255;0.9284;0.9313;0.9341;0.937;0.9399;0.9427;0.9456;0.9485" values="86.4;99;111.6;124.2;136.8;149.4;162;174.6;187.2;199.8;212.4;225;237.6;225;212.4;199.8;187.2;174.6;162;149.4;136.8;124.2;111.6;99;86.4;99;111.6;124.2;136.8;149.4;162;174.6;187.2;199.8;212.4;225;237.6;250.2;262.8;275.4;288;300.6;313.2;325.8;338.4;351;363.6;376.2;388.8;401.4;414;426.6;439.2;451.8;464.4;451.8;439.2;426.6;414;401.4;388.8;376.2;363.6;351;338.4;325.8;313.2;300.6;288;275.4;262.8;250.2;237.6;225;212.4;199.8;187.2;174.6;162;149.4;136.8;124.2;111.6;99;86.4"/><animate attributeName="opacity" values="1;1;0.25;1" keyTimes="0;0.55;0.75;1" dur="1.3s" repeatCount="indefinite"/></rect></g>
+<clipPath id="k18"><rect x="17" y="17" width="686" height="1038"/></clipPath><g clip-path="url(#k18)"><rect x="17" y="-120" width="686" height="120" fill="url(#sweep)"><animateTransform attributeName="transform" type="translate" values="0 0;0 1192" dur="8.9333s" repeatCount="indefinite"/></rect></g>
+</svg>

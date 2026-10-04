@@ -1,0 +1,15 @@
+{
+  "_edit": "Hand-maintained. Shown in assets/dynamic/research-queue.svg. state must be OPEN, QUEUED or PARKED.",
+  "queue": [
+    {"module": "debtwatch", "state": "OPEN",
+     "question": "would a defined borrower population show worsening terms or failed refinancing that persists?"},
+    {"module": "ai-bubblewatch", "state": "OPEN",
+     "question": "what do mature asset cohorts return after energy, maintenance, replacement and financing?"},
+    {"module": "ai-bubblewatch", "state": "OPEN",
+     "question": "how much demand depends on continuing financing support?"},
+    {"module": "culture-legitimacy", "state": "OPEN",
+     "question": "does cultural affinity change what power people are willing to accept?"},
+    {"module": "gen-alpha", "state": "OPEN",
+     "question": "which forms of digital use have credible causal evidence behind them?"}
+  ]
+}

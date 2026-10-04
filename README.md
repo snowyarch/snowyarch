@@ -2,6 +2,9 @@
   <img src="assets/header.svg" width="100%" alt="snowyarch@zurich-node terminal running neofetch. An ASCII skyline of twin towers, moon and river next to: node afterhours / personal, loc zürich // ch, role builder · researcher, focus markets · ai · philosophy, research 5 public · 1 restricted, tools python · git · claude code, markets btc · sol · credit, library dune · leviathan · 1984, side minecraft · terraria, status still learning. The prompt cycles through: build things to understand them; why do markets believe what they believe?; not yet is a valid result; questions over answers.">
 </p>
 
+<a name="boot"></a>
+<img src="assets/dynamic/boot-sequence.svg" width="100%" alt="boot.sequence — the node boots its public modules: research, markets, library, archive and signals mounted; radio not mounted yet. Generated from the repository.">
+
 <a name="index"></a>
 <img src="assets/mod-index.svg" width="100%" alt="research.index terminal module: tree of ~/research — 01 debtwatch credit-console, 02 ai-bubblewatch observatory, 03 culture-legitimacy dossier, 04 ECIS restricted, 05 GEN_ALPHA.dat cohort archive, 06 autonomous-security review. Dates are research cutoffs, not live updates.">
 
@@ -496,6 +499,12 @@ type       selected public note
 
 [`$ cat public/autonomous-systems-security-public-note.md`](public/autonomous-systems-security-public-note.md)
 
+<a name="orbit"></a>
+<img src="assets/dynamic/currently-orbiting.svg" width="100%" alt="currently.orbiting — an orbital display of the current orbit (fiction, series, mythology, rabbit hole), from data/orbit.json. An orbit, not a reading log.">
+
+<a name="queue"></a>
+<img src="assets/dynamic/research-queue.svg" width="100%" alt="research.queue — a process table of open research questions from the public notes, with states set by hand in data/research-queue.json. No percentages, no ETA.">
+
 <a name="market-frequencies"></a>
 <img src="assets/mod-markets.svg" width="100%" alt="market.frequencies terminal module: channels for crypto, equities, credit, structure and narrative. Interests and questions only — no wallets, positions, P&amp;L or advice. Plain text below.">
 
@@ -596,6 +605,21 @@ mastery=undefined
 
 </details>
 
+<a name="signal-map"></a>
+<img src="assets/dynamic/signal-map.svg" width="100%" alt="signal.map — a conceptual network topology with snowyarch at the centre, linked to markets, philosophy, culture, AI / systems, security, research and library. Not geography.">
+
+<a name="archive"></a>
+<img src="assets/dynamic/signal-archive.svg" width="100%" alt="signal.archive — file listing of public/, with type, size and last change date for each public file.">
+
+<a name="activity"></a>
+<img src="assets/dynamic/signal-activity.svg" width="100%" alt="signal.activity — commits per day in this public repository over the last 14 days; refresh commits excluded.">
+
+<a name="transmissions"></a>
+<img src="assets/dynamic/transmission-log.svg" width="100%" alt="transmission.log — the last five public commits of this repository, by date and class (profile, public, asset, dynamic, doc); raw messages hidden.">
+
+<a name="clock"></a>
+<img src="assets/dynamic/node-clock.svg" width="100%" alt="node.clock — Zürich node time in Europe/Zurich as of the last refresh; node time, not a location.">
+
 <img src="assets/mod-side.svg" width="100%" alt="side.frequencies terminal module: Minecraft, Terraria, weird corners of the internet, technical rabbit holes, internet culture, too many tabs.">
 
 <details>
@@ -609,6 +633,8 @@ too-many-tabs.txt
 ```
 
 </details>
+
+<!-- future radio.afterhours goes here -->
 
 <p align="center">
   <img src="assets/footer-signal.svg" width="100%" alt="session.end terminal: exit, logout — session closed. questions still open. snowyarch // ZÜRICH NODE, AFTERHOURS / PERSONAL NODE.">
