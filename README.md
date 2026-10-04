@@ -3,7 +3,7 @@
 </p>
 
 <a name="boot"></a>
-<img src="assets/dynamic/boot-sequence.svg" width="100%" alt="boot.sequence — the node boots its public modules: research, markets, library, archive and signals mounted; radio not mounted yet. Generated from the repository.">
+<img src="assets/dynamic/boot-sequence.svg" width="100%" alt="boot.sequence — the node boots its public modules: research, markets, library, archive, signals and radio mounted. Generated from the repository.">
 
 <a name="index"></a>
 <img src="assets/mod-index.svg" width="100%" alt="research.index terminal module: tree of ~/research — 01 debtwatch credit-console, 02 ai-bubblewatch observatory, 03 culture-legitimacy dossier, 04 ECIS restricted, 05 GEN_ALPHA.dat cohort archive, 06 autonomous-security review. Dates are research cutoffs, not live updates.">
