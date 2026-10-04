@@ -114,24 +114,17 @@ def corners(x, y, w, h, color=ICE, n=14, sw=2):
     return "\n".join(p)
 
 
-def window(x, y, w, h, color, title, right="", fill=PANEL, bar=RAISED):
-    """Terminal window chrome: frame, title bar, three drawn dots."""
-    out = [
-        rect(x, y, w, h, fill=fill),
-        rect(x, y, w, h, fill="url(#scan)"),
-        rect(x, y, w, 38, fill=bar),
-        line(x, y + 38, x + w, y + 38, stroke=color, sw=1.2, opacity=0.7),
-        rect(x, y, w, h, stroke=color, sw=1.6, opacity=0.55,
-             extra=' filter="url(#glow)"'),
-        rect(x, y, w, h, stroke=color, sw=1.2),
-    ]
-    for i in range(3):
-        out.append(f'<circle cx="{x + 22 + i * 20}" cy="{y + 19}" r="5.5" '
-                   f'stroke="{color}" stroke-width="1.6"'
-                   f'{" fill=" + chr(34) + color + chr(34) if i == 0 else ""}/>')
-    out.append(t(x + 86, y + 27, title, 22, ICE))
+def window(x, y, w, h, color, title, right="", fill=PANEL):
+    """A TUI pane: flat frame with the title cut into the top border."""
+    out = [rect(x, y, w, h, fill=fill), rect(x, y, w, h, stroke=color, sw=1.4)]
+    label = f"[ {title} ]"
+    out.append(rect(x + 16, y - 13, len(label) * 20 * CW + 12, 26, fill=VOID))
+    out.append(t(x + 22, y + 7, label, 20, color, "bold"))
     if right:
-        out.append(t(x + w - 16, y + 27, right, 22, color, anchor="end"))
+        rl = f"[ {right} ]"
+        rw = len(rl) * 20 * CW + 12
+        out.append(rect(x + w - 16 - rw, y - 13, rw, 26, fill=VOID))
+        out.append(t(x + w - 22, y + 7, rl, 20, ICE, anchor="end"))
     return "\n".join(out)
 
 
@@ -167,298 +160,618 @@ def write(name, content):
     (OUT / name).write_text(content, encoding="utf-8")
 
 
+# ---------------------------------------------------------------- typing
+# Typing effects use SMIL <set>/<animate>, which browsers run inside an
+# <img>. Every animation only hides things for a while: a renderer that
+# ignores animation still shows the finished terminal.
+
+CW = 0.6  # monospace advance width as a fraction of the font size
+_ids = [0]
+
+
+def uid():
+    _ids[0] += 1
+    return f"k{_ids[0]}"
+
+
+def _f(v):
+    return f"{v:.4f}".rstrip("0").rstrip(".")
+
+
+def typed(x, y, s, size, fill, start, cps=24, weight="normal",
+          cursor=GREEN):
+    """Text that types itself in from `start` seconds. Returns (svg, end)."""
+    n = len(s)
+    cw = size * CW
+    full = n * cw
+    dt = 1 / cps
+    end = start + n * dt
+    dur = end + dt
+    kt = [0] + [(start + i * dt) / dur for i in range(n + 1)]
+    widths = [0] + [i * cw for i in range(n + 1)]
+    keys = ";".join(_f(k) for k in kt)
+    cid = uid()
+    out = [
+        f'<clipPath id="{cid}"><rect x="{x}" y="{y - size}" '
+        f'width="{_f(full)}" height="{size * 1.4}">'
+        f'<animate attributeName="width" dur="{_f(dur)}s" calcMode="discrete" '
+        f'keyTimes="{keys}" values="{";".join(_f(v) for v in widths)}"/>'
+        f'</rect></clipPath>',
+        f'<text x="{x}" y="{y}" font-size="{size}" fill="{fill}" '
+        f'font-weight="{weight}" textLength="{_f(full)}" '
+        f'lengthAdjust="spacing" clip-path="url(#{cid})">{escape(s)}</text>',
+    ]
+    if cursor:
+        xs = ";".join(_f(x + v) for v in widths)
+        out.append(
+            f'<rect x="{x}" y="{y - size * 0.8}" width="{_f(cw * 0.9)}" '
+            f'height="{size}" fill="{cursor}" opacity="0">'
+            f'<animate attributeName="x" dur="{_f(dur)}s" calcMode="discrete" '
+            f'keyTimes="{keys}" values="{xs}"/>'
+            f'<animate attributeName="opacity" dur="{_f(dur)}s" '
+            f'calcMode="discrete" keyTimes="0;{_f(start / dur)}" '
+            f'values="0;1"/></rect>')
+    return "\n".join(out), end
+
+
+def appear(fragment, at):
+    """Hide a fragment until `at` seconds."""
+    return (f'<g><set attributeName="opacity" to="0" begin="0s" '
+            f'dur="{_f(at)}s"/>{fragment}</g>')
+
+
+def blink(x, y, size, color, at, times="indefinite"):
+    """Block cursor that shows up at `at` seconds and blinks."""
+    return (f'<rect x="{_f(x)}" y="{_f(y - size * 0.8)}" '
+            f'width="{_f(size * CW * 0.9)}" height="{size}" fill="{color}">'
+            f'<set attributeName="opacity" to="0" begin="0s" dur="{_f(at)}s"/>'
+            f'<animate attributeName="opacity" values="1;0" dur="1.1s" '
+            f'begin="{_f(at)}s" calcMode="discrete" repeatCount="{times}"/>'
+            f'</rect>')
+
+
+def rotating(x, y, phrases, size, fill, start, cps=18, hold=2.6, gap=0.5):
+    """Phrases that type, pause, delete and loop forever, after `start`."""
+    cw = size * CW
+    dt = 1 / cps
+    slots, tcur = [], 0.0
+    for p in phrases:
+        slots.append((tcur, len(p)))
+        tcur += len(p) * dt * 1.5 + hold + gap
+    cycle = tcur
+    tracks = []
+    for s0, n in slots:
+        ev = {0.0: 0.0}
+        for i in range(1, n + 1):
+            ev[s0 + i * dt] = i * cw
+        d0 = s0 + n * dt + hold
+        for i in range(1, n + 1):
+            ev[d0 + i * dt * 0.5] = (n - i) * cw
+        tracks.append(ev)
+
+    def width_at(ev, tt):
+        return ev[max(k for k in ev if k <= tt)]
+
+    out = []
+    for idx, ev in enumerate(tracks):
+        times = sorted(ev)
+        n = slots[idx][1]
+        cid = uid()
+        base = n * cw if idx == 0 else 0
+        out.append(
+            f'<clipPath id="{cid}"><rect x="{x}" y="{y - size}" '
+            f'width="{_f(base)}" height="{size * 1.4}">'
+            f'<animate attributeName="width" begin="{_f(start)}s" '
+            f'dur="{_f(cycle)}s" repeatCount="indefinite" calcMode="discrete" '
+            f'keyTimes="{";".join(_f(k / cycle) for k in times)}" '
+            f'values="{";".join(_f(ev[k]) for k in times)}"/></rect>'
+            f'</clipPath>'
+            f'<text x="{x}" y="{y}" font-size="{size}" fill="{fill}" '
+            f'textLength="{_f(n * cw)}" lengthAdjust="spacing" '
+            f'clip-path="url(#{cid})">{escape(phrases[idx])}</text>')
+    # one cursor follows whichever phrase is on screen
+    times = sorted(set(k for ev in tracks for k in ev))
+    xs = [x + sum(width_at(ev, k) for ev in tracks) for k in times]
+    out.append(
+        f'<rect x="{_f(x + slots[0][1] * cw)}" y="{_f(y - size * 0.8)}" '
+        f'width="{_f(cw * 0.9)}" height="{size}" fill="{fill}">'
+        f'<animate attributeName="x" begin="{_f(start)}s" dur="{_f(cycle)}s" '
+        f'repeatCount="indefinite" calcMode="discrete" '
+        f'keyTimes="{";".join(_f(k / cycle) for k in times)}" '
+        f'values="{";".join(_f(v) for v in xs)}"/></rect>')
+    return appear("\n".join(out), start)
+
+
+def terminal_plate(name, h, color, title, right, cmd, rows, status=None,
+                   frame=True, step=0.05):
+    """One terminal module: the command types, then its output streams in
+    line by line. `rows` are fragments in screen coordinates."""
+    out = []
+    if frame:
+        out.append(window(16, 16, W - 32, h - 32, color, title, right,
+                          fill=VOID))
+    out.append(t(40, 66, "$", 22, GREEN, "bold"))
+    line_svg, end = typed(66, 66, cmd, 22, ICE, 0.6, cps=26)
+    out.append(line_svg)
+    out.append(blink(66 + len(cmd) * 22 * CW + 8, 66, 22, GREEN, end, "8"))
+    for i, frag in enumerate(rows):
+        out.append(appear(frag, end + 0.3 + i * step))
+    if status:
+        # tmux-style status line, always on screen
+        out.append(rect(17, h - 50, W - 34, 33, fill=color))
+        out.append(t(30, h - 27, status[0], 19, VOID, "bold"))
+        out.append(t(W - 30, h - 27, status[1], 19, VOID, "bold",
+                     anchor="end"))
+    write(name, svg(h, "\n".join(out)))
+
+
+def col(n, size=20, x0=40):
+    """x position of monospace column n."""
+    return x0 + n * size * CW
+
+
+def pane(x, y, w, h, label, color=BLUE, fill=PANEL):
+    """A sub-pane with its label cut into the top border."""
+    lw = len(label) * 17 * CW + 12
+    return (rect(x, y, w, h, fill=fill, stroke=LINE, sw=1.2) +
+            rect(x + 10, y - 10, lw, 20, fill=VOID) +
+            t(x + 16, y + 6, label, 17, color, "bold"))
+
+
 # ---------------------------------------------------------------- assets
 
+ASCII_CITY = r"""
+  .    . .                .
+  .     '    '        ooo  .
+       `             o@@@o
+         ^      ^     ooo
+  .   ' /|\    /|\      '
+    '   |#|  . |#|
+        |#|   '|#| .
+        |o|    |o|  .
+      ` |#|    |#|
+        |#|    |#|_____
+        |:|====|:|| : |
+________|#|####|#||:  |
+|  :  :||#|####|#||  :|_____
+| :  : ||:|#[]#|:|| : ||  :|
+|:  :  ||#|####|#||:  || : |
+|  :  :||#|####|#||  :||:  |
+| :  : ||:|####|:|| : ||  :|
+============================
+~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+""".strip("\n").split("\n")
+
+
 def header():
-    rnd = random.Random(7)
-    h = 440
-    horizon = 330
-    b = [rect(0, 0, W, horizon, fill="url(#sky)")]
+    h = 600
+    b = [window(16, 16, W - 32, h - 32, PINK, "snowyarch@zurich-node: ~",
+                "AFTERHOURS", fill=VOID)]
+    # the boot command
+    prompt = "snowyarch@zurich-node:~$"
+    b.append(t(36, 70, prompt, 21, GREEN, "bold"))
+    cmd, t0 = typed(36 + (len(prompt) + 1) * 21 * CW, 70, "neofetch", 21,
+                    WHITE, 0.8, cps=12)
+    b.append(cmd)
+    t0 += 0.35
 
-    # rain: short diagonal strokes, very quiet
-    for _ in range(90):
-        x = rnd.uniform(0, W)
-        y = rnd.uniform(0, horizon - 20)
-        ln = rnd.uniform(8, 22)
-        b.append(line(round(x, 1), round(y, 1), round(x - ln * 0.25, 1),
-                      round(y + ln, 1), stroke=ICE, sw=0.8,
-                      opacity=round(rnd.uniform(0.08, 0.22), 2)))
+    # original ascii skyline: twin towers, moon, snow, river
+    fs, lh = 13.5, 16.5
+    rows = []
+    shades = [PINK, PINK, PINK, "#E35FD6", "#C46DE0", "#A47BEA", "#857FF2",
+              "#6687F8", BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, BLUE,
+              BLUE, ICE, BLUE]
+    for i, row in enumerate(ASCII_CITY):
+        rows.append(appear(
+            f'<text x="36" y="{_f(112 + i * lh)}" font-size="{fs}" '
+            f'fill="{shades[i]}" xml:space="preserve">{escape(row)}</text>',
+            t0 + i * 0.04))
+    b += rows
 
-    # striped cold moon
-    b.append('<clipPath id="moonclip">' + "".join(
-        f'<rect x="540" y="{36 + i * 9}" width="140" height="{9 - min(i, 6)}"/>'
-        for i in range(12)) + '</clipPath>')
-    b.append(f'<circle cx="610" cy="96" r="54" fill="{PINK}" opacity="0.85" '
-             f'clip-path="url(#moonclip)"/>')
-    b.append(f'<circle cx="610" cy="96" r="62" stroke="{PINK}" '
-             f'stroke-width="1" opacity="0.35"/>')
+    # palette swatches under the art
+    pal = [VOID, PANEL, RAISED, LINE, BLUE, PINK, GREEN, ICE, WHITE]
+    sw = [appear(rect(36 + i * 26, 440, 22, 22, fill=c, stroke=LINE, sw=1),
+                 t0 + 0.9 + i * 0.05) for i, c in enumerate(pal)]
+    b += sw
 
-    # skyline with lit windows
-    x = -4
-    while x < W:
-        bw = rnd.choice([34, 42, 50, 58, 66])
-        bh = rnd.randint(60, 170)
-        if 470 < x < 690:
-            bh = rnd.randint(50, 120)  # keep the moon visible
-        top = horizon - bh
-        b.append(rect(x, top, bw - 4, bh, fill="#0B1220", stroke=LINE, sw=1))
-        if rnd.random() < 0.3:
-            b.append(line(x + bw / 2 - 2, top, x + bw / 2 - 2, top - 14,
-                          stroke=LINE, sw=1.2))
-        for wy in range(top + 8, horizon - 8, 11):
-            for wx in range(x + 6, x + bw - 10, 9):
-                r = rnd.random()
-                if r < 0.10:
-                    c = rnd.choice([PINK, BLUE, ICE, ICE, GREEN])
-                    b.append(rect(wx, wy, 4, 5, fill=c,
-                                  opacity=round(rnd.uniform(0.35, 0.8), 2)))
-        x += bw
+    # neofetch-style info column
+    x0 = 286
+    fs2, lh2 = 19, 29
+    b.append(appear(t(x0, 112, "snowyarch@zurich-node", 22, PINK, "bold"),
+                    t0 + 0.1))
+    b.append(appear(t(x0, 134, "-" * 21, 22, LINE), t0 + 0.15))
+    info = [("node", "afterhours / personal"),
+            ("loc", "zürich // ch"),
+            ("role", "builder · researcher"),
+            ("focus", "markets · ai · philosophy"),
+            ("research", "5 public · 1 restricted"),
+            ("tools", "python · git · claude code"),
+            ("markets", "btc · sol · credit"),
+            ("library", "dune · leviathan · 1984"),
+            ("side", "minecraft · terraria"),
+            ("status", "still learning")]
+    for i, (k, v) in enumerate(info):
+        y = 168 + i * lh2
+        frag = (t(x0, y, f"{k}:", fs2, BLUE, "bold") +
+                t(x0 + 10 * fs2 * CW, y, v, fs2,
+                  GREEN if k == "status" else WHITE))
+        b.append(appear(frag, t0 + 0.25 + i * 0.09))
 
-    # horizon line, reflection, perspective grid
-    b.append(rect(0, horizon, W, h - horizon, fill="url(#reflect)"))
-    b.append(line(0, horizon, W, horizon, stroke=PINK, sw=1.6,
-                  opacity=0.9))
-    b.append(line(0, horizon, W, horizon, stroke=PINK, sw=5, opacity=0.25))
-    vx = W / 2
-    for i in range(-14, 15):
-        b.append(line(vx + i * 18, horizon, vx + i * 90, h, stroke=BLUE,
-                      sw=0.8, opacity=0.35))
-    yy, step = horizon + 6, 6
-    while yy < h:
-        b.append(line(0, round(yy, 1), W, round(yy, 1), stroke=BLUE, sw=0.8,
-                      opacity=0.35))
-        step *= 1.38
-        yy += step
-
-    # boot terminal
-    b.append(window(24, 24, 410, 156, PINK, "session", "01"))
-    b.append(t(44, 92, "> connection established", 24, PINK))
-    b.append(t(44, 124, "> public node online", 24, WHITE))
-    b.append(t(44, 156, "> session initialized", 24, GREEN))
-    b.append(rect(362, 137, 13, 23, fill=GREEN))
-
-    # wordmark with a small static glitch split
-    wm = dict(size=104, weight="bold",
-              extra=' textLength="520" lengthAdjust="spacingAndGlyphs"')
-    b.append(t(37, 271, "snowyarch", fill=BLUE, opacity=0.8, **wm))
-    b.append(t(43, 267, "snowyarch", fill=PINK, opacity=0.8, **wm))
-    b.append(t(40, 269, "snowyarch", fill=WHITE,
-               size=104, weight="bold",
-               extra=' textLength="520" lengthAdjust="spacingAndGlyphs" '
-                     f'stroke="{VOID}" stroke-width="2" paint-order="stroke"'))
-    for gx, gy, gw, gc in ((572, 214, 34, PINK), (584, 222, 18, BLUE),
-                           (566, 252, 26, BLUE)):
-        b.append(rect(gx, gy, gw, 3, fill=gc, opacity=0.8))
-
-    # identity line under the wordmark
-    b.append(rect(28, 284, 664, 40, fill=VOID, opacity=0.82))
-    b.append(t(42, 313, "ZÜRICH // CH", 28, PINK, "bold", spacing=1))
-    b.append(t(680, 312, "AFTERHOURS / PERSONAL NODE", 24, ICE,
-               anchor="end"))
-
-    # HUD footer
-    b.append(rect(0, h - 38, W, 38, fill=VOID, opacity=0.86))
-    b.append(t(24, h - 12, "NODE ZH-01", 22, BLUE, "bold"))
-    b.append(t(W / 2, h - 12, "public surface", 22, ICE, anchor="middle"))
-    for i in range(5):
-        hh = 6 + i * 4
-        b.append(rect(650 + i * 9, h - 12 - hh, 5, hh,
-                      fill=GREEN if i < 4 else LINE))
-    b.append(corners(8, 8, W - 16, h - 16, ICE, 18, 1.5))
+    # kali-style prompt with rotating thoughts
+    t1 = t0 + 0.25 + len(info) * 0.09 + 0.4
+    b.append(appear(line(36, 488, W - 36, 488, stroke=LINE, sw=1), t1))
+    b.append(appear(
+        t(36, 522, "┌──(", 21, BLUE) +
+        t(36 + 4 * 21 * CW, 522, "snowyarch@zurich", 21, PINK, "bold") +
+        t(36 + 20 * 21 * CW, 522, ")-[~/research]", 21, BLUE), t1))
+    b.append(appear(t(36, 556, "└─$", 21, BLUE), t1))
+    b.append(rotating(36 + 4 * 21 * CW, 556,
+                      ["build things to understand them",
+                       "why do markets believe what they believe?",
+                       '"not yet" is a valid result',
+                       "questions > answers"],
+                      21, GREEN, t1 + 0.3))
     write("header.svg", svg(h, "\n".join(b)))
 
 
 def operator_note():
-    h = 258
-    b = [window(16, 16, W - 32, h - 32, PINK, "operator.note",
-                "AFTERHOURS")]
-    b.append(t(40, 94, "> whoami", 26, PINK))
-    b.append(t(40, 136, "builder · researcher · markets obsessive", 25,
-               WHITE))
-    b.append(t(40, 172, "philosophy nerd · systems explorer", 25, WHITE))
-    b.append(t(40, 208, "internet-native learner", 25, WHITE))
-    b.append(rect(402, 189, 13, 24, fill=PINK))
-    b.append(t(W - 40, 208, "still learning", 22, GREEN, anchor="end"))
+    h = 330
+    b = [window(16, 16, W - 32, h - 32, PINK, "operator.note", "tty1",
+                fill=VOID)]
+    b.append(t(40, 72, "┌──(", 22, BLUE) +
+             t(40 + 4 * 22 * CW, 72, "snowyarch@zurich", 22, PINK, "bold") +
+             t(40 + 20 * 22 * CW, 72, ")-[~]", 22, BLUE))
+    b.append(t(40, 104, "└─$", 22, BLUE))
+    cmd, t0 = typed(40 + 4 * 22 * CW, 104, "whoami", 22, WHITE, 0.7, cps=10)
+    b.append(cmd)
+    out = ["builder · researcher · markets obsessive",
+           "philosophy nerd · systems explorer",
+           "internet-native learner"]
+    for i, ln in enumerate(out):
+        b.append(appear(t(40, 146 + i * 34, ln, 24, WHITE), t0 + 0.3 + i * 0.12))
+    b.append(appear(t(40, 254, "# still learning", 22, GREEN), t0 + 0.8))
+    b.append(appear(t(40, 290, "└─$", 22, BLUE), t0 + 1.1))
+    b.append(blink(40 + 4 * 22 * CW, 290, 22, PINK, t0 + 1.1))
     write("operator-note.svg", svg(h, "\n".join(b)))
 
 
 INDEX_ROWS = [
-    ("01", "DEBTWATCH", "macro / credit research", BLUE),
-    ("02", "AI BUBBLEWATCH", "ai economics research", BLUE),
-    ("03", "CULTURE / LEGITIMACY", "documentary · causal question open", PINK),
-    ("04", "ECIS", "PRIVATE R&D SYSTEM · ACCESS RESTRICTED", ICE),
-    ("05", "GEN_ALPHA.dat", "ongoing research", GREEN),
-    ("06", "AUTONOMOUS SYSTEMS SECURITY", "discovery / adversarial review",
+    ("drwxr-xr-x", "debtwatch/", "macro / credit research", BLUE),
+    ("drwxr-xr-x", "ai-bubblewatch/", "ai economics research", BLUE),
+    ("drwxr-xr-x", "culture-legitimacy/", "documentary · causal question open",
+     PINK),
+    ("d---------", "ECIS", "PRIVATE R&D SYSTEM · ACCESS RESTRICTED", ICE),
+    ("-rw-r--r--", "GEN_ALPHA.dat", "ongoing research", GREEN),
+    ("drwxr-xr-x", "autonomous-security/", "discovery / adversarial review",
      BLUE),
 ]
 
 
 def research_index():
-    row_h = 74
-    top = 116
-    h = top + row_h * len(INDEX_ROWS) + 40
-    b = [rect(0, 0, W, h, fill="url(#grid)")]
-    b.append(t(56, 56, "RESEARCH INDEX", 34, WHITE, "bold", spacing=2))
-    b.append(t(56, 88, "research files · public node", 22, ICE))
-    b.append(t(W - 24, 56, "06", 34, BLUE, "bold", anchor="end"))
-    b.append(line(24, 24, 24, h - 24, stroke=BLUE, sw=2, opacity=0.8))
-    for i, (num, name, status, color) in enumerate(INDEX_ROWS):
-        y = top + i * row_h
-        b.append(line(56, y, W - 24, y, stroke=LINE, sw=1))
-        b.append(rect(19, y + 30, 10, 10, fill=VOID, stroke=color, sw=2))
-        b.append(line(29, y + 35, 50, y + 35, stroke=color, sw=1.2,
-                      opacity=0.7))
-        b.append(t(56, y + 43, num, 24, GREEN, "bold"))
-        b.append(t(104, y + 33, name, 26, WHITE, "bold"))
-        b.append(t(104, y + 61, status, 22, ICE))
-        if name == "ECIS":
-            b.append(lock(W - 52, y + 34, 0.55, ICE))
-        else:
-            b.append(f'<path d="M{W - 64} {y + 26}h16l8 8v18h-24z" '
-                     f'stroke="{color}" stroke-width="1.6"/>')
-    y = top + row_h * len(INDEX_ROWS)
-    b.append(line(56, y, W - 24, y, stroke=LINE, sw=1))
-    b.append(corners(8, 8, W - 16, h - 16, LINE, 14, 1.5))
-    write("research-index.svg", svg(h, "\n".join(b)))
+    h = 590
+    rows = [t(40, 110, "total 6", 20, ICE)]
+    for i, (perm, name, desc, c) in enumerate(INDEX_ROWS):
+        y = 150 + i * 62
+        rows.append(t(40, y, perm, 21, LINE if name == "ECIS" else ICE) +
+                    t(col(12, 21), y, name, 21,
+                      WHITE if name == "ECIS" else c, "bold") +
+                    t(col(12, 21), y + 26, desc, 19, ICE))
+    terminal_plate("research-index.svg", h, BLUE, "~/research", "ls -l",
+                   "ls -l ~/research", rows,
+                   status=("[zh-01] 0:index*", "5 public · 1 restricted"))
 
 
 def debtwatch():
-    h = 668
-    x0, w0 = 16, W - 32
-    b = [window(x0, 16, w0, h - 32, BLUE, "debtwatch :: credit console",
-                "2026-10-02")]
-    b.append(t(40, 106, "DEBTWATCH", 48, WHITE, "bold", spacing=3))
-    b.append(t(40, 142, "CREDIT TRANSMISSION CONSOLE", 22, BLUE, spacing=1))
-    b.append(t(40, 186, "When does expensive credit", 26, PINK))
-    b.append(t(40, 218, "become unavailable credit?", 26, PINK))
-
-    # transmission path: macro -> pricing -> refinancing -> company
-    y = 252
-    nodes = [("MACRO", 112), ("PRICING", 138), ("REFINANCING", 186),
-             ("COMPANY", 138)]
-    gap = 22
-    total = sum(wd for _, wd in nodes) + gap * 3
-    b.append(line(40, y + 28, 40 + total, y + 28, stroke=BLUE, sw=1.4,
-                  dash="4 6", opacity=0.8))
-    nx = 40
-    for i, (n, bw) in enumerate(nodes):
-        b.append(rect(nx, y, bw, 56, fill=RAISED, stroke=BLUE, sw=1.4))
-        b.append(t(nx + bw / 2, y + 36, n, 22, WHITE, "bold",
+    h = 790
+    rows = []
+    # symbol bar, the way a market screen opens
+    rows.append(rect(40, 92, 640, 38, fill=RAISED, stroke=LINE, sw=1) +
+                t(52, 118, "DEBTWATCH", 21, WHITE, "bold") +
+                t(178, 118, "CREDIT · TRANSMISSION", 19, ICE) +
+                t(668, 118, "snapshot 2026-10-02", 19, GREEN, anchor="end"))
+    # chart pane: a conceptual path, watermarked so it can't pass for data
+    g = [pane(40, 150, 420, 214, "transmission", BLUE, VOID)]
+    for k in range(1, 4):
+        g.append(line(40 + 105 * k, 160, 40 + 105 * k, 364, stroke=LINE,
+                      dash="2 6"))
+    for k in range(1, 5):
+        g.append(line(40, 150 + 43 * k, 460, 150 + 43 * k, stroke=LINE,
+                      opacity=0.35))
+    g.append(t(250, 330, "DEBTWATCH", 46, LINE, "bold", anchor="middle",
+               opacity=0.35))
+    g.append(line(92, 244, 407, 244, stroke=BLUE, sw=1.6, dash="6 5"))
+    for i, (cx, lab) in enumerate(((92, "MACRO"), (197, "PRICING"),
+                                   (302, "REFINANCING"), (407, "COMPANY"))):
+        g.append(rect(cx - 7, 237, 14, 14, fill=VOID, stroke=BLUE, sw=2))
+        g.append(t(cx, 282 if i % 2 == 0 else 222, lab, 18, WHITE, "bold",
                    anchor="middle"))
         if i < 3:
-            ax = nx + bw + 5
-            b.append(f'<path d="M{ax} {y + 22}l12 6-12 6z" fill="{BLUE}"/>')
-        nx += bw + gap
-    b.append(t(40, y + 90, "conceptual path · not automatic", 22, ICE))
-
-    # three different observations, kept apart
-    bands = [("PRICE", "what borrowing costs"),
-             ("TERMS", "security · restrictions"),
-             ("ACCESS", "can it be obtained?")]
-    by = 380
-    for i, (k, v) in enumerate(bands):
-        yy = by + i * 60
-        b.append(rect(40, yy, w0 - 48, 48, fill=PANEL, stroke=LINE, sw=1))
-        b.append(rect(40, yy, 124, 48, fill=RAISED))
-        b.append(rect(40, yy, 4, 48, fill=GREEN))
-        b.append(t(58, yy + 32, k, 23, GREEN, "bold", spacing=1))
-        b.append(t(182, yy + 32, v, 23, WHITE))
-        for j in range(5):
-            b.append(rect(W - 64 - j * 12, yy + 15, 6, 18, fill=BLUE,
-                          opacity=round(0.2 + 0.12 * (4 - j), 2)))
-    b.append(line(40, h - 98, W - 40, h - 98, stroke=LINE))
-    b.append(t(40, h - 60, "> result may be:", 24, ICE))
-    b.append(t(300, h - 60, "NOT YET", 24, GREEN, "bold", spacing=2))
-    b.append(t(40, h - 30, "not a crash predictor", 22, ICE))
-    write("section-debtwatch.svg", svg(h, "\n".join(b)))
+            g.append(f'<path d="M{cx + 46} 238l10 6-10 6z" fill="{BLUE}"/>')
+    g.append(t(52, 352, "conceptual path · not a price series", 17, ICE))
+    rows.append("".join(g))
+    # details pane
+    d = [pane(472, 150, 208, 214, "details", BLUE, VOID)]
+    for i, (k, v) in enumerate((("snapshot", "02 Oct"), ("evidence", "≤ 01 Oct"),
+                                ("edition", "03 Oct"), ("year", "2026"),
+                                ("mode", "research"), ("forecast", "none"))):
+        y = 190 + i * 29
+        d.append(t(486, y, k, 18, ICE) + t(486 + 9 * 18 * CW, y, v, 18, WHITE))
+    rows.append("".join(d))
+    # watchlist: the three observations, in words, as the brief states them
+    wl = [rect(40, 384, 640, 30, fill=RAISED),
+          rect(40, 384, 640, 156, stroke=LINE, sw=1.2),
+          t(52, 405, "LAYER", 17, ICE, "bold"),
+          t(170, 405, "OBSERVATION", 17, ICE, "bold"),
+          t(470, 405, "AT SNAPSHOT", 17, ICE, "bold")]
+    rows.append("".join(wl))
+    for i, (k, v, mark, st) in enumerate(
+            (("PRICE", "cost of borrowing", "●", "more evident"),
+             ("TERMS", "security · restrictions", "◐", "selective"),
+             ("ACCESS", "can it be obtained?", "○", "not established"))):
+        y = 414 + i * 42
+        rows.append((line(40, y, 680, y, stroke=LINE) if i else "") +
+                    t(52, y + 28, k, 21, GREEN, "bold") +
+                    t(170, y + 28, v, 20, WHITE) +
+                    t(470, y + 28, f"{mark} {st}", 20, WHITE))
+    # bottom panel with tabs
+    rows.append(t(52, 578, "notes", 18, WHITE, "bold") +
+                rect(52, 585, 60, 2, fill=BLUE) +
+                t(136, 578, "counterevidence", 18, ICE) +
+                t(330, 578, "limits", 18, ICE) +
+                line(40, 592, 680, 592, stroke=LINE))
+    notes = ["successful refinancings kept as counterevidence",
+             "panel picked after cases of interest: no prevalence",
+             "not a claim about conditions today"]
+    for i, n in enumerate(notes):
+        y = 622 + i * 30
+        rows.append(t(40, y, ">", 19, GREEN) + t(col(2, 19), y, n, 19, ICE))
+    y = 622 + 3 * 30
+    rows.append(t(40, y, ">", 19, GREEN) + t(col(2, 19), y, "result:", 19, ICE) +
+                t(col(10, 19), y, "NOT YET", 19, GREEN, "bold") +
+                t(col(18, 19), y, "· threshold not crossed", 19, ICE))
+    terminal_plate("section-debtwatch.svg", h, BLUE,
+                   "debtwatch :: credit terminal", "HISTORICAL",
+                   "cat public/debtwatch-public-brief.md", rows,
+                   status=("[zh-01] 1:debtwatch*",
+                           "research · not a crash predictor"))
 
 
 def ai_bubblewatch():
-    h = 720
-    b = [rect(0, 0, W, h, fill="url(#grid)")]
-    b.append(window(16, 16, W - 32, h - 32, PINK,
-                    "ai-bubblewatch :: observatory", "2026-09-21",
-                    fill=PANEL))
-    b.append(t(40, 106, "AI BUBBLEWATCH", 46, WHITE, "bold", spacing=2))
-    b.append(t(W - 44, 140, "?", 88, PINK, "bold", anchor="end",
-               extra=' filter="url(#glow)"'))
-    b.append(t(40, 142, "AI CAPITAL OBSERVATORY", 22, BLUE, spacing=1))
-    b.append(t(40, 182, "the name is a question,", 25, PINK))
-    b.append(t(40, 212, "not a verdict", 25, PINK))
-
-    quads = [("INVESTMENT", "built, paid,", "committed?"),
-             ("UTILIZATION", "used by whom,", "on what terms?"),
-             ("RETURNS", "cash left after", "all costs?"),
-             ("FINANCING", "who supplies it,", "who bears risk?")]
-    qx, qy, qw, qh, g = 40, 236, 310, 164, 20
-    for i, (k, l1, l2) in enumerate(quads):
-        cx = qx + (i % 2) * (qw + g)
-        cy = qy + (i // 2) * (qh + g)
-        b.append(rect(cx, cy, qw, qh, fill=RAISED, stroke=BLUE, sw=1.3))
-        b.append(corners(cx + 6, cy + 6, qw - 12, qh - 12, BLUE, 10, 1.4))
-        b.append(t(cx + 20, cy + 42, f"0{i + 1}", 22, GREEN, "bold"))
-        b.append(t(cx + 20, cy + 78, k, 25, WHITE, "bold", spacing=1))
-        b.append(t(cx + 20, cy + 112, l1, 22, ICE))
-        b.append(t(cx + 20, cy + 140, l2, 22, ICE))
-    # obligations sits in the middle, touching all four fields
-    mx, my = qx + qw + g / 2, qy + qh + g / 2
-    b.append(f'<path d="M{mx} {my - 44}L{mx + 88} {my}L{mx} {my + 44}'
-             f'L{mx - 88} {my}Z" fill="{VOID}" stroke="{PINK}" '
-             f'stroke-width="1.8"/>')
-    b.append(t(mx, my + 6, "OBLIGATIONS", 18, PINK, "bold", anchor="middle"))
-
-    y = qy + 2 * qh + g + 44
-    b.append(t(40, y, "16 deliberately selected entities", 22, WHITE))
-    b.append(t(40, y + 30, "not a representative sample", 22, ICE))
-    tg, tw = tag(40, y + 48, "NO BUBBLE VERDICT", GREEN, 22, 10, 34)
-    b.append(tg)
-    write("section-ai-bubblewatch.svg", svg(h, "\n".join(b)))
+    h = 830
+    rows = [rect(40, 92, 640, 38, fill=RAISED, stroke=LINE, sw=1) +
+            t(52, 118, "AI BUBBLEWATCH", 21, WHITE, "bold") +
+            t(241, 118, "CAPITAL MONITOR", 19, ICE) +
+            t(668, 118, "? HYPOTHESIS", 19, PINK, "bold", anchor="end")]
+    for i, (k, v, c) in enumerate((("hypothesis", "unresolved", PINK),
+                                   ("sample", "16 selected entities", WHITE),
+                                   ("representative", "no", WHITE),
+                                   ("verdict", "none", GREEN),
+                                   ("cutoff", "2026-09-21", WHITE))):
+        y = 166 + i * 28
+        dots = "." * (16 - len(k))
+        rows.append(t(40, y, f"{k} {dots}", 20, ICE) +
+                    t(col(18), y, v, 20, c, "bold" if c != WHITE else "normal"))
+    m = [pane(40, 316, 640, 92, "conceptual map", PINK, VOID)]
+    flow = [("financing", WHITE), (" ─▶ ", BLUE), ("capex", WHITE),
+            (" ─▶ ", BLUE), ("capacity", WHITE), (" ─▶ ", BLUE),
+            ("use", WHITE), (" ─▶ ", BLUE), ("returns", WHITE)]
+    c0 = 0
+    for s_, c in flow:
+        m.append(t(col(c0, 19, 56), 352, s_, 19, c,
+                   extra=' xml:space="preserve"'))
+        c0 += len(s_)
+    m.append(t(col(10, 19, 56), 386, "└──", 19, BLUE) +
+             t(col(14, 19, 56), 386, "obligations: who pays, when?", 19, ICE))
+    rows.append("".join(m))
+    mods = [("capex", BLUE, "built · paid · committed", "announced ≠ spent"),
+            ("utilization", BLUE, "used by whom, what terms?",
+             "contracted ≠ realized"),
+            ("returns", BLUE, "cash after all costs?", "revenue ≠ return"),
+            ("obligations", BLUE, "debt · leases · projects",
+             "treated separately"),
+            ("financing", BLUE, "who supplies, who bears?",
+             "access ≠ good economics"),
+            ("counterevidence", PINK, "priced financing 09-18",
+             "settlement expected")]
+    for i, (k, c, l1, l2) in enumerate(mods):
+        x = 40 + (i % 2) * 326
+        y = 430 + (i // 2) * 116
+        rows.append(pane(x, y, 314, 102, k, c, VOID) +
+                    t(x + 14, y + 44, l1, 19, WHITE) +
+                    t(x + 14, y + 76, l2, 19, ICE))
+    terminal_plate("section-ai-bubblewatch.svg", h, PINK,
+                   "ai-bubblewatch :: observatory", "2026-09-21",
+                   "cat public/ai-bubblewatch-public-brief.md", rows,
+                   status=("[zh-01] 2:ai-bubblewatch*", "no bubble verdict"))
 
 
 def culture():
-    h = 820
-    b = []
-    # dossier folder with a pink tab
-    b.append(f'<path d="M16 66H330L358 36H16Z" fill="{RAISED}" '
-             f'stroke="{PINK}" stroke-width="1.6"/>')
-    b.append(t(34, 59, "CULTURE / LEGITIMACY", 22, PINK, "bold"))
-    b.append(rect(16, 66, W - 32, h - 82, fill=PANEL, stroke=PINK, sw=1.6))
-    b.append(rect(16, 66, W - 32, h - 82, fill="url(#scan)"))
-    b.append(t(40, 124, "CULTURAL SIGNAL DOSSIER", 22, BLUE, spacing=1))
-    b.append(t(40, 174, "Tastewashing →", 36, WHITE, "bold"))
-    b.append(t(40, 218, "Cultural Legitimacy", 36, WHITE, "bold"))
-    b.append(t(40, 262, "Embedding", 36, WHITE, "bold"))
-    b.append(t(40, 298, "(working title)", 24, ICE))
+    h = 720
+    tree = [("", "culture-legitimacy/", BLUE, "bold", "", None),
+            ("├── ", "index.md", WHITE, "normal", "", None),
+            ("│     ", "Tastewashing →", PINK, "bold", "", None),
+            ("│     ", "Cultural Legitimacy Embedding", PINK, "bold", "", None),
+            ("│     ", "(working title)", ICE, "normal", "", None),
+            ("├── ", "production/", BLUE, "bold", "what companies make", ICE),
+            ("├── ", "reception/", BLUE, "bold", "how people read it", ICE),
+            ("├── ", "causal-question/", BLUE, "bold", "OPEN", PINK),
+            ("└── ", "reports/", BLUE, "bold", "", None),
+            ("    ├── ", "Tastewashing_Informe_Sencillo_PUBLIC_v1.pdf", WHITE,
+             "normal", "", None),
+            ("    │       ", "start here · ES · 10 pages", GREEN, "normal", "",
+             None),
+            ("    └── ", "Tastewashing_Informe_Formal_PUBLIC_v1.pdf", WHITE,
+             "normal", "", None),
+            ("            ", "full synthesis · ES · 13 pages", GREEN, "normal",
+             "", None)]
+    rows = []
+    for i, (pre, name, c, wt, desc, dc) in enumerate(tree):
+        y = 110 + i * 30
+        frag = t(40, y, pre, 20, LINE, extra=' xml:space="preserve"')
+        frag += t(col(len(pre)), y, name, 20, c, wt)
+        if desc:
+            frag += t(col(24), y, desc, 20, dc,
+                      "bold" if desc == "OPEN" else "normal")
+        rows.append(frag)
+    rows.append(t(40, 522, "4 directories, 3 files", 20, ICE))
+    for i, (k, v, c) in enumerate((("status", "documentary · pre-experimental",
+                                    WHITE),
+                                   ("cutoff", "2026-08-12", WHITE),
+                                   ("edition", "2026-10-03 (editorial)", WHITE),
+                                   ("causal", "OPEN · not established", PINK))):
+        y = 566 + i * 28
+        rows.append(t(40, y, k, 20, GREEN) + t(col(10), y, v, 20, c))
+    terminal_plate("section-culture.svg", h, PINK,
+                   "dossier :: culture-legitimacy", "ARCHIVE",
+                   "tree culture-legitimacy/", rows,
+                   status=("[zh-01] 3:culture*", "ES · 10 + 13 pages"))
 
-    x = 40
-    for s in ("DOCUMENTARY", "PRE-EXPERIMENTAL"):
-        tg, tw = tag(x, 322, s, GREEN, 20, 9, 34)
-        b.append(tg)
-        x += tw + 12
-    tg, tw = tag(40, 366, "CAUSAL QUESTION OPEN", PINK, 20, 9, 34)
-    b.append(tg)
 
-    cards = [("01", "PRODUCTION", "what companies make", BLUE),
-             ("02", "RECEPTION", "how people read it", BLUE),
-             ("03", "CAUSAL QUESTION", "does affinity change", PINK)]
-    extra = {"03": "legitimacy?"}
-    cy = 424
-    for i, (n, k, l1, c) in enumerate(cards):
-        y = cy + i * 98
-        x = 40 + i * 8
-        b.append(rect(x, y, W - 96 - i * 8, 86, fill=RAISED, stroke=c,
-                      sw=1.3))
-        b.append(rect(x, y, 6, 86, fill=c))
-        b.append(t(x + 24, y + 34, n, 22, GREEN, "bold"))
-        b.append(t(x + 72, y + 34, k, 24, WHITE, "bold", spacing=1))
-        b.append(t(x + 72, y + 66, l1 + (" " + extra[n] if n in extra
-                                          else ""), 22, ICE))
-        b.append(rect(W - 40, y + 22, 24, 42, fill=c, opacity=0.85))
-        b.append(t(W - 28, y + 50, n[1], 20, VOID, "bold", anchor="middle"))
-    b.append(line(40, h - 106, W - 56, h - 106, stroke=LINE))
-    b.append(t(40, h - 70, "reports · ES · 10 + 13 pages", 22, WHITE))
-    b.append(t(40, h - 38, "research cutoff 2026-08-12", 22, ICE))
-    write("section-culture.svg", svg(h, "\n".join(b)))
+def gen_alpha():
+    h = 600
+    rows = [t(40, 110, "# cohort / cognition archive", 20, ICE),
+            t(40, 138, "# snapshot 2026-08-16 · label, not a dataset", 20,
+              ICE)]
+    top, rh, split = 162, 40, 340
+    rows.append(rect(40, top, 640, 36, fill=RAISED) +
+                rect(40, top, 640, 36 + 5 * rh, stroke=LINE, sw=1.2) +
+                line(split, top, split, top + 36 + 5 * rh, stroke=LINE) +
+                t(52, top + 25, "DOMAIN", 20, GREEN, "bold") +
+                t(split + 12, top + 25, "NOTE", 20, GREEN, "bold"))
+    data = [("education ≠ cognition", "test ≠ general ability"),
+            ("population · age · task", "PISA 2022 = 15-year-olds"),
+            ("school conditions", "instruction · attendance"),
+            ("screens / feeds / ai", "separate causal evidence"),
+            ("the observer", "memory flatters the past")]
+    for i, (a, b_) in enumerate(data):
+        y = top + 36 + i * rh
+        rows.append(line(40, y, 680, y, stroke=LINE) +
+                    t(52, y + 27, a, 19, WHITE) +
+                    t(split + 12, y + 27, b_, 19, ICE))
+    y = top + 36 + 5 * rh
+    rows.append(t(40, y + 34, "(5 rows)", 20, ICE))
+    rows.append(t(40, y + 72, "causality", 20, ICE) +
+                t(col(12), y + 72, "UNRESOLVED", 20, PINK, "bold"))
+    rows.append(t(40, y + 102, "research", 20, ICE) +
+                t(col(12), y + 102, "open", 20, GREEN, "bold"))
+    terminal_plate("section-gen-alpha.svg", h, GREEN, "GEN_ALPHA.dat",
+                   "research note", "column -t -s'|' GEN_ALPHA.dat", rows,
+                   status=("[zh-01] 5:gen_alpha*",
+                           "not a dataset · not a download"))
+
+
+def security():
+    h = 470
+    log = [("mode", "discovery / adversarial review", "", ICE),
+           ("scope", "security boundaries, autonomous action", "", ICE),
+           ("method", "compare with existing research + tools", "", ICE),
+           ("check", "novelty claims ......", "under falsification", PINK),
+           ("check", "protection claims ...", "under falsification", PINK),
+           ("result", "validated primitive .", "none", WHITE),
+           ("result", "product .............", "none", WHITE),
+           ("result", "startup thesis ......", "none", WHITE),
+           ("note", "a question is not yet a contribution", "", GREEN)]
+    rows = []
+    for i, (k, a, b_, c) in enumerate(log):
+        y = 112 + i * 32
+        frag = t(40, y, f"[{k:<6}]", 20, BLUE, "bold",
+                 extra=' xml:space="preserve"')
+        frag += t(col(9), y, a, 20, c if not b_ else ICE)
+        if b_:
+            frag += t(col(31), y, b_, 20, c, "bold")
+        rows.append(frag)
+    terminal_plate("section-security.svg", h, BLUE, "adversarial-review",
+                   "CONTROLLED", "tail -n 9 review.log", rows,
+                   status=("[zh-01] 6:security*", "DISCOVERY · no readiness claim"))
+
+
+def market_frequencies():
+    lines = [("# interests and questions, not positions", None),
+             ("[crypto]", "sec"),
+             (("topics", "bitcoin, solana, memecoins"), "kv"),
+             (("lens", "liquidity, incentives, narrative"), "kv"),
+             ("[equities]", "sec"),
+             (("topics", "banks, software, ai, defense-tech"), "kv"),
+             (("lens", "capital, market power, dependence"), "kv"),
+             ("[credit]", "sec"),
+             (("topics", "obligations, maturities, refinancing"), "kv"),
+             ("[structure]", "sec"),
+             (("topics", "liquidity, market structure"), "kv"),
+             ("[narrative]", "sec"),
+             (("question", "why does a story become a price?"), "kv"),
+             ("; no wallets · no positions · no p&l · not advice", None)]
+    rows = []
+    for i, (v, kind) in enumerate(lines):
+        y = 110 + i * 30
+        if kind == "sec":
+            rows.append(t(40, y, v, 20, PINK, "bold"))
+        elif kind == "kv":
+            rows.append(t(40, y, v[0], 20, BLUE) + t(col(9), y, "=", 20, ICE) +
+                        t(col(11), y, v[1], 20, WHITE))
+        else:
+            rows.append(t(40, y, v, 20, ICE))
+    h = 110 + len(lines) * 30 + 70
+    terminal_plate("market-frequencies.svg", h, BLUE, "markets.conf",
+                   "interests", "cat ~/.market_frequencies", rows,
+                   status=("[zh-01] 7:markets*", "no prices · no positions"))
+
+
+def library():
+    tree = [("", "library/", BLUE, ""),
+            ("├── ", "books/", BLUE, ""),
+            ("│   ├── ", "dune", WHITE, "power · prescience"),
+            ("│   ├── ", "leviathan", WHITE, "authority · order"),
+            ("│   ├── ", "1984", WHITE, "language · control"),
+            ("│   ├── ", "fahrenheit_451", WHITE, "distraction · conformity"),
+            ("│   ├── ", "brave_new_world", WHITE, "comfort · conditioning"),
+            ("│   ├── ", "the_road", WHITE, "moral continuity"),
+            ("│   └── ", "cadaver_exquisito", WHITE, "normality · language"),
+            ("├── ", "fiction/", PINK, ""),
+            ("│   ├── ", "monster", WHITE, "responsibility"),
+            ("│   ├── ", "edgerunners", WHITE, "identity · systems"),
+            ("│   ├── ", "angel_beats", WHITE, "memory · loss"),
+            ("│   └── ", "charlotte", WHITE, "bonds · continuity"),
+            ("└── ", "myth/", GREEN, ""),
+            ("    └── ", "norse", WHITE, "fate · transformation")]
+    rows = []
+    for i, (pre, name, c, theme) in enumerate(tree):
+        y = 110 + i * 29
+        frag = t(40, y, pre, 20, LINE, extra=' xml:space="preserve"')
+        frag += t(col(len(pre)), y, name, 20, c,
+                  "bold" if name.endswith("/") else "normal")
+        if theme:
+            frag += t(col(27), y, theme, 19, ICE)
+        rows.append(frag)
+    y = 110 + len(tree) * 29 + 14
+    rows.append(t(40, y, "3 directories, 12 entries", 20, ICE))
+    rows.append(t(40, y + 30, "# an orbit of works, not a reading log", 20,
+                  GREEN))
+    h = y + 30 + 76
+    terminal_plate("library-node.svg", h, PINK, "~/library", "orbit",
+                   "tree -L 2 ~/library", rows,
+                   status=("[zh-01] 8:library*", "no reading log"))
+
+
+def environment():
+    exports = [("BUILD", "claude-code git vscode python"),
+               ("RESEARCH", "chatgpt source-reading"),
+               ("SCREENS", "tradingview reuters coinglass"),
+               ("CRYPTO", "axiom phantom")]
+    rows = [t(40, 110, "# grouped by use · no mastery bars", 20, ICE)]
+    for i, (k, v) in enumerate(exports):
+        y = 148 + i * 32
+        rows.append(t(40, y, "export", 20, BLUE) +
+                    t(col(7), y, k, 20, PINK, "bold") +
+                    t(col(7 + len(k)), y, "=", 20, ICE) +
+                    t(col(8 + len(k)), y, f'"{v}"', 20, GREEN))
+    y = 148 + len(exports) * 32
+    rows.append(t(40, y, "export", 20, BLUE) + t(col(7), y, "MASTERY", 20,
+                PINK, "bold") + t(col(14), y, "=undefined", 20, WHITE) +
+                t(col(25), y, "# tool ≠ skill", 20, ICE))
+    h = y + 82
+    terminal_plate("operator-environment.svg", h, GREEN, "operator.env",
+                   "env", "cat ~/.operator_env", rows,
+                   status=("[zh-01] 9:env*", "agent-assisted · still learning"))
 
 
 def restricted_panel():
@@ -481,182 +794,55 @@ def restricted_panel():
 
 
 def mind_cache():
-    h = 262
+    qs = ["What would make me change my mind?",
+          "When does authority become legitimate?",
+          "Who gets to define normal?",
+          "How much of identity is actually ours?",
+          "Why do markets believe what they believe?"]
+    h = 214 + len(qs) * 42
     b = [window(16, 16, W - 32, h - 32, GREEN, "mind.cache", "05 entries",
-                fill=PANEL)]
-    b.append(line(84, 56, 84, h - 26, stroke=PINK, sw=1, opacity=0.6))
-    for i in range(5):
-        y = 86 + i * 32
-        b.append(t(40, y + 6, f"0{i + 1}", 20, ICE))
-    b.append(t(104, 116, "MIND CACHE", 48, WHITE, "bold", spacing=3))
-    b.append(t(104, 158, "[ questions still open ]", 24, GREEN))
-    b.append(t(104, 204, "> fragments, not answers", 24, ICE))
-    b.append(rect(476, 185, 13, 24, fill=PINK))
+                fill=VOID)]
+    b.append(t(40, 98, "MIND CACHE", 46, WHITE, "bold", spacing=3))
+    b.append(t(W - 40, 98, "[ open ]", 22, GREEN, anchor="end"))
+    b.append(t(40, 146, "$", 22, GREEN, "bold"))
+    cmd, tt = typed(66, 146, "tail -n 5 mind.cache", 22, ICE, 0.6, cps=22)
+    b.append(cmd)
+    tt += 0.3
+    for i, q in enumerate(qs):
+        y = 192 + i * 42
+        b.append(appear(t(40, y, f"0{i + 1}", 20, PINK), tt))
+        line_svg, tt = typed(86, y, q, 22, WHITE, tt, cps=34, cursor=PINK)
+        b.append(line_svg)
+        tt += 0.35
+    b.append(blink(40, 192 + len(qs) * 42, 22, GREEN, tt))
     write("mind-cache.svg", svg(h, "\n".join(b)))
 
 
-def gen_alpha():
-    h = 724
-    b = [window(16, 16, W - 32, h - 32, GREEN, "GEN_ALPHA.dat",
-                "research note")]
-    b.append(t(40, 106, "GEN_ALPHA.dat", 46, WHITE, "bold", spacing=2))
-    b.append(t(40, 142, "COHORT / COGNITION ARCHIVE", 22, GREEN, spacing=1))
-    b.append(t(40, 182, "what changes between generations,", 24, PINK))
-    b.append(t(40, 212, "and what changes in the comparison?", 24, PINK))
-    rows = [("EDUCATION ≠ COGNITION", "a test is not general ability"),
-            ("POPULATION · AGE · TASK", "which group, measure, when?"),
-            ("SCHOOL CONDITIONS", "instruction · attendance"),
-            ("SCREENS / FEEDS / AI", "separate causal evidence"),
-            ("THE OBSERVER", "memory flatters the past")]
-    y0 = 240
-    for i, (k, v) in enumerate(rows):
-        y = y0 + i * 74
-        b.append(rect(40, y, W - 80, 64, fill=RAISED if i % 2 == 0 else PANEL,
-                      stroke=LINE, sw=1))
-        b.append(t(54, y + 27, f"0x0{i + 1}", 20, GREEN))
-        b.append(t(136, y + 27, k, 23, WHITE, "bold"))
-        b.append(t(136, y + 54, v, 22, ICE))
-    y = y0 + 5 * 74 + 20
-    tg, tw = tag(40, y, "CAUSALITY UNRESOLVED", PINK, 22, 10, 34)
-    b.append(tg)
-    b.append(t(40, y + 70, "snapshot 2026-08-16", 22, ICE))
-    write("section-gen-alpha.svg", svg(h, "\n".join(b)))
-
-
-def security():
-    h = 384
-    b = [window(16, 16, W - 32, h - 32, BLUE, "adversarial-review",
-                fill=VOID)]
-    tg, tw = tag(W - 48 - 138, 62, "DISCOVERY", GREEN, 22, 10, 34)
-    b.append(tg)
-    b.append(t(40, 88, "AUTONOMOUS SYSTEMS", 32, WHITE, "bold", spacing=1))
-    b.append(t(40, 124, "SECURITY", 32, WHITE, "bold", spacing=1))
-    b.append(t(40, 172, "> compare · falsify · review", 25, PINK))
-    rows = [("validated primitive", "none"), ("product", "none"),
-            ("startup thesis", "none")]
-    for i, (k, v) in enumerate(rows):
-        y = 218 + i * 36
-        dots = "." * (24 - len(k))
-        b.append(t(40, y, f"{k} {dots}", 23, ICE))
-        b.append(t(430, y, v, 23, WHITE, "bold"))
-    b.append(t(40, h - 38, "research before claims", 23, BLUE))
-    write("section-security.svg", svg(h, "\n".join(b)))
-
-
-def market_frequencies():
-    h = 436
-    b = [rect(0, 0, W, h, fill="url(#grid)")]
-    b.append(t(32, 62, "MARKET FREQUENCIES", 38, WHITE, "bold", spacing=2))
-    b.append(t(32, 96, "interests and questions · no prices", 22, ICE))
-    # three decorative waves, deliberately not data-shaped
-    for k, (c, amp, per) in enumerate(((PINK, 14, 90), (BLUE, 10, 60),
-                                       (GREEN, 6, 140))):
-        pts = []
-        for xi in range(0, W + 1, 6):
-            yv = 146 + amp * math.sin(xi / per * 2 * math.pi + k)
-            pts.append(f"{xi},{yv:.1f}")
-        b.append(f'<polyline points="{" ".join(pts)}" stroke="{c}" '
-                 f'stroke-width="1.6" opacity="0.75"/>')
-    bands = [("CH-A", "BITCOIN · SOLANA · MEMECOINS", PINK),
-             ("CH-B", "EQUITIES · BANKS · SOFTWARE", BLUE),
-             ("CH-C", "AI · DEFENSE-TECH · FINANCING", BLUE),
-             ("CH-D", "CREDIT · LIQUIDITY · STRUCTURE", GREEN),
-             ("CH-E", "NARRATIVE ↔ PRICE", PINK)]
-    for i, (ch, lab, c) in enumerate(bands):
-        y = 200 + i * 40
-        b.append(rect(32, y - 24, 70, 32, fill=VOID, stroke=c, sw=1.2))
-        b.append(t(67, y - 1, ch, 19, c, "bold", anchor="middle"))
-        b.append(t(118, y, lab, 23, WHITE))
-    b.append(t(32, h - 18, "no wallets · no positions · not advice", 22,
-               ICE))
-    write("market-frequencies.svg", svg(h, "\n".join(b)))
-
-
-def library():
-    h = 500
-    rnd = random.Random(11)
-    b = [t(32, 58, "LIBRARY // CULTURE NODE", 34, WHITE, "bold", spacing=1),
-         t(32, 92, "an orbit of works, not a reading log", 22, ICE)]
-    spines = ["DUNE", "LEVIATHAN", "1984", "FAHRENHEIT 451",
-              "BRAVE NEW WORLD", "THE ROAD", "CADÁVER EXQUISITO", "MONSTER",
-              "EDGERUNNERS", "ANGEL BEATS!", "CHARLOTTE", "NORSE MYTHS"]
-    colors = [PINK, BLUE, GREEN, ICE]
-    shelf = h - 56
-    x = 32
-    sw = 50
-    for i, s in enumerate(spines):
-        ht = max(len(s) * 13.6 + 52, rnd.randint(200, 300))
-        ht = min(ht, shelf - 116)
-        c = colors[i % 4] if i < 7 else (PINK if i % 2 else BLUE)
-        b.append(rect(x, shelf - ht, sw - 6, ht, fill=RAISED, stroke=c,
-                      sw=1.3))
-        b.append(line(x + 4, shelf - ht + 12, x + sw - 10, shelf - ht + 12,
-                      stroke=c, sw=1, opacity=0.7))
-        b.append(line(x + 4, shelf - 14, x + sw - 10, shelf - 14,
-                      stroke=c, sw=1, opacity=0.7))
-        cx, cy = x + (sw - 6) / 2 + 8, shelf - 24
-        b.append(f'<text x="{cx}" y="{cy}" font-size="21" fill="{WHITE}" '
-                 f'font-weight="bold" transform="rotate(-90 {cx} {cy})">'
-                 f'{escape(s)}</text>')
-        x += sw + (14 if i == 6 else 4)
-    b.append(rect(20, shelf, W - 40, 6, fill=LINE))
-    b.append(line(20, shelf + 6, W - 20, shelf + 6, stroke=PINK, sw=1,
-                  opacity=0.6))
-    b.append(t(32, h - 18, "books", 22, ICE))
-    b.append(t(420, h - 18, "fiction · myth", 22, ICE))
-    write("library-node.svg", svg(h, "\n".join(b)))
-
-
-def environment():
-    h = 460
-    b = [t(32, 58, "OPERATOR ENVIRONMENT", 34, WHITE, "bold", spacing=1),
-         t(32, 92, "grouped by use · no mastery bars", 22, ICE)]
-    groups = [("BUILD & ITERATE", ["Claude Code · Git", "VS Code · Python"],
-               PINK),
-              ("RESEARCH & COMPARE", ["ChatGPT", "source reading"], BLUE),
-              ("MARKET SCREENS", ["TradingView", "Reuters · CoinGlass"],
-               BLUE),
-              ("CRYPTO TOOLS", ["Axiom", "Phantom"], GREEN)]
-    gw, gh, g = 318, 150, 20
-    for i, (k, rows, c) in enumerate(groups):
-        x = 32 + (i % 2) * (gw + g)
-        y = 120 + (i // 2) * (gh + g)
-        b.append(rect(x, y, gw, gh, fill=PANEL, stroke=c, sw=1.3))
-        b.append(rect(x, y, gw, 38, fill=RAISED))
-        b.append(line(x, y + 38, x + gw, y + 38, stroke=c, sw=1))
-        b.append(t(x + 14, y + 27, "> " + k, 21, c, "bold"))
-        for j, r in enumerate(rows):
-            b.append(t(x + 14, y + 80 + j * 36, r, 24, WHITE))
-    write("operator-environment.svg", svg(h, "\n".join(b)))
-
-
 def side_frequencies():
-    h = 240
+    h = 330
     rnd = random.Random(3)
-    b = []
-    # blocky terrain, an original pixel motif
-    size = 16
-    heights = []
-    hv = 5
-    for i in range(W // size + 1):
-        hv = max(3, min(8, hv + rnd.choice([-1, 0, 0, 1])))
-        heights.append(hv)
-    for i, hv in enumerate(heights):
+    terrain = []
+    # blocky terrain along the bottom, an original pixel motif
+    size, hv = 16, 4
+    for i in range(1, (W - 34) // size + 1):
+        hv = max(2, min(6, hv + rnd.choice([-1, 0, 0, 1])))
         for j in range(hv):
-            y = h - (j + 1) * size
+            y = h - 52 - (j + 1) * size
             top = j == hv - 1
-            c = GREEN if top else (RAISED if j < hv - 2 else PANEL)
-            op = 0.85 if top else 1
-            b.append(rect(i * size, y, size - 1, size - 1, fill=c,
-                          opacity=op))
-            if not top and rnd.random() < 0.06:
-                b.append(rect(i * size + 5, y + 5, 5, 5,
-                              fill=rnd.choice([PINK, BLUE])))
-    b.append(rect(24, 20, 500, 124, fill=VOID, stroke=PINK, sw=1.4))
-    b.append(t(44, 64, "SIDE FREQUENCIES", 32, PINK, "bold", spacing=2))
-    b.append(t(44, 100, "minecraft · terraria · weird", 23, WHITE))
-    b.append(t(44, 128, "corners of the internet", 23, WHITE))
-    write("side-frequencies.svg", svg(h, "\n".join(b)))
+            terrain.append(rect(1 + i * size, y, size - 1, size - 1,
+                                fill=GREEN if top else RAISED,
+                                opacity=0.85 if top else 1))
+            if not top and rnd.random() < 0.07:
+                terrain.append(rect(i * size + 5, y + 5, 5, 5,
+                                    fill=rnd.choice([PINK, BLUE])))
+    rows = [t(40, 110, "minecraft/", 20, GREEN, "bold") +
+            t(col(13), 110, "terraria/", 20, GREEN, "bold"),
+            t(40, 140, "weird-corners-of-the-internet/", 20, PINK, "bold"),
+            t(40, 170, "too-many-tabs.txt", 20, WHITE),
+            "".join(terrain)]
+    terminal_plate("side-frequencies.svg", h, GREEN, "side.frequencies",
+                   "off-duty", "ls ~/side_quests", rows,
+                   status=("[zh-01] 10:side*", "still one more question"))
 
 
 def divider():
@@ -672,28 +858,31 @@ def divider():
 
 
 def footer():
-    h = 270
+    h = 300
     rnd = random.Random(5)
     b = []
     # low skyline reprise
     x = 0
     while x < W:
         bw = rnd.choice([30, 40, 52])
-        bh = rnd.randint(20, 64)
+        bh = rnd.randint(20, 60)
         b.append(rect(x, h - bh, bw - 3, bh, fill="#0B1220", stroke=LINE,
                       sw=1))
         x += bw
     b.append(rect(0, h - 2, W, 2, fill="url(#fadeP)"))
     # fading signal bars
     for i in range(36):
-        hh = 4 + abs(math.sin(i * 0.55)) * 26 * (1 - i / 40)
-        b.append(rect(32 + i * 18, 60 - hh / 2, 8, round(hh, 1), fill=PINK,
+        hh = 4 + abs(math.sin(i * 0.55)) * 22 * (1 - i / 40)
+        b.append(rect(32 + i * 18, 40 - hh / 2, 8, round(hh, 1), fill=PINK,
                       opacity=round(max(0.08, 0.9 - i * 0.025), 2)))
-    b.append(t(W / 2, 124, "session closed.", 28, WHITE, anchor="middle"))
-    b.append(t(W / 2, 158, "questions still open.", 28, WHITE,
-               anchor="middle"))
-    b.append(t(W / 2, 194, "snowyarch // ZÜRICH NODE", 22, PINK, "bold",
-               anchor="middle", spacing=1))
+    b.append(t(40, 98, "└─$", 22, BLUE))
+    cmd, t0 = typed(40 + 4 * 22 * CW, 98, "exit", 22, WHITE, 0.8, cps=8)
+    b.append(cmd)
+    b.append(appear(t(40, 140, "session closed.", 28, WHITE), t0 + 0.4))
+    b.append(appear(t(40, 176, "questions still open.", 28, WHITE), t0 + 0.8))
+    b.append(appear(t(40, 214, "snowyarch // ZÜRICH NODE", 22, PINK, "bold",
+                      spacing=1), t0 + 1.2))
+    b.append(blink(40 + 21 * 28 * CW + 10, 176, 28, GREEN, t0 + 1.2))
     write("footer-signal.svg", svg(h, "\n".join(b)))
 
 

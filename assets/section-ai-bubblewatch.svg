@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="720" viewBox="0 0 720 720" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="830" viewBox="0 0 720 830" fill="none">
 <style>text{font-family:ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', monospace;}</style>
 <defs>
 <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
@@ -29,64 +29,32 @@
 <stop offset="1" stop-color="#0E1830"/>
 </linearGradient>
 </defs>
-<rect width="720" height="720" fill="#070A10"/>
-<rect x="0" y="0" width="720" height="720" fill="url(#grid)"/>
-<rect x="16" y="16" width="688" height="688" fill="#101724"/>
-<rect x="16" y="16" width="688" height="688" fill="url(#scan)"/>
-<rect x="16" y="16" width="688" height="38" fill="#172235"/>
-<line x1="16" y1="54" x2="704" y2="54" stroke="#FF4FCB" stroke-width="1.2" opacity="0.7"/>
-<rect x="16" y="16" width="688" height="688" fill="none" stroke="#FF4FCB" stroke-width="1.6" opacity="0.55" filter="url(#glow)"/>
-<rect x="16" y="16" width="688" height="688" fill="none" stroke="#FF4FCB" stroke-width="1.2"/>
-<circle cx="38" cy="35" r="5.5" stroke="#FF4FCB" stroke-width="1.6" fill="#FF4FCB"/>
-<circle cx="58" cy="35" r="5.5" stroke="#FF4FCB" stroke-width="1.6"/>
-<circle cx="78" cy="35" r="5.5" stroke="#FF4FCB" stroke-width="1.6"/>
-<text x="102" y="43" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">ai-bubblewatch :: observatory</text>
-<text x="688" y="43" font-size="22" fill="#FF4FCB" font-weight="normal" text-anchor="end">2026-09-21</text>
-<text x="40" y="106" font-size="46" fill="#EDF5FF" font-weight="bold" text-anchor="start" letter-spacing="2">AI BUBBLEWATCH</text>
-<text x="676" y="140" font-size="88" fill="#FF4FCB" font-weight="bold" text-anchor="end" filter="url(#glow)">?</text>
-<text x="40" y="142" font-size="22" fill="#2D8CFF" font-weight="normal" text-anchor="start" letter-spacing="1">AI CAPITAL OBSERVATORY</text>
-<text x="40" y="182" font-size="25" fill="#FF4FCB" font-weight="normal" text-anchor="start">the name is a question,</text>
-<text x="40" y="212" font-size="25" fill="#FF4FCB" font-weight="normal" text-anchor="start">not a verdict</text>
-<rect x="40" y="236" width="310" height="164" fill="#172235" stroke="#2D8CFF" stroke-width="1.3"/>
-<path d="M46 252V242H56" stroke="#2D8CFF" stroke-width="1.4"/>
-<path d="M344 252V242H334" stroke="#2D8CFF" stroke-width="1.4"/>
-<path d="M46 384V394H56" stroke="#2D8CFF" stroke-width="1.4"/>
-<path d="M344 384V394H334" stroke="#2D8CFF" stroke-width="1.4"/>
-<text x="60" y="278" font-size="22" fill="#C6FF3A" font-weight="bold" text-anchor="start">01</text>
-<text x="60" y="314" font-size="25" fill="#EDF5FF" font-weight="bold" text-anchor="start" letter-spacing="1">INVESTMENT</text>
-<text x="60" y="348" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">built, paid,</text>
-<text x="60" y="376" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">committed?</text>
-<rect x="370" y="236" width="310" height="164" fill="#172235" stroke="#2D8CFF" stroke-width="1.3"/>
-<path d="M376 252V242H386" stroke="#2D8CFF" stroke-width="1.4"/>
-<path d="M674 252V242H664" stroke="#2D8CFF" stroke-width="1.4"/>
-<path d="M376 384V394H386" stroke="#2D8CFF" stroke-width="1.4"/>
-<path d="M674 384V394H664" stroke="#2D8CFF" stroke-width="1.4"/>
-<text x="390" y="278" font-size="22" fill="#C6FF3A" font-weight="bold" text-anchor="start">02</text>
-<text x="390" y="314" font-size="25" fill="#EDF5FF" font-weight="bold" text-anchor="start" letter-spacing="1">UTILIZATION</text>
-<text x="390" y="348" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">used by whom,</text>
-<text x="390" y="376" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">on what terms?</text>
-<rect x="40" y="420" width="310" height="164" fill="#172235" stroke="#2D8CFF" stroke-width="1.3"/>
-<path d="M46 436V426H56" stroke="#2D8CFF" stroke-width="1.4"/>
-<path d="M344 436V426H334" stroke="#2D8CFF" stroke-width="1.4"/>
-<path d="M46 568V578H56" stroke="#2D8CFF" stroke-width="1.4"/>
-<path d="M344 568V578H334" stroke="#2D8CFF" stroke-width="1.4"/>
-<text x="60" y="462" font-size="22" fill="#C6FF3A" font-weight="bold" text-anchor="start">03</text>
-<text x="60" y="498" font-size="25" fill="#EDF5FF" font-weight="bold" text-anchor="start" letter-spacing="1">RETURNS</text>
-<text x="60" y="532" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">cash left after</text>
-<text x="60" y="560" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">all costs?</text>
-<rect x="370" y="420" width="310" height="164" fill="#172235" stroke="#2D8CFF" stroke-width="1.3"/>
-<path d="M376 436V426H386" stroke="#2D8CFF" stroke-width="1.4"/>
-<path d="M674 436V426H664" stroke="#2D8CFF" stroke-width="1.4"/>
-<path d="M376 568V578H386" stroke="#2D8CFF" stroke-width="1.4"/>
-<path d="M674 568V578H664" stroke="#2D8CFF" stroke-width="1.4"/>
-<text x="390" y="462" font-size="22" fill="#C6FF3A" font-weight="bold" text-anchor="start">04</text>
-<text x="390" y="498" font-size="25" fill="#EDF5FF" font-weight="bold" text-anchor="start" letter-spacing="1">FINANCING</text>
-<text x="390" y="532" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">who supplies it,</text>
-<text x="390" y="560" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">who bears risk?</text>
-<path d="M360.0 366.0L448.0 410.0L360.0 454.0L272.0 410.0Z" fill="#070A10" stroke="#FF4FCB" stroke-width="1.8"/>
-<text x="360.0" y="416.0" font-size="18" fill="#FF4FCB" font-weight="bold" text-anchor="middle">OBLIGATIONS</text>
-<text x="40" y="628" font-size="22" fill="#EDF5FF" font-weight="normal" text-anchor="start">16 deliberately selected entities</text>
-<text x="40" y="658" font-size="22" fill="#A7B8CE" font-weight="normal" text-anchor="start">not a representative sample</text>
-<rect x="40" y="676" width="251" height="34" fill="#070A10" stroke="#C6FF3A" stroke-width="1.4"/>
-<text x="50" y="700.92" font-size="22" fill="#C6FF3A" font-weight="bold" text-anchor="start">NO BUBBLE VERDICT</text>
+<rect width="720" height="830" fill="#070A10"/>
+<rect x="16" y="16" width="688" height="798" fill="#070A10"/>
+<rect x="16" y="16" width="688" height="798" fill="none" stroke="#FF4FCB" stroke-width="1.4"/>
+<rect x="32" y="3" width="408.0" height="26" fill="#070A10"/>
+<text x="38" y="23" font-size="20" fill="#FF4FCB" font-weight="bold" text-anchor="start">[ ai-bubblewatch :: observatory ]</text>
+<rect x="508.0" y="3" width="180.0" height="26" fill="#070A10"/>
+<text x="682" y="23" font-size="20" fill="#A7B8CE" font-weight="normal" text-anchor="end">[ 2026-09-21 ]</text>
+<text x="40" y="66" font-size="22" fill="#C6FF3A" font-weight="bold" text-anchor="start">$</text>
+<clipPath id="k9"><rect x="66" y="44" width="541.2" height="30.799999999999997"><animate attributeName="width" dur="2.2154s" calcMode="discrete" keyTimes="0;0.2708;0.2882;0.3056;0.3229;0.3403;0.3576;0.375;0.3924;0.4097;0.4271;0.4444;0.4618;0.4792;0.4965;0.5139;0.5312;0.5486;0.566;0.5833;0.6007;0.6181;0.6354;0.6528;0.6701;0.6875;0.7049;0.7222;0.7396;0.7569;0.7743;0.7917;0.809;0.8264;0.8438;0.8611;0.8785;0.8958;0.9132;0.9306;0.9479;0.9653;0.9826" values="0;0;13.2;26.4;39.6;52.8;66;79.2;92.4;105.6;118.8;132;145.2;158.4;171.6;184.8;198;211.2;224.4;237.6;250.8;264;277.2;290.4;303.6;316.8;330;343.2;356.4;369.6;382.8;396;409.2;422.4;435.6;448.8;462;475.2;488.4;501.6;514.8;528;541.2"/></rect></clipPath>
+<text x="66" y="66" font-size="22" fill="#A7B8CE" font-weight="normal" textLength="541.2" lengthAdjust="spacing" clip-path="url(#k9)">cat public/ai-bubblewatch-public-brief.md</text>
+<rect x="66" y="48.4" width="11.88" height="22" fill="#C6FF3A" opacity="0"><animate attributeName="x" dur="2.2154s" calcMode="discrete" keyTimes="0;0.2708;0.2882;0.3056;0.3229;0.3403;0.3576;0.375;0.3924;0.4097;0.4271;0.4444;0.4618;0.4792;0.4965;0.5139;0.5312;0.5486;0.566;0.5833;0.6007;0.6181;0.6354;0.6528;0.6701;0.6875;0.7049;0.7222;0.7396;0.7569;0.7743;0.7917;0.809;0.8264;0.8438;0.8611;0.8785;0.8958;0.9132;0.9306;0.9479;0.9653;0.9826" values="66;66;79.2;92.4;105.6;118.8;132;145.2;158.4;171.6;184.8;198;211.2;224.4;237.6;250.8;264;277.2;290.4;303.6;316.8;330;343.2;356.4;369.6;382.8;396;409.2;422.4;435.6;448.8;462;475.2;488.4;501.6;514.8;528;541.2;554.4;567.6;580.8;594;607.2"/><animate attributeName="opacity" dur="2.2154s" calcMode="discrete" keyTimes="0;0.2708" values="0;1"/></rect>
+<rect x="615.2" y="48.4" width="11.88" height="22" fill="#C6FF3A"><set attributeName="opacity" to="0" begin="0s" dur="2.1769s"/><animate attributeName="opacity" values="1;0" dur="1.1s" begin="2.1769s" calcMode="discrete" repeatCount="8"/></rect>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.4769s"/><rect x="40" y="92" width="640" height="38" fill="#172235" stroke="#30435E" stroke-width="1"/><text x="52" y="118" font-size="21" fill="#EDF5FF" font-weight="bold" text-anchor="start">AI BUBBLEWATCH</text><text x="241" y="118" font-size="19" fill="#A7B8CE" font-weight="normal" text-anchor="start">CAPITAL MONITOR</text><text x="668" y="118" font-size="19" fill="#FF4FCB" font-weight="bold" text-anchor="end">? HYPOTHESIS</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.5269s"/><text x="40" y="166" font-size="20" fill="#A7B8CE" font-weight="normal" text-anchor="start">hypothesis ......</text><text x="256.0" y="166" font-size="20" fill="#FF4FCB" font-weight="bold" text-anchor="start">unresolved</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.5769s"/><text x="40" y="194" font-size="20" fill="#A7B8CE" font-weight="normal" text-anchor="start">sample ..........</text><text x="256.0" y="194" font-size="20" fill="#EDF5FF" font-weight="normal" text-anchor="start">16 selected entities</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.6269s"/><text x="40" y="222" font-size="20" fill="#A7B8CE" font-weight="normal" text-anchor="start">representative ..</text><text x="256.0" y="222" font-size="20" fill="#EDF5FF" font-weight="normal" text-anchor="start">no</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.6769s"/><text x="40" y="250" font-size="20" fill="#A7B8CE" font-weight="normal" text-anchor="start">verdict .........</text><text x="256.0" y="250" font-size="20" fill="#C6FF3A" font-weight="bold" text-anchor="start">none</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.7269s"/><text x="40" y="278" font-size="20" fill="#A7B8CE" font-weight="normal" text-anchor="start">cutoff ..........</text><text x="256.0" y="278" font-size="20" fill="#EDF5FF" font-weight="normal" text-anchor="start">2026-09-21</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.7769s"/><rect x="40" y="316" width="640" height="92" fill="#070A10" stroke="#30435E" stroke-width="1.2"/><rect x="50" y="306" width="154.79999999999998" height="20" fill="#070A10"/><text x="56" y="322" font-size="17" fill="#FF4FCB" font-weight="bold" text-anchor="start">conceptual map</text><text x="56.0" y="352" font-size="19" fill="#EDF5FF" font-weight="normal" text-anchor="start" xml:space="preserve">financing</text><text x="158.6" y="352" font-size="19" fill="#2D8CFF" font-weight="normal" text-anchor="start" xml:space="preserve"> ─▶ </text><text x="204.2" y="352" font-size="19" fill="#EDF5FF" font-weight="normal" text-anchor="start" xml:space="preserve">capex</text><text x="261.2" y="352" font-size="19" fill="#2D8CFF" font-weight="normal" text-anchor="start" xml:space="preserve"> ─▶ </text><text x="306.79999999999995" y="352" font-size="19" fill="#EDF5FF" font-weight="normal" text-anchor="start" xml:space="preserve">capacity</text><text x="398.0" y="352" font-size="19" fill="#2D8CFF" font-weight="normal" text-anchor="start" xml:space="preserve"> ─▶ </text><text x="443.59999999999997" y="352" font-size="19" fill="#EDF5FF" font-weight="normal" text-anchor="start" xml:space="preserve">use</text><text x="477.8" y="352" font-size="19" fill="#2D8CFF" font-weight="normal" text-anchor="start" xml:space="preserve"> ─▶ </text><text x="523.4" y="352" font-size="19" fill="#EDF5FF" font-weight="normal" text-anchor="start" xml:space="preserve">returns</text><text x="170.0" y="386" font-size="19" fill="#2D8CFF" font-weight="normal" text-anchor="start">└──</text><text x="215.6" y="386" font-size="19" fill="#A7B8CE" font-weight="normal" text-anchor="start">obligations: who pays, when?</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.8269s"/><rect x="40" y="430" width="314" height="102" fill="#070A10" stroke="#30435E" stroke-width="1.2"/><rect x="50" y="420" width="63.0" height="20" fill="#070A10"/><text x="56" y="436" font-size="17" fill="#2D8CFF" font-weight="bold" text-anchor="start">capex</text><text x="54" y="474" font-size="19" fill="#EDF5FF" font-weight="normal" text-anchor="start">built · paid · committed</text><text x="54" y="506" font-size="19" fill="#A7B8CE" font-weight="normal" text-anchor="start">announced ≠ spent</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.8769s"/><rect x="366" y="430" width="314" height="102" fill="#070A10" stroke="#30435E" stroke-width="1.2"/><rect x="376" y="420" width="124.2" height="20" fill="#070A10"/><text x="382" y="436" font-size="17" fill="#2D8CFF" font-weight="bold" text-anchor="start">utilization</text><text x="380" y="474" font-size="19" fill="#EDF5FF" font-weight="normal" text-anchor="start">used by whom, what terms?</text><text x="380" y="506" font-size="19" fill="#A7B8CE" font-weight="normal" text-anchor="start">contracted ≠ realized</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.9269s"/><rect x="40" y="546" width="314" height="102" fill="#070A10" stroke="#30435E" stroke-width="1.2"/><rect x="50" y="536" width="83.39999999999999" height="20" fill="#070A10"/><text x="56" y="552" font-size="17" fill="#2D8CFF" font-weight="bold" text-anchor="start">returns</text><text x="54" y="590" font-size="19" fill="#EDF5FF" font-weight="normal" text-anchor="start">cash after all costs?</text><text x="54" y="622" font-size="19" fill="#A7B8CE" font-weight="normal" text-anchor="start">revenue ≠ return</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="2.9769s"/><rect x="366" y="546" width="314" height="102" fill="#070A10" stroke="#30435E" stroke-width="1.2"/><rect x="376" y="536" width="124.2" height="20" fill="#070A10"/><text x="382" y="552" font-size="17" fill="#2D8CFF" font-weight="bold" text-anchor="start">obligations</text><text x="380" y="590" font-size="19" fill="#EDF5FF" font-weight="normal" text-anchor="start">debt · leases · projects</text><text x="380" y="622" font-size="19" fill="#A7B8CE" font-weight="normal" text-anchor="start">treated separately</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.0269s"/><rect x="40" y="662" width="314" height="102" fill="#070A10" stroke="#30435E" stroke-width="1.2"/><rect x="50" y="652" width="103.8" height="20" fill="#070A10"/><text x="56" y="668" font-size="17" fill="#2D8CFF" font-weight="bold" text-anchor="start">financing</text><text x="54" y="706" font-size="19" fill="#EDF5FF" font-weight="normal" text-anchor="start">who supplies, who bears?</text><text x="54" y="738" font-size="19" fill="#A7B8CE" font-weight="normal" text-anchor="start">access ≠ good economics</text></g>
+<g><set attributeName="opacity" to="0" begin="0s" dur="3.0769s"/><rect x="366" y="662" width="314" height="102" fill="#070A10" stroke="#30435E" stroke-width="1.2"/><rect x="376" y="652" width="165.0" height="20" fill="#070A10"/><text x="382" y="668" font-size="17" fill="#FF4FCB" font-weight="bold" text-anchor="start">counterevidence</text><text x="380" y="706" font-size="19" fill="#EDF5FF" font-weight="normal" text-anchor="start">priced financing 09-18</text><text x="380" y="738" font-size="19" fill="#A7B8CE" font-weight="normal" text-anchor="start">settlement expected</text></g>
+<rect x="17" y="780" width="686" height="33" fill="#FF4FCB"/>
+<text x="30" y="803" font-size="19" fill="#070A10" font-weight="bold" text-anchor="start">[zh-01] 2:ai-bubblewatch*</text>
+<text x="690" y="803" font-size="19" fill="#070A10" font-weight="bold" text-anchor="end">no bubble verdict</text>
 </svg>

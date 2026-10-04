@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/header.svg" width="100%" alt="snowyarch — ZÜRICH // CH — AFTERHOURS / PERSONAL NODE. A neon night skyline over a grid, with a small boot terminal: connection established, public node online, session initialized.">
+  <img src="assets/header.svg" width="100%" alt="snowyarch@zurich-node terminal running neofetch. An ASCII skyline of twin towers, moon and river next to: node afterhours / personal, loc zürich // ch, role builder · researcher, focus markets · ai · philosophy, research 5 public · 1 restricted, tools python · git · claude code, markets btc · sol · credit, library dune · leviathan · 1984, side minecraft · terraria, status still learning. The prompt cycles through: build things to understand them; why do markets believe what they believe?; not yet is a valid result; questions over answers.">
 </p>
 
 <img src="assets/divider.svg" width="100%" alt="">
@@ -21,7 +21,7 @@ My working environment is mostly terminals, agents, source material and repeated
 <a name="research-index"></a>
 
 <p align="center">
-  <img src="assets/research-index.svg" width="100%" alt="Research index. 01 DebtWatch, macro and credit research. 02 AI BubbleWatch, AI economics research. 03 Culture / Legitimacy, documentary research, causal question open. 04 ECIS, private R&amp;D system, access restricted. 05 GEN_ALPHA.dat, ongoing research. 06 Autonomous Systems Security, discovery and adversarial review.">
+  <img src="assets/research-index.svg" width="100%" alt="Terminal running ls -l ~/research: debtwatch/ macro and credit research; ai-bubblewatch/ AI economics research; culture-legitimacy/ documentary, causal question open; ECIS, PRIVATE R&amp;D SYSTEM, ACCESS RESTRICTED; GEN_ALPHA.dat ongoing research; autonomous-security/ discovery and adversarial review. Status line: 5 public, 1 restricted.">
 </p>
 
 **Public files** → [DebtWatch](#debtwatch) · [AI BubbleWatch](#ai-bubblewatch) · [Culture / Legitimacy](#culture-legitimacy) · [GEN_ALPHA.dat](#gen-alpha) · [Autonomous Systems Security](#autonomous-systems-security)<br>
@@ -34,7 +34,7 @@ My working environment is mostly terminals, agents, source material and repeated
 <a name="debtwatch"></a>
 
 <p align="center">
-  <img src="assets/section-debtwatch.svg" width="100%" alt="DebtWatch — credit transmission console, historical snapshot 2026-10-02. When does expensive credit become unavailable credit? A conceptual path: macro, pricing, refinancing, company — not an automatic sequence. Three separate observations: price, terms, access. Result may be: not yet. Not a crash predictor.">
+  <img src="assets/section-debtwatch.svg" width="100%" alt="DebtWatch credit terminal, historical snapshot 2026-10-02. A market-screen layout: a conceptual transmission path (macro, pricing, refinancing, company) watermarked as not a price series; a details pane (evidence to 01 Oct, edition 03 Oct, mode research, forecast none); a watchlist of three observations — price: more evident, terms: selective, access: not established; and notes — successful refinancings kept as counterevidence, panel picked after cases of interest so no prevalence estimate, not a claim about conditions today, result: not yet.">
 </p>
 
 `MACRO / CREDIT RESEARCH` · `historical snapshot 2026-10-02`
@@ -49,14 +49,14 @@ At its historical snapshot, the reviewed material pointed to pressure that was m
 
 This is a research and monitoring workflow, not a crash predictor. **"Not yet"** is a valid result: the evidence hasn't crossed the threshold for the stronger conclusion. It doesn't mean no risk exists.
 
-→ [**Read the public brief**](public/debtwatch-public-brief.md)
+[`$ cat public/debtwatch-public-brief.md`](public/debtwatch-public-brief.md) — read the public brief
 
 <img src="assets/divider.svg" width="100%" alt="">
 
 <a name="ai-bubblewatch"></a>
 
 <p align="center">
-  <img src="assets/section-ai-bubblewatch.svg" width="100%" alt="AI BubbleWatch — AI capital observatory, historical cutoff 2026-09-21. The name is a question, not a verdict. Four fields — investment, utilization, returns, financing — with obligations at the center. 16 deliberately selected entities, not a representative sample. No bubble verdict.">
+  <img src="assets/section-ai-bubblewatch.svg" width="100%" alt="AI BubbleWatch capital observatory, cutoff 2026-09-21. Status: hypothesis unresolved, sample 16 selected entities, not representative, verdict none. Conceptual map: financing, capex, capacity, use, returns, with obligations alongside. Modules: capex, utilization, returns, obligations, financing, and a counterevidence entry for a priced financing on 18 September with settlement still expected at the cutoff. No bubble verdict.">
 </p>
 
 `AI ECONOMICS RESEARCH` · `historical cutoff 2026-09-21`
@@ -75,14 +75,14 @@ Financial stress, access to new capital and weak investment returns are differen
 
 The snapshot covered 16 deliberately selected entities, not a representative sample of the AI economy. No bubble verdict, no live market assessment, no trading recommendation.
 
-→ [**Read the research note**](public/ai-bubblewatch-public-brief.md)
+[`$ cat public/ai-bubblewatch-public-brief.md`](public/ai-bubblewatch-public-brief.md) — read the research note
 
 <img src="assets/divider.svg" width="100%" alt="">
 
 <a name="culture-legitimacy"></a>
 
 <p align="center">
-  <img src="assets/section-culture.svg" width="100%" alt="Culture / Legitimacy — cultural signal dossier. Tastewashing → Cultural Legitimacy Embedding (working title). Documentary. Pre-experimental. Causal question open. Three layers: production, reception, causal question. Reports in Spanish, 10 and 13 pages, research cutoff 2026-08-12.">
+  <img src="assets/section-culture.svg" width="100%" alt="Dossier tree for culture-legitimacy: index for Tastewashing → Cultural Legitimacy Embedding (working title); production, reception and causal-question (open) folders; reports — the accessible report, Spanish, 10 pages, and the formal report, Spanish, 13 pages. Status documentary and pre-experimental, cutoff 2026-08-12, causal question open.">
 </p>
 
 `DOCUMENTARY RESEARCH` · `PRE‑EXPERIMENTAL` · `CAUSAL QUESTION OPEN`
@@ -107,7 +107,7 @@ accessible report · PDF · `ES · 10 pages`
 **Full documentary synthesis** → [De tastewashing a la legitimidad cultural del poder tecnológico](public/Tastewashing_Informe_Formal_PUBLIC_v1.pdf)<br>
 formal report · PDF · `ES · 13 pages`
 
-→ [**Explore the research**](public/culture-legitimacy-public-index.md)
+[`$ cat public/culture-legitimacy-public-index.md`](public/culture-legitimacy-public-index.md) — explore the research
 
 <details>
 <summary><b>About these public editions</b></summary>
@@ -130,7 +130,7 @@ The public editions preserve the research bodies and update the bibliography. So
 <a name="mind-cache"></a>
 
 <p align="center">
-  <img src="assets/mind-cache.svg" width="100%" alt="mind.cache — Mind Cache: questions still open. Thought fragments, not answers.">
+  <img src="assets/mind-cache.svg" width="100%" alt="mind.cache terminal typing five open questions: What would make me change my mind? When does authority become legitimate? Who gets to define normal? How much of identity is actually ours? Why do markets believe what they believe?">
 </p>
 
 **What would make me change my mind?**<br>
@@ -153,7 +153,7 @@ A price is a story with money behind it. I want to know where the story comes fr
 <a name="gen-alpha"></a>
 
 <p align="center">
-  <img src="assets/section-gen-alpha.svg" width="100%" alt="GEN_ALPHA.dat — cohort / cognition archive, a research note. What changes between generations, and what changes in the comparison? Five entries: education is not cognition; population, age and task; school conditions; screens, feeds and AI as separate hypotheses; the observer. Causality unresolved. Source snapshot 2026-08-16.">
+  <img src="assets/section-gen-alpha.svg" width="100%" alt="GEN_ALPHA.dat shown as a two-column table (a label, not a dataset): education is not cognition; population, age and task — PISA 2022 tested 15-year-olds; school conditions; screens, feeds and AI need separate causal evidence; the observer — memory flatters the past. Causality unresolved, research open, snapshot 2026-08-16.">
 </p>
 
 `ONGOING RESEARCH` · `source snapshot 2026-08-16`
@@ -170,14 +170,14 @@ This began with claims that younger generations are becoming less capable. I wan
 
 A selected public note, not a systematic review, a dataset or an experiment. The research stays open. *(The `.dat` is a label, not a download.)*
 
-→ [**Read the selected findings**](public/gen-alpha-research-note.md)
+[`$ cat public/gen-alpha-research-note.md`](public/gen-alpha-research-note.md) — read the selected findings
 
 <img src="assets/divider.svg" width="100%" alt="">
 
 <a name="autonomous-systems-security"></a>
 
 <p align="center">
-  <img src="assets/section-security.svg" width="100%" alt="Autonomous Systems Security — adversarial review terminal. Status: discovery. Compare, falsify, review. Validated primitive: none. Product: none. Startup thesis: none. Research before claims.">
+  <img src="assets/section-security.svg" width="100%" alt="Review log for autonomous systems security: mode discovery and adversarial review; scope security boundaries for autonomous action; method compare with existing research and tools; novelty and protection claims under falsification; validated primitive none, product none, startup thesis none; a question is not yet a contribution.">
 </p>
 
 `DISCOVERY / ADVERSARIAL REVIEW`
@@ -186,14 +186,14 @@ I study security boundaries for increasingly autonomous action. The work compare
 
 It has not established a new security primitive, a validated product or a startup thesis. An interesting question is not yet a defensible contribution.
 
-→ [**Read the discovery note**](public/autonomous-systems-security-public-note.md)
+[`$ cat public/autonomous-systems-security-public-note.md`](public/autonomous-systems-security-public-note.md) — read the discovery note
 
 <img src="assets/divider.svg" width="100%" alt="">
 
 <a name="market-frequencies"></a>
 
 <p align="center">
-  <img src="assets/market-frequencies.svg" width="100%" alt="Market frequencies — interests and questions, no prices. Bitcoin, Solana, memecoins. Equities, banks, software. AI, defense-tech, financing. Credit, liquidity, market structure. Narrative and price. No wallets, no positions, not advice.">
+  <img src="assets/market-frequencies.svg" width="100%" alt="markets.conf: crypto — bitcoin, solana, memecoins; equities — banks, software, AI, defense-tech; credit — obligations, maturities, refinancing; structure — liquidity and market structure; narrative — why does a story become a price? No wallets, no positions, no P&amp;L, not advice.">
 </p>
 
 - **Crypto** — Bitcoin, Solana and memecoin culture, where liquidity, incentives, coordination and narrative collide.
@@ -209,7 +209,7 @@ It has not established a new security primitive, a validated product or a startu
 <a name="library"></a>
 
 <p align="center">
-  <img src="assets/library-node.svg" width="100%" alt="Library // culture node — an orbit of works, not a reading log. Book spines: Dune, Leviathan, 1984, Fahrenheit 451, Brave New World, The Road, Cadáver exquisito; then Monster, Cyberpunk: Edgerunners, Angel Beats!, Charlotte, Norse myths.">
+  <img src="assets/library-node.svg" width="100%" alt="tree of ~/library — books: Dune, Leviathan, 1984, Fahrenheit 451, Brave New World, The Road, Cadáver exquisito; fiction: Monster, Cyberpunk: Edgerunners, Angel Beats!, Charlotte; myth: Norse. An orbit of works, not a reading log.">
 </p>
 
 Works that orbit the questions above. Not a reading log: no "read", "completed" or ratings.
@@ -238,7 +238,7 @@ Works that orbit the questions above. Not a reading log: no "read", "completed" 
 <a name="operator-environment"></a>
 
 <p align="center">
-  <img src="assets/operator-environment.svg" width="100%" alt="Operator environment, grouped by use, no mastery bars. Build and iterate: Claude Code, Git, VS Code, Python. Research and compare: ChatGPT, source reading. Market screens: TradingView, Reuters, CoinGlass. Crypto tools: Axiom, Phantom.">
+  <img src="assets/operator-environment.svg" width="100%" alt="operator.env exports: build — Claude Code, Git, VS Code, Python; research — ChatGPT and source reading; screens — TradingView, Reuters, CoinGlass; crypto — Axiom, Phantom; mastery undefined, because a tool is not a skill.">
 </p>
 
 **Build & iterate** — Claude Code, Git, VS Code, Python. Most building happens in a terminal with agents: direct the task, compare answers, review the result, revise.<br>
@@ -249,7 +249,7 @@ Works that orbit the questions above. Not a reading log: no "read", "completed" 
 *A tool I use is not a skill I claim to have mastered.*
 
 <p align="center">
-  <img src="assets/side-frequencies.svg" width="100%" alt="Side frequencies: Minecraft, Terraria, weird corners of the internet. Blocky pixel terrain.">
+  <img src="assets/side-frequencies.svg" width="100%" alt="ls ~/side_quests: minecraft, terraria, weird corners of the internet, too many tabs. Blocky pixel terrain.">
 </p>
 
 Minecraft · Terraria · weird corners of the internet · technical rabbit holes · internet culture
@@ -259,7 +259,7 @@ Minecraft · Terraria · weird corners of the internet · technical rabbit holes
 <img src="assets/divider.svg" width="100%" alt="">
 
 <p align="center">
-  <img src="assets/footer-signal.svg" width="100%" alt="session closed. questions still open. snowyarch // ZÜRICH NODE.">
+  <img src="assets/footer-signal.svg" width="100%" alt="exit — session closed. questions still open. snowyarch // ZÜRICH NODE.">
 </p>
 
 <p align="center"><a href="#research-index"><code>↑ back to the index</code></a></p>
