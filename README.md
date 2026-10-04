@@ -613,7 +613,11 @@ too-many-tabs.txt
 </details>
 
 <a name="radio"></a>
-<img src="assets/dynamic/radio-afterhours.svg" width="100%" alt="radio.afterhours — AFTERHOURS FM Spotify playlist relay.">
+<a href="https://open.spotify.com/playlist/4dmC1A34kqmEilGf8KSlbN">
+  <img src="assets/dynamic/radio-afterhours.svg" width="100%" alt="radio.afterhours — AFTERHOURS FM Spotify playlist relay.">
+</a>
+
+[`OPEN SPOTIFY ↗`](https://open.spotify.com/playlist/4dmC1A34kqmEilGf8KSlbN)
 
 <p align="center">
   <img src="assets/footer-signal.svg" width="100%" alt="session.end terminal: exit, logout — session closed. questions still open. snowyarch // ZÜRICH NODE, AFTERHOURS / PERSONAL NODE.">
