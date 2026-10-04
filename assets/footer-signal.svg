@@ -87,8 +87,8 @@
 <rect x="644" y="37.75415160740658" width="8" height="4.5" fill="#FF4FCB" opacity="0.08"/>
 <rect x="662" y="37.46398742503623" width="8" height="5.1" fill="#FF4FCB" opacity="0.08"/>
 <text x="40" y="98" font-size="22" fill="#2D8CFF" font-weight="normal" text-anchor="start">└─$</text>
-<clipPath id="k23"><rect x="92.8" y="76" width="52.8" height="30.799999999999997"><animate attributeName="width" dur="1.425s" calcMode="discrete" keyTimes="0;0.5614;0.6491;0.7368;0.8246;0.9123" values="0;0;13.2;26.4;39.6;52.8"/></rect></clipPath>
-<text x="92.8" y="98" font-size="22" fill="#EDF5FF" font-weight="normal" textLength="52.8" lengthAdjust="spacing" clip-path="url(#k23)">exit</text>
+<clipPath id="k6"><rect x="92.8" y="76" width="52.8" height="30.799999999999997"><animate attributeName="width" dur="1.425s" calcMode="discrete" keyTimes="0;0.5614;0.6491;0.7368;0.8246;0.9123" values="0;0;13.2;26.4;39.6;52.8"/></rect></clipPath>
+<text x="92.8" y="98" font-size="22" fill="#EDF5FF" font-weight="normal" textLength="52.8" lengthAdjust="spacing" clip-path="url(#k6)">exit</text>
 <rect x="92.8" y="80.4" width="11.88" height="22" fill="#C6FF3A" opacity="0"><animate attributeName="x" dur="1.425s" calcMode="discrete" keyTimes="0;0.5614;0.6491;0.7368;0.8246;0.9123" values="92.8;92.8;106;119.2;132.4;145.6"/><animate attributeName="opacity" dur="1.425s" calcMode="discrete" keyTimes="0;0.5614" values="0;1"/></rect>
 <g><set attributeName="opacity" to="0" begin="0s" dur="1.7s"/><text x="40" y="140" font-size="28" fill="#EDF5FF" font-weight="normal" text-anchor="start">session closed.</text></g>
 <g><set attributeName="opacity" to="0" begin="0s" dur="2.1s"/><text x="40" y="176" font-size="28" fill="#EDF5FF" font-weight="normal" text-anchor="start">questions still open.</text></g>
